@@ -38,6 +38,7 @@ public class VChessBoard extends JPanel implements Observer {
                 if (e.getButton() == MouseEvent.BUTTON3) {
 
                     cellClicked.toggleSelected();
+                    update();
                 }
             }
         });
