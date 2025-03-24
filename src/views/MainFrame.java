@@ -1,9 +1,12 @@
 package views;
 
+import controllers.ChessBoardController;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Observer {
 
     private JPanel contentPane;
     private VChessBoard board;
@@ -30,5 +33,10 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         this.build();
+    }
+
+    @Override
+    public void update() {
+        board.update();
     }
 }
