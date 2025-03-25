@@ -1,4 +1,7 @@
 package models.pieces;
 
-public class Queen {
+public class Queen extends Piece {
+    public Queen(int color) {
+        super(color);
+    }
 }

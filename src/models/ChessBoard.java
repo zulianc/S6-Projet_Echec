@@ -2,9 +2,6 @@ package models;
 
 import models.pieces.Piece;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ChessBoard extends Observable {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
@@ -23,8 +20,8 @@ public class ChessBoard extends Observable {
         }
     }
 
-    private void placePieces(Piece piece) {
-
+    public void placePieces(Piece piece, int x, int y) {
+        this.cells[x][y].setPiece(piece);
     }
 
     public Cell getCell(int x, int y) {

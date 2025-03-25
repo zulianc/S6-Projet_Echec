@@ -1,9 +1,9 @@
 package models;
 
-import java.awt.*;
+import models.pieces.Piece;
 
 public class Cell {
-    //private Piece piece;
+    private Piece piece;
     private boolean isSelected;
     private boolean canMoveOnIt;
     private final int baseColor;
@@ -37,5 +37,13 @@ public class Cell {
 
     public int getBaseColor() {
         return baseColor;
+    }
+
+    public Piece getPiece() {
+        return piece;
+    }
+
+    public void setPiece(Piece piece) {
+        this.piece = piece;
     }
 }
