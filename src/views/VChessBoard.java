@@ -21,7 +21,7 @@ public class VChessBoard extends JPanel implements Observer {
 
     public VChessBoard(int size, ChessBoard model, List<Color> baseColors) {
         this.model = model;
-        this.controller = new ChessBoardController(model);
+        this.controller = new ChessBoardController(model, this);
         this.cellSize = size / ChessBoard.CHESS_BOARD_SIZE;
         this.setPreferredSize(new Dimension(size, size));
 
@@ -42,15 +42,6 @@ public class VChessBoard extends JPanel implements Observer {
                 VCell cellClicked = vCells.get(index);
 
                 controller.control(cellClicked, e);
-
-                /*
-                if (e.getButton() == MouseEvent.BUTTON3) {
-
-                    cellClicked.toggleSelected();
-                    update();
-                }
-
-                 */
             }
         });
     }

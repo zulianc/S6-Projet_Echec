@@ -1,8 +1,5 @@
 package models;
 
-import views.VCell;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +23,5 @@ public class ChessBoard extends Observable {
 
     public Cell getCell(int index) {
         return cells.get(index);
-    }
-
-    public void toggleSelect(Cell cell) {
-        cell.toggleSelect();
-        updateAll();
     }
 }
