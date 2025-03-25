@@ -20,6 +20,10 @@ public abstract class Observable {
         observers.remove(observer);
     }
 
+    public void updateOneWithParams(Object[] params, Observer observer) {
+        observer.updateParams(params);
+    }
+
     public void updateAll() {
         for (Observer observer : observers) {
             observer.update();

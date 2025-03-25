@@ -57,8 +57,7 @@ public class VChessBoard extends JPanel implements Observer {
         Color color;
         for (int y = 0; y < ChessBoard.CHESS_BOARD_SIZE; y++) {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
-                int index = y * ChessBoard.CHESS_BOARD_SIZE + x;
-                Cell cell = this.model.getCell(index);
+                Cell cell = this.model.getCell(x, y);
                 color = cell.getBaseColor() == 0 ? this.baseColors.get(0) : this.baseColors.get(1) ;
                 vCells.add(new VCell(cell, color, cellSize, x, y));
             }
@@ -76,5 +75,10 @@ public class VChessBoard extends JPanel implements Observer {
     @Override
     public void update() {
         repaint();
+    }
+
+    @Override
+    public void updateParams(Object[] params) {
+
     }
 }
