@@ -2,7 +2,11 @@ package views;
 
 import models.Cell;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class VCell {
 
@@ -34,6 +38,11 @@ public class VCell {
 
         g.setColor(Color.BLACK);
         g.drawRect(cellX, cellY, size, size);
+
+        if (cell.getPiece() != null) {
+            Image img = VPiece.getImage(cell.getPiece());
+            g.drawImage(img, cellX, cellY, null);
+        }
     }
 
     public Cell getCell() {

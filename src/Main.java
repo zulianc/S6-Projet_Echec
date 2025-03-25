@@ -11,5 +11,7 @@ public class Main {
         board.addObserver(frame);
 
         frame.setVisible(true);
+
+        game.playGame();
     }
 }

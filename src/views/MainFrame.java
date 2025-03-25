@@ -47,4 +47,9 @@ public class MainFrame extends JFrame implements Observer {
     public void update() {
         board.update();
     }
+
+    @Override
+    public void updateParams(Object[] params) {
+
+    }
 }

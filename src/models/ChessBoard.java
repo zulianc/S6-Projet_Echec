@@ -22,6 +22,7 @@ public class ChessBoard extends Observable {
     }
 
     public void placePieces(Piece piece, int x, int y) {
+        System.out.println("Placing piece " + piece + " at (" + x + ", " + y + ")");
         this.cells[x][y].setPiece(piece);
     }
 

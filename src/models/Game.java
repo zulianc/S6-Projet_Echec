@@ -20,6 +20,7 @@ public class Game {
             Player p = this.nextPlayer();
             Move m;
             do {
+                assert p != null;
                 m = p.getMove();
             } while (!this.validMove());
             this.applyMove(m);
@@ -28,6 +29,7 @@ public class Game {
 
     private void initializePieces() {
 
+        System.out.println("Initializing pieces...");
         this.chessBoard.placePieces(new Rook(0), 0, 0);
     }
 
