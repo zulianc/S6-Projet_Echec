@@ -1,8 +1,6 @@
 package models.pieces;
 
 public abstract class Piece {
-
-    private static final PieceName PIECE_NAME = PieceName.PIECE;
     private final int color;
 
     public Piece(int color) {
@@ -13,7 +11,12 @@ public abstract class Piece {
         return color;
     }
 
-    public String getPieceName() {
-        return PIECE_NAME.getValue();
+    public abstract String getPieceName() ;
+
+    @Override
+    public String toString() {
+        return "Piece{" +
+                "color=" + color +
+                '}';
     }
 }

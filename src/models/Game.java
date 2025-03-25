@@ -30,7 +30,9 @@ public class Game {
     private void initializePieces() {
 
         System.out.println("Initializing pieces...");
-        this.chessBoard.placePieces(new Rook(0), 0, 0);
+        Rook rook1 = new Rook(1);
+        System.out.println(rook1);
+        this.chessBoard.placePieces(rook1, 0, 0);
     }
 
     private boolean gameEnded() {
