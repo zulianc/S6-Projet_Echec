@@ -30,9 +30,7 @@ public class VPiece {
         Image img = null;
         try {
             String relativeLink = BASE + key + EXTENSION;
-            File file = Paths.get(relativeLink).toFile();
-            System.out.println(file.getAbsolutePath());
-            img = ImageIO.read(file);
+            img = ImageIO.read(new File(relativeLink));
             temp.put(key, img);
         } catch (Exception e) {
             System.err.println("Error VPiece : "+e.getMessage());
