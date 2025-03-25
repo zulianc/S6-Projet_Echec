@@ -1,32 +1,33 @@
 package views;
 
+import models.Cell;
+
 import java.awt.*;
 
 public class VCell {
+
+    private final Cell cell;
+
     private int size;
-    private final double indexX;
-    private final double indexY;
+    private final int indexX;
+    private final int indexY;
 
     private final Color baseColor;
-    //private Piece piece;
-    private boolean isSelected;
-    private boolean canMoveOnIt;
 
 
-    public VCell(Color baseColor, int size, double indexX, double indexY) {
+    public VCell(Cell cell, Color baseColor, int size, int indexX, int indexY) {
+        this.cell = cell;
         this.baseColor = baseColor;
-        this.isSelected = false;
-        this.canMoveOnIt = false;
         this.size = size;
         this.indexX = indexX;
         this.indexY = indexY;
     }
 
     public void paint(Graphics g) {
-        int cellX = (int) indexX * size;
-        int cellY = (int) indexY * size;
+        int cellX = indexX * size;
+        int cellY = indexY * size;
 
-        Color cellColor = this.isSelected() ? Color.RED : this.getBaseColor();
+        Color cellColor = this.cell.isSelected() ? Color.RED : this.getBaseColor();
         g.setColor(cellColor);
 
         g.fillRect(cellX, cellY, size, size);
@@ -35,28 +36,12 @@ public class VCell {
         g.drawRect(cellX, cellY, size, size);
     }
 
+    public Cell getCell() {
+        return cell;
+    }
+
     public Color getBaseColor() {
         return baseColor;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
-    public void toggleSelected() {
-        isSelected = !isSelected;
-    }
-
-    public boolean isCanMoveOnIt() {
-        return canMoveOnIt;
-    }
-
-    public void setCanMoveOnIt(boolean canMoveOnIt) {
-        this.canMoveOnIt = canMoveOnIt;
     }
 
     public int getSize() {
@@ -66,4 +51,6 @@ public class VCell {
     public void setSize(int size) {
         this.size = size;
     }
+
+
 }

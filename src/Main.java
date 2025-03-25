@@ -4,7 +4,7 @@ import views.MainFrame;
 public class Main {
     public static void main(String[] args) {
         ChessBoard board = new ChessBoard();
-        MainFrame frame = new MainFrame();
+        MainFrame frame = new MainFrame(board);
 
         board.addObserver(frame);
 
