@@ -1,12 +1,10 @@
 package views;
 
 import models.pieces.Piece;
-import models.pieces.PieceName;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;

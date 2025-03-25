@@ -41,7 +41,7 @@ public class VCell {
 
         if (cell.getPiece() != null) {
             Image img = VPiece.getImage(cell.getPiece());
-            g.drawImage(img, cellX, cellY, null);
+            g.drawImage(img, cellX, cellY, size, size, null);
         }
     }
 
