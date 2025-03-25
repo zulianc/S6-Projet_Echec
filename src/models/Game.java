@@ -27,12 +27,8 @@ public class Game {
     }
 
     private void initializePieces() {
-        Rook rook1 = new Rook(0);
-        Rook rook2 = new Rook(0);
-        Rook rook3 = new Rook(1);
-        Rook rook4 = new Rook(1);
 
-        this.chessBoard.placePieces(rook1, 0, 0);
+        this.chessBoard.placePieces(new Rook(0), 0, 0);
     }
 
     private boolean gameEnded() {

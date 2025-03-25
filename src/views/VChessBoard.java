@@ -3,6 +3,7 @@ package views;
 import controllers.ChessBoardController;
 import models.Cell;
 import models.ChessBoard;
+import structure.Observer;
 
 import javax.swing.*;
 import java.awt.*;

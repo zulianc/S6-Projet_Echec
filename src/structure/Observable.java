@@ -1,6 +1,4 @@
-package models;
-
-import views.Observer;
+package structure;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -1,6 +1,7 @@
 package models;
 
 import models.pieces.Piece;
+import structure.Observable;
 
 public class ChessBoard extends Observable {
     public static final int CHESS_BOARD_SIZE = 8;

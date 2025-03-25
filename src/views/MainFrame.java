@@ -1,6 +1,7 @@
 package views;
 
 import models.ChessBoard;
+import structure.Observer;
 
 import javax.swing.*;
 import java.awt.*;
