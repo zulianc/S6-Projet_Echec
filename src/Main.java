@@ -11,6 +11,7 @@ public class Main {
 
         frame.setVisible(true);
 
-        game.playGame();
+        Thread thread = new Thread(game);
+        thread.start();
     }
 }

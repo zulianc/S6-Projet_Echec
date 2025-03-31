@@ -2,6 +2,7 @@ package controllers;
 
 import models.Cell;
 import models.Game;
+import models.Move;
 import structure.Position;
 import views.MainFrame;
 import views.VCell;
@@ -36,7 +37,9 @@ public class ChessController {
             }
             else {
                 after = new Position(vCell.getIndexX(), vCell.getIndexY());
-
+                gameModel.sendMove(new Move(before, after));
+                this.before = null;
+                this.after = null;
             }
         }
     }

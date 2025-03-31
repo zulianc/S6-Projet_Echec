@@ -10,4 +10,12 @@ public class Move {
         this.before = before;
         this.after = after;
     }
+
+    public Position getBefore() {
+        return before;
+    }
+
+    public Position getAfter() {
+        return after;
+    }
 }

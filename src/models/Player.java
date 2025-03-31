@@ -2,12 +2,17 @@ package models;
 
 public class Player {
     private String name;
-    private Game game;
+    private final Game game;
+
+    public Player(String name, Game game) {
+        this.name = name;
+        this.game = game;
+    }
 
     public Move getMove() {
         try {
             synchronized (game) {
-                wait();
+                game.wait();
             }
             return game.move;
         } catch (Exception ignored) {

@@ -27,7 +27,6 @@ public class Game extends Observable implements Runnable {
             Player p = this.nextPlayer();
             Move m;
             do {
-                assert p != null;
                 m = p.getMove();
             } while (!this.validMove());
             this.applyMove(m);
@@ -78,14 +77,19 @@ public class Game extends Observable implements Runnable {
     }
 
     private Player nextPlayer() {
-        return null;
+        return new Player("bernard", this);
     }
 
     private boolean validMove() {
-        return false;
+        return true;
     }
 
     private void applyMove(Move m) {
+        Cell startCell = this.chessBoard.getCell(m.getBefore().getX(), m.getBefore().getY());
+        Piece movedPiece = startCell.getPiece();
+        startCell.setPiece(null);
+        Cell endCell = this.chessBoard.getCell(m.getAfter().getX(), m.getAfter().getY());
+        endCell.setPiece(movedPiece);
     }
 
     public ChessBoard getBoard() {
