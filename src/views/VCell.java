@@ -1,6 +1,7 @@
 package views;
 
 import models.Cell;
+import structure.Position;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,23 +14,21 @@ public class VCell {
     private final Cell cell;
 
     private int size;
-    private final int indexX;
-    private final int indexY;
+    private final Position coordinates;
 
     private final Color baseColor;
 
 
-    public VCell(Cell cell, Color baseColor, int size, int indexX, int indexY) {
+    public VCell(Cell cell, Color baseColor, int size, Position coordinates) {
         this.cell = cell;
         this.baseColor = baseColor;
         this.size = size;
-        this.indexX = indexX;
-        this.indexY = indexY;
+        this.coordinates = coordinates;
     }
 
     public void paint(Graphics g) {
-        int cellX = indexX * size;
-        int cellY = indexY * size;
+        int cellX = coordinates.getX() * size;
+        int cellY = coordinates.getY() * size;
 
         Color cellColor = this.cell.isSelected() ? Color.RED : this.getBaseColor();
         g.setColor(cellColor);
@@ -61,5 +60,11 @@ public class VCell {
         this.size = size;
     }
 
+    public int getIndexX() {
+        return coordinates.getX();
+    }
 
+    public int getIndexY() {
+        return coordinates.getY();
+    }
 }

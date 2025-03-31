@@ -3,7 +3,7 @@ package models;
 import models.pieces.Piece;
 import structure.Observable;
 
-public class ChessBoard extends Observable {
+public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
 

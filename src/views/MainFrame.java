@@ -1,6 +1,8 @@
 package views;
 
+import controllers.ChessController;
 import models.ChessBoard;
+import models.Game;
 import structure.Observer;
 
 import javax.swing.*;
@@ -8,13 +10,15 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements Observer {
-
     private JPanel contentPane;
     private VChessBoard board;
     private JLabel label;
-    private final ChessBoard boardModel;
+    private final Game gameModel;
+    private ChessController chessController;
 
     private void build() {
+        this.chessController = new ChessController(gameModel, this);
+
         this.contentPane = new JPanel();
         this.contentPane.setPreferredSize(new Dimension(800, 600));
         this.contentPane.setLayout(new BorderLayout());
@@ -23,7 +27,7 @@ public class MainFrame extends JFrame implements Observer {
         basesColors.add(Color.WHITE);
         basesColors.add(Color.BLACK);
 
-        this.board = new VChessBoard(600, boardModel, basesColors);
+        this.board = new VChessBoard(600, gameModel, chessController, basesColors);
         this.contentPane.add(board, BorderLayout.CENTER);
 
         this.label = new JLabel("Super jeu d'échecs");
@@ -38,8 +42,8 @@ public class MainFrame extends JFrame implements Observer {
         this.setResizable(false);
     }
 
-    public MainFrame(ChessBoard model) {
-        this.boardModel = model;
+    public MainFrame(Game model) {
+        this.gameModel = model;
         this.build();
     }
 

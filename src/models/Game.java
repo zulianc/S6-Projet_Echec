@@ -1,16 +1,24 @@
 package models;
 
 import models.pieces.*;
+import structure.Observable;
+import structure.Observer;
 
 import java.util.List;
 
-public class Game {
+public class Game extends Observable implements Runnable {
     private final ChessBoard chessBoard;
     private List<Player> players;
     private int playerNumber;
+    public Move move;
 
-    public Game(ChessBoard chessBoard) {
-        this.chessBoard = chessBoard;
+    public Game() {
+        this.chessBoard = new ChessBoard();
+    }
+
+    @Override
+    public void run() {
+        this.playGame();
     }
 
     public void playGame() {
@@ -23,6 +31,13 @@ public class Game {
                 m = p.getMove();
             } while (!this.validMove());
             this.applyMove(m);
+        }
+    }
+
+    public void sendMove(Move m) {
+        this.move = m;
+        synchronized (this) {
+            notify();
         }
     }
 
@@ -71,5 +86,9 @@ public class Game {
     }
 
     private void applyMove(Move m) {
+    }
+
+    public ChessBoard getBoard() {
+        return this.chessBoard;
     }
 }

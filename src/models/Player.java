@@ -1,11 +1,17 @@
 package models;
 
-import models.pieces.Move;
-
 public class Player {
     private String name;
+    private Game game;
 
     public Move getMove() {
-        return null;
+        try {
+            synchronized (game) {
+                wait();
+            }
+            return game.move;
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 }

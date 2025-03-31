@@ -4,11 +4,10 @@ import views.MainFrame;
 
 public class Main {
     public static void main(String[] args) {
-        ChessBoard board = new ChessBoard();
-        Game game = new Game(board);
-        MainFrame frame = new MainFrame(board);
+        Game game = new Game();
+        MainFrame frame = new MainFrame(game);
 
-        board.addObserver(frame);
+        game.addObserver(frame);
 
         frame.setVisible(true);
 
