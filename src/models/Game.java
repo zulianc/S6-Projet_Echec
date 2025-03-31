@@ -44,10 +44,10 @@ public class Game {
         this.chessBoard.placePieces(new Bishop(0), 2, 7);
         this.chessBoard.placePieces(new Bishop(0), 5, 7);
 
-        this.chessBoard.placePieces(new Queen(1), 4, 0);
+        this.chessBoard.placePieces(new Queen(1), 3, 0);
         this.chessBoard.placePieces(new Queen(0), 3, 7);
 
-        this.chessBoard.placePieces(new King(1), 3, 0);
+        this.chessBoard.placePieces(new King(1), 4, 0);
         this.chessBoard.placePieces(new King(0), 4, 7);
 
         for (int x = 0; x < 8; x++) {
