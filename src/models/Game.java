@@ -1,5 +1,6 @@
 package models;
 
+import models.decorators.LinesDecorator;
 import models.pieces.*;
 import structure.Observable;
 import structure.Observer;

@@ -9,7 +9,6 @@ public class Cell {
     private final int baseColor;
 
     public Cell(int baseColor) {
-
         this.isSelected  = false;
         this.canMoveOnIt = false;
         this.baseColor = baseColor;

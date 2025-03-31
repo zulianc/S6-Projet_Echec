@@ -3,7 +3,7 @@ package models.pieces;
 public class Bishop extends Piece {
 
     public Bishop(int color) {
-        super(color);
+        super(color, null);
     }
 
     @Override
