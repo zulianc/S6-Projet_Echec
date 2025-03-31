@@ -20,18 +20,24 @@ public class ChessController {
         this.mainView = mainView;
 
         this.before = null;
-        this.after = null;
+        this.after  = null;
     }
 
     public void control(VCell vCell, MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-
-            Cell cell = vCell.getCell();
-            cell.toggleSelect();
+            System.out.println("Single right click");
+            if (e.getClickCount() != 2) {
+                Cell cell = vCell.getCell();
+                cell.toggleSelect();
+            } else {
+                System.out.println("Double right click");
+                this.gameModel.getBoard().clearNotes();
+            }
 
             mainView.update();
 
         } else if (e.getButton() == MouseEvent.BUTTON1) {
+            System.out.println("Single left click");
             if (before == null) {
                 before = new Position(vCell.getIndexX(), vCell.getIndexY());
             }
@@ -39,7 +45,7 @@ public class ChessController {
                 after = new Position(vCell.getIndexX(), vCell.getIndexY());
                 gameModel.sendMove(new Move(before, after));
                 this.before = null;
-                this.after = null;
+                this.after  = null;
             }
         }
     }

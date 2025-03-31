@@ -1,7 +1,6 @@
 package models;
 
 import models.pieces.Piece;
-import structure.Observable;
 
 public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
@@ -17,6 +16,14 @@ public class ChessBoard {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
                 baseColor = ((x+y) % 2 == 0) ? 0 : 1 ;
                 this.cells[x][y] = new Cell(baseColor);
+            }
+        }
+    }
+
+    public void clearNotes() {
+        for (Cell[] cellList : cells) {
+            for (Cell cell : cellList) {
+                cell.setSelected(false);
             }
         }
     }
