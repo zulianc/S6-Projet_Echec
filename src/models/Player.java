@@ -19,4 +19,12 @@ public class Player {
             return null;
         }
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Game getGame() {
+        return game;
+    }
 }

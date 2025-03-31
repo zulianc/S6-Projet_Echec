@@ -30,6 +30,8 @@ public class Game extends Observable implements Runnable {
                 m = p.getMove();
             } while (!this.validMove());
             this.applyMove(m);
+            this.updateAll();
+            System.out.println("Move played");
         }
     }
 
