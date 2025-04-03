@@ -4,21 +4,20 @@ import models.Cell;
 import models.ChessBoard;
 import models.decorators.AccessibleCellsDecorator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
-    private final int color;
+    private final int team;
     private Cell cell;
     private final AccessibleCellsDecorator decorator;
 
-    public Piece(int color, AccessibleCellsDecorator decorator) {
-        this.color = color;
+    public Piece(int team, AccessibleCellsDecorator decorator) {
+        this.team = team;
         this.decorator = decorator;
     }
 
-    public int getColor() {
-        return color;
+    public int getTeam() {
+        return team;
     }
 
     public abstract String getPieceName();
@@ -31,10 +30,18 @@ public abstract class Piece {
         return decorator.getAccessibleCells(chessBoard, this.cell);
     }
 
+    public Cell getCell() {
+        return cell;
+    }
+
+    public void setCell(Cell cell) {
+        this.cell = cell;
+    }
+
     @Override
     public String toString() {
         return "Piece{" +
-                "color=" + color +
+                "team=" + team +
                 '}';
     }
 }

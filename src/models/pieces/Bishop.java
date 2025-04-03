@@ -2,8 +2,8 @@ package models.pieces;
 
 public class Bishop extends Piece {
 
-    public Bishop(int color) {
-        super(color, null);
+    public Bishop(int team) {
+        super(team, null);
     }
 
     @Override

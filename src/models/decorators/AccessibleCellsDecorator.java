@@ -2,12 +2,17 @@ package models.decorators;
 
 import models.Cell;
 import models.ChessBoard;
+import structure.Orientation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AccessibleCellsDecorator {
-    AccessibleCellsDecorator base;
+    protected AccessibleCellsDecorator base;
+    protected List<Orientation> orientationPossibles;
+
+    protected AccessibleCellsDecorator(AccessibleCellsDecorator base) {
+        this.base = base;
+    }
 
     protected abstract List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell);
 

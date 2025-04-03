@@ -1,9 +1,11 @@
 package models.pieces;
 
+import models.decorators.LinesDecorator;
+
 public class Rook extends Piece {
 
-    public Rook(int color) {
-        super(color, null);
+    public Rook(int team) {
+        super(team, new LinesDecorator(null));
     }
 
     @Override

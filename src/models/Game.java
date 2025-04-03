@@ -1,19 +1,24 @@
 package models;
 
-import models.decorators.LinesDecorator;
 import models.pieces.*;
 import structure.Observable;
-import structure.Observer;
+import structure.Position;
 
 import java.util.List;
 
 public class Game extends Observable implements Runnable {
     private final ChessBoard chessBoard;
-    private List<Player> players;
-    private int playerNumber;
+    private final List<Player> players;
+    private final int playerCount;
+    private int actualPlayer;
     public Move move;
 
-    public Game() {
+    public Game(List<Player> players) {
+        this.players     = players;
+        this.playerCount = players.size();
+        for (Player player : players) {
+            player.setGame(this);
+        }
         this.chessBoard = new ChessBoard();
     }
 
@@ -29,7 +34,7 @@ public class Game extends Observable implements Runnable {
             Move m;
             do {
                 m = p.getMove();
-            } while (!this.validMove());
+            } while (!this.validMove(m));
             this.applyMove(m);
             this.updateAll();
             System.out.println("Move played");
@@ -80,18 +85,29 @@ public class Game extends Observable implements Runnable {
     }
 
     private Player nextPlayer() {
-        return new Player("bernard", this);
+        return players.get((this.actualPlayer + 1) % playerCount);
     }
 
-    private boolean validMove() {
-        return true;
+    private boolean validMove(Move m) {
+        boolean isValid = false;
+        Position sourcePosition = m.source();
+        Cell sourceCell = this.chessBoard.getCell(sourcePosition);
+        if (sourceCell.hasPiece()) {
+            Piece piece = sourceCell.getPiece();
+            List<Cell> accessibleCells = piece.getAccessibleCells(chessBoard);
+            if (accessibleCells.contains(sourceCell)) {
+                isValid = true;
+            }
+        }
+
+        return isValid;
     }
 
     private void applyMove(Move m) {
-        Cell startCell = this.chessBoard.getCell(m.getBefore().getX(), m.getBefore().getY());
+        Cell startCell = this.chessBoard.getCell(m.source().getX(), m.source().getY());
         Piece movedPiece = startCell.getPiece();
         startCell.setPiece(null);
-        Cell endCell = this.chessBoard.getCell(m.getAfter().getX(), m.getAfter().getY());
+        Cell endCell = this.chessBoard.getCell(m.destination().getX(), m.destination().getY());
         endCell.setPiece(movedPiece);
     }
 

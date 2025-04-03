@@ -2,7 +2,7 @@ package models.decorators;
 
 import models.Cell;
 import models.ChessBoard;
-import structure.Position;
+import structure.Orientation;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -10,19 +10,39 @@ import java.util.List;
 
 public class LinesDecorator extends AccessibleCellsDecorator {
     public LinesDecorator(AccessibleCellsDecorator base) {
+        super(null);
         if (base != null) {
             this.base = base;
         }
+        this.orientationPossibles = new ArrayList<>();
+        this.orientationPossibles.add(Orientation.FRONT);
+        this.orientationPossibles.add(Orientation.BACK);
+        this.orientationPossibles.add(Orientation.LEFT);
+        this.orientationPossibles.add(Orientation.RIGHT);
     }
 
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
+        System.out.println("Starting cell : "+ startingCell);
         List<Cell> accessibleCells = new LinkedList<>();
         Cell nextCell;
-        do {
-            nextCell = chessBoard.getCellAtRelativePosition(startingCell, new Position(0, 1));
-            accessibleCells.add(nextCell);
-        } while (!(nextCell == null) && !nextCell.hasPiece());
+        for (Orientation orientation : this.orientationPossibles) {
+            boolean pieceIsBlocked = false;
+            while (!pieceIsBlocked) {
+                nextCell = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
+
+                if (nextCell == null) {
+                    pieceIsBlocked = true;
+                } else if (nextCell.hasPiece()) {
+                    if (nextCell.getPiece().getTeam() != startingCell.getPiece().getTeam()) {
+                        accessibleCells.add(nextCell);
+                    }
+                    pieceIsBlocked = true;
+                } else {
+                    accessibleCells.add(nextCell);
+                }
+            }
+        }
 
         return accessibleCells;
     }

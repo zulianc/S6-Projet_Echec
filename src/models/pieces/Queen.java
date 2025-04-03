@@ -3,8 +3,8 @@ package models.pieces;
 import models.decorators.LinesDecorator;
 
 public class Queen extends Piece {
-    public Queen(int color) {
-        super(color, new LinesDecorator(null));
+    public Queen(int team) {
+        super(team, new LinesDecorator(null));
     }
 
     @Override

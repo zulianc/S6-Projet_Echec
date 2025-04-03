@@ -31,13 +31,37 @@ public class ChessBoard {
 
     public void placePieces(Piece piece, int x, int y) {
         this.cells[x][y].setPiece(piece);
+        piece.setCell(cells[x][y]);
     }
 
     public Cell getCell(int x, int y) {
         return cells[x][y];
     }
+    public Cell getCell(Position position) {
+        return cells[position.getX()][position.getY()];
+    }
 
     public Cell getCellAtRelativePosition(Cell startingCell, Position relativePosition) {
+        Position indexes = getIndexOfCell(startingCell);
+        if (indexes == null) {
+            System.out.println("NULL INDEX");
+            return null;
+        }
+        int returnCellIndexX = indexes.getX() + relativePosition.getX();
+        int returnCellIndexY = indexes.getY() + relativePosition.getY();
+        return cells[returnCellIndexX][returnCellIndexY];
+    }
+
+    private Position getIndexOfCell(Cell startingCell) {
+        assert startingCell != null;
+        for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
+            for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
+                if (cells[x][y].equals(startingCell)) {
+                    System.out.println("AYAYAYA");
+                    return new Position(x,y);
+                }
+            }
+        }
         return null;
     }
 }

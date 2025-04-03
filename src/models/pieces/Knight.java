@@ -2,8 +2,8 @@ package models.pieces;
 
 public class Knight extends Piece {
 
-    public Knight(int color) {
-        super(color, null);
+    public Knight(int team) {
+        super(team, null);
     }
 
     @Override
