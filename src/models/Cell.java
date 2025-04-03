@@ -67,6 +67,16 @@ public class Cell {
         return Objects.hashCode(id);
     }
 
+    @Override
+    public String toString() {
+        return "Cell{" +
+                "id=" + id +
+                ", piece=" + piece +
+                ", isSelected=" + isSelected +
+                ", baseColor=" + baseColor +
+                '}';
+    }
+
     public int getId() {
         return this.id;
     }

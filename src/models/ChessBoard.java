@@ -49,6 +49,9 @@ public class ChessBoard {
         }
         int returnCellIndexX = indexes.getX() + relativePosition.getX();
         int returnCellIndexY = indexes.getY() + relativePosition.getY();
+        if (returnCellIndexX < 0 || CHESS_BOARD_SIZE <= returnCellIndexX || returnCellIndexY < 0 || CHESS_BOARD_SIZE <= returnCellIndexY) {
+            return null;
+        }
         return cells[returnCellIndexX][returnCellIndexY];
     }
 
@@ -56,6 +59,7 @@ public class ChessBoard {
         assert startingCell != null;
         for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
             for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
+                System.out.println(startingCell.getId() + "   ==?   "+ cells[x][y].getId());
                 if (cells[x][y].equals(startingCell)) {
                     System.out.println("AYAYAYA");
                     return new Position(x,y);

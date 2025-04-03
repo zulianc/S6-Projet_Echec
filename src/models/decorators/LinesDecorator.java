@@ -25,11 +25,11 @@ public class LinesDecorator extends AccessibleCellsDecorator {
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
         System.out.println("Starting cell : "+ startingCell);
         List<Cell> accessibleCells = new LinkedList<>();
-        Cell nextCell;
         for (Orientation orientation : this.orientationPossibles) {
+            Cell nextCell = startingCell;
             boolean pieceIsBlocked = false;
             while (!pieceIsBlocked) {
-                nextCell = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
+                nextCell = chessBoard.getCellAtRelativePosition(nextCell, orientation.getVector());
 
                 if (nextCell == null) {
                     pieceIsBlocked = true;
@@ -43,6 +43,7 @@ public class LinesDecorator extends AccessibleCellsDecorator {
                 }
             }
         }
+        System.out.println(accessibleCells);
 
         return accessibleCells;
     }

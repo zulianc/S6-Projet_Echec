@@ -10,7 +10,7 @@ public class Game extends Observable implements Runnable {
     private final ChessBoard chessBoard;
     private final List<Player> players;
     private final int playerCount;
-    private int actualPlayer;
+    private Player actualPlayer;
     public Move move;
 
     public Game(List<Player> players) {
@@ -30,10 +30,10 @@ public class Game extends Observable implements Runnable {
     public void playGame() {
         initializePieces();
         while (!(this.gameEnded())) {
-            Player p = this.nextPlayer();
+            this.actualPlayer = this.nextPlayer();
             Move m;
             do {
-                m = p.getMove();
+                m = this.actualPlayer.getMove();
             } while (!this.validMove(m));
             this.applyMove(m);
             this.updateAll();
@@ -85,18 +85,26 @@ public class Game extends Observable implements Runnable {
     }
 
     private Player nextPlayer() {
-        return players.get((this.actualPlayer + 1) % playerCount);
+        return this.players.get((players.indexOf(this.actualPlayer)+1) % this.playerCount);
     }
-
     private boolean validMove(Move m) {
         boolean isValid = false;
-        Position sourcePosition = m.source();
-        Cell sourceCell = this.chessBoard.getCell(sourcePosition);
+
+        Position sourcePosition      = m.source();
+        Position destinationPosition = m.destination();
+        Cell sourceCell      = this.chessBoard.getCell(sourcePosition);
+        Cell destinationCell = this.chessBoard.getCell(destinationPosition);
+
         if (sourceCell.hasPiece()) {
-            Piece piece = sourceCell.getPiece();
-            List<Cell> accessibleCells = piece.getAccessibleCells(chessBoard);
-            if (accessibleCells.contains(sourceCell)) {
-                isValid = true;
+            Piece pieceToMove = sourceCell.getPiece();
+
+            if (pieceToMove.getTeam() == actualPlayer.getTeam()) {
+                List<Cell> accessibleCells = pieceToMove.getAccessibleCells(chessBoard);
+                System.out.println(accessibleCells);
+                System.out.println(sourceCell);
+                if (accessibleCells.contains(destinationCell)) {
+                    isValid = true;
+                }
             }
         }
 
@@ -108,6 +116,7 @@ public class Game extends Observable implements Runnable {
         Piece movedPiece = startCell.getPiece();
         startCell.setPiece(null);
         Cell endCell = this.chessBoard.getCell(m.destination().getX(), m.destination().getY());
+        movedPiece.setCell(endCell);
         endCell.setPiece(movedPiece);
     }
 
