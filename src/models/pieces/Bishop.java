@@ -1,9 +1,11 @@
 package models.pieces;
 
+import models.decorators.DiagonalsDecorator;
+
 public class Bishop extends Piece {
 
     public Bishop(int team) {
-        super(team, null);
+        super(team, new DiagonalsDecorator(null));
     }
 
     @Override

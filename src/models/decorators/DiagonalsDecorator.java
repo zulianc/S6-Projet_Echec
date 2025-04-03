@@ -8,17 +8,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LinesDecorator extends AccessibleCellsDecorator {
-    public LinesDecorator(AccessibleCellsDecorator base) {
+public class DiagonalsDecorator extends AccessibleCellsDecorator {
+
+    public DiagonalsDecorator(AccessibleCellsDecorator base) {
         super(null);
         if (base != null) {
             this.base = base;
         }
         this.orientationPossibles = new ArrayList<>();
-        this.orientationPossibles.add(Orientation.FRONT);
-        this.orientationPossibles.add(Orientation.BACK);
-        this.orientationPossibles.add(Orientation.LEFT);
-        this.orientationPossibles.add(Orientation.RIGHT);
+        this.orientationPossibles.add(Orientation.FRONT_LEFT);
+        this.orientationPossibles.add(Orientation.FRONT_RIGHT);
+        this.orientationPossibles.add(Orientation.BACK_LEFT);
+        this.orientationPossibles.add(Orientation.BACK_RIGHT);
     }
 
     @Override
