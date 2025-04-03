@@ -2,16 +2,17 @@ package models.pieces;
 
 import models.Cell;
 import models.ChessBoard;
-import models.decorators.AccessiblesCellsDecorator;
+import models.decorators.AccessibleCellsDecorator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Piece {
     private final int color;
     private Cell cell;
-    private final AccessiblesCellsDecorator decorator;
+    private final AccessibleCellsDecorator decorator;
 
-    public Piece(int color, AccessiblesCellsDecorator decorator) {
+    public Piece(int color, AccessibleCellsDecorator decorator) {
         this.color = color;
         this.decorator = decorator;
     }
@@ -26,8 +27,8 @@ public abstract class Piece {
         this.cell = cell;
     }
 
-    public ArrayList<Cell> getAccessibleCells(ChessBoard chessBoard) {
-        return decorator.getAccessiblesCells(chessBoard, this.cell);
+    public List<Cell> getAccessibleCells(ChessBoard chessBoard) {
+        return decorator.getAccessibleCells(chessBoard, this.cell);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package models;
 
 import models.pieces.Piece;
+import structure.Position;
 
 public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
@@ -34,5 +35,9 @@ public class ChessBoard {
 
     public Cell getCell(int x, int y) {
         return cells[x][y];
+    }
+
+    public Cell getCellAtRelativePosition(Cell startingCell, Position relativePosition) {
+        return null;
     }
 }
