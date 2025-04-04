@@ -19,7 +19,7 @@ public class Game extends Observable implements Runnable {
         for (Player player : players) {
             player.setGame(this);
         }
-        this.chessBoard = new ChessBoard();
+        this.chessBoard = new ChessBoard(this);
     }
 
     @Override
@@ -122,5 +122,9 @@ public class Game extends Observable implements Runnable {
 
     public ChessBoard getBoard() {
         return this.chessBoard;
+    }
+
+    public int getPlayerCount() {
+        return this.playerCount;
     }
 }

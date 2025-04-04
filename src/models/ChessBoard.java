@@ -6,8 +6,10 @@ import structure.Position;
 public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
+    private final Game game;
 
-    public ChessBoard() {
+    public ChessBoard(Game game) {
+        this.game = game;
         initializeEmptyBoard();
     }
 
@@ -67,5 +69,9 @@ public class ChessBoard {
             }
         }
         return null;
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

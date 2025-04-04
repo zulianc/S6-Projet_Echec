@@ -5,6 +5,7 @@ import models.ChessBoard;
 import structure.Orientation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class KingDecorator extends AccessibleCellsDecorator{
@@ -24,6 +25,15 @@ public class KingDecorator extends AccessibleCellsDecorator{
 
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
-        return null;
+        List<Cell> accessibleCells = new LinkedList<>();
+        for (Orientation orientation : this.orientationPossibles) {
+            Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
+
+            if (nextCell != null && doesntContainsSameTeamPieces(nextCell, startingCell)) {
+                accessibleCells.add(nextCell);
+            }
+        }
+
+        return accessibleCells;
     }
 }

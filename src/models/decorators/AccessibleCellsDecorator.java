@@ -24,4 +24,8 @@ public abstract class AccessibleCellsDecorator {
 
         return cells;
     }
+
+    protected boolean doesntContainsSameTeamPieces(Cell cell1, Cell cell2) {
+        return !cell1.hasPiece() || cell1.getPiece().getTeam() != cell2.getPiece().getTeam();
+    }
 }
