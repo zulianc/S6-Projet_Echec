@@ -3,13 +3,12 @@ package views;
 import models.Cell;
 import structure.Position;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class VCell {
+
+    private static final Color MARKED_COLOR = Color.RED;
+    private static final Color SELECTED_COLOR = Color.BLUE;
 
     private final Cell cell;
 
@@ -30,7 +29,8 @@ public class VCell {
         int cellX = coordinates.getX() * size;
         int cellY = coordinates.getY() * size;
 
-        Color cellColor = this.cell.isSelected() ? Color.RED : this.getBaseColor();
+        Color cellColor = this.cell.isMarked() ? MARKED_COLOR : this.getBaseColor();
+        cellColor = this.cell.isSelected() ? SELECTED_COLOR : cellColor;
         g.setColor(cellColor);
 
         g.fillRect(cellX, cellY, size, size);
@@ -41,6 +41,9 @@ public class VCell {
         if (cell.getPiece() != null) {
             Image img = VPiece.getImage(cell.getPiece());
             g.drawImage(img, cellX, cellY, size, size, null);
+        } else if (cell.canMoveOnIt()){
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(cellX, cellY, size/2, size/2);
         }
     }
 

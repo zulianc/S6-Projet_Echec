@@ -118,6 +118,7 @@ public class Game extends Observable implements Runnable {
         Cell endCell = this.chessBoard.getCell(m.destination().getX(), m.destination().getY());
         movedPiece.setCell(endCell);
         endCell.setPiece(movedPiece);
+        this.chessBoard.unselectAll();
     }
 
     public ChessBoard getBoard() {
@@ -126,5 +127,9 @@ public class Game extends Observable implements Runnable {
 
     public int getPlayerCount() {
         return this.playerCount;
+    }
+
+    public Player getActualPlayer() {
+        return actualPlayer;
     }
 }

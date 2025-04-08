@@ -10,6 +10,7 @@ public abstract class Piece {
     private final int team;
     private Cell cell;
     private final AccessibleCellsDecorator decorator;
+    private Boolean hasMoved = false;
 
     public Piece(int team, AccessibleCellsDecorator decorator) {
         this.team = team;

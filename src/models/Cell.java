@@ -8,15 +8,29 @@ public class Cell {
     private static int cellsId = 0;
     private final int id;
     private Piece piece;
+    private boolean isMarked;
     private boolean isSelected;
     private boolean canMoveOnIt;
     private final int baseColor;
 
     public Cell(int baseColor) {
         this.id = ++cellsId;
+        this.isMarked    = false;
         this.isSelected  = false;
         this.canMoveOnIt = false;
         this.baseColor = baseColor;
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public void setMarked(boolean marked) {
+        isMarked = marked;
+    }
+
+    public void toggleMark() {
+        this.isMarked = !this.isMarked;
     }
 
     public boolean isSelected() {
@@ -31,7 +45,7 @@ public class Cell {
         isSelected = !isSelected;
     }
 
-    public boolean isCanMoveOnIt() {
+    public boolean canMoveOnIt() {
         return canMoveOnIt;
     }
 

@@ -28,7 +28,7 @@ public class ChessController {
             System.out.println("Single right click");
             if (e.getClickCount() != 2) {
                 Cell cell = vCell.getCell();
-                cell.toggleSelect();
+                cell.toggleMark();
             } else {
                 System.out.println("Double right click");
                 this.gameModel.getBoard().clearNotes();
@@ -40,12 +40,18 @@ public class ChessController {
             System.out.println("Single left click");
             if (before == null) {
                 before = new Position(vCell.getIndexX(), vCell.getIndexY());
-            }
-            else {
+                Cell selectedCell = vCell.getCell();
+                if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
+                    selectedCell.setSelected(true);
+                    gameModel.getBoard().markAccessibleCells(selectedCell.getPiece());
+                }
+            } else {
                 after = new Position(vCell.getIndexX(), vCell.getIndexY());
                 gameModel.sendMove(new Move(before, after));
                 this.before = null;
                 this.after  = null;
+                gameModel.getBoard().unselectAll();
+                gameModel.updateAll();
             }
         }
     }

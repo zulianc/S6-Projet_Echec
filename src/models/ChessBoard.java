@@ -3,6 +3,8 @@ package models;
 import models.pieces.Piece;
 import structure.Position;
 
+import java.util.List;
+
 public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
@@ -26,7 +28,7 @@ public class ChessBoard {
     public void clearNotes() {
         for (Cell[] cellList : cells) {
             for (Cell cell : cellList) {
-                cell.setSelected(false);
+                cell.setMarked(false);
             }
         }
     }
@@ -73,5 +75,21 @@ public class ChessBoard {
 
     public Game getGame() {
         return game;
+    }
+
+    public void markAccessibleCells(Piece piece) {
+        List<Cell> accessibleCells = piece.getAccessibleCells(this);
+        for (Cell cell : accessibleCells) {
+            cell.setSelected(true);
+        }
+        game.updateAll();
+    }
+
+    public void unselectAll() {
+        for (int i = 0; i < CHESS_BOARD_SIZE; i++) {
+            for (int j = 0; j < CHESS_BOARD_SIZE; j++) {
+                this.cells[i][j].setSelected(false);
+            }
+        }
     }
 }

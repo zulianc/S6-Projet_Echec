@@ -25,7 +25,7 @@ public enum Orientation {
         this.vector = vector;
     }
 
-    public static Position getVectorRotatedBy90Degrees(Orientation orientation) {
+    public static Position getVectorRotatedBy180Degrees(Orientation orientation) {
         Position vector = orientation.getVector();
         return new Position(vector.getX()*-1, vector.getY()*-1);
     }
