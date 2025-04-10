@@ -87,7 +87,7 @@ public class Game extends Observable implements Runnable {
     }
 
     private void checkIfPlayerLost(Player p) {
-        if (this.isInMate(p)) {
+        if (this.isInCheckmate(p)) {
             p.makePlayerLose();
         }
     }
@@ -99,7 +99,7 @@ public class Game extends Observable implements Runnable {
 
         int alivePlayers = 0;
         for (Player player : this.players) {
-            if (!player.hasLost()) {
+            if (!player.hasLost() && !isInStalemate(player)) {
                 alivePlayers++;
             }
         }
@@ -166,15 +166,22 @@ public class Game extends Observable implements Runnable {
         return false;
     }
 
-    public boolean isInMate(Player p) {
+    public boolean isInCheckmate(Player p) {
+        return (this.isInCheck(p) && !this.playerHasAnAvaibleMove(p));
+    }
+
+    public boolean isInStalemate(Player p) {
+        return (!this.isInCheck(p) && !this.playerHasAnAvaibleMove(p));
+    }
+
+    private boolean playerHasAnAvaibleMove(Player p) {
         List<Piece> pieces = this.chessBoard.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() == p.getTeam() && !this.getValidCells(piece, p).isEmpty()) {
-                return false;
+                return true;
             }
         }
-
-        return true;
+        return false;
     }
 
     private Piece tryMove(Move m) {
