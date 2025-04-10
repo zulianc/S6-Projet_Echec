@@ -2,6 +2,7 @@ package models;
 
 import models.pieces.*;
 import structure.Observable;
+import structure.Orientation;
 import structure.Position;
 
 import java.util.ArrayList;
@@ -221,5 +222,13 @@ public class Game extends Observable implements Runnable {
 
     public Player getActualPlayer() {
         return this.actualPlayer;
+    }
+
+    private void checkCastling(Cell startCell, Cell endCell) {
+        if (startCell.hasPiece() && startCell.getPiece().getPieceName().equals("king")) {
+            if (this.getBoard().getCellAtRelativePosition(startCell, Orientation.LONG_LEFT.getVector()).equals(endCell)) {
+
+            }
+        }
     }
 }
