@@ -76,4 +76,8 @@ public class ChessController {
         gameModel.getBoard().unmarkValidMoveCells();
         gameModel.updateAll();
     }
+
+    public void promotionControl(String result) {
+        gameModel.sendPromotion(result);
+    }
 }

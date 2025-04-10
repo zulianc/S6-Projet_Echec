@@ -22,6 +22,12 @@ public abstract class Observable {
         observer.updateParams(params);
     }
 
+    public void updateAllWithParams(Object[] params) {
+        for (Observer observer : observers) {
+            observer.updateParams(params);
+        }
+    }
+
     public void updateAll() {
         for (Observer observer : observers) {
             observer.update();

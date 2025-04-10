@@ -46,8 +46,6 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
             if (!nextCell.hasPiece()) {
                 accessibleCells.add(nextCell);
             }
-        } else {
-            //TODO promote ?
         }
 
         return accessibleCells;

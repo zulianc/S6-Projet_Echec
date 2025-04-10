@@ -13,6 +13,7 @@ public class Game extends Observable implements Runnable {
     private final int playerCount;
     private Player actualPlayer;
     public Move move;
+    private Piece promotionPiece;
 
     public Game(List<Player> players) {
         this.players     = players;
@@ -53,6 +54,35 @@ public class Game extends Observable implements Runnable {
         synchronized (this) {
             notify();
         }
+    }
+
+    public void sendPromotion(String pieceName) {
+        System.out.println("Promote to " + pieceName);
+        this.promotionPiece = createPieceFromString(pieceName);
+    }
+
+    private Piece createPieceFromString(String pieceName) {
+        Piece result;
+        int actualPlayerTeam = this.actualPlayer.getTeam();
+        switch (pieceName) {
+            case "rook" : {
+                result = new Rook(actualPlayerTeam);
+                break;
+            }
+            case "bishop" : {
+                result = new Bishop(actualPlayerTeam);
+                break;
+            }
+            case "knight" : {
+                result = new Knight(actualPlayerTeam);
+                break;
+            }
+            default : {
+                result = new Queen(actualPlayerTeam);
+                break;
+            }
+        }
+        return result;
     }
 
     private void initializePieces() {
@@ -205,7 +235,10 @@ public class Game extends Observable implements Runnable {
 
     private void applyMove(Move m) {
         Piece movedPiece = this.tryMove(m);
-        checkCastling(this.getBoard().getCell(m.destination()));
+
+        Cell destinationCell = this.getBoard().getCell(m.destination());
+        checkCastling(destinationCell);
+        checkPromotion(destinationCell);
 
         movedPiece.setHasMoved(true);
         this.chessBoard.unselectAll();
@@ -232,10 +265,10 @@ public class Game extends Observable implements Runnable {
         return this.actualPlayer;
     }
 
-    private void checkCastling(Cell kingCell) {
-        if (kingCell.hasPiece() && kingCell.getPiece().getPieceName().equals("king") && !kingCell.getPiece().hasAlreadyMove()) {
-            int kingY = this.getBoard().getPositionOfCell(kingCell).getY();
-            int kingX = this.getBoard().getPositionOfCell(kingCell).getX();
+    private void checkCastling(Cell destinationCell) {
+        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && !destinationCell.getPiece().hasAlreadyMove()) {
+            int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
+            int kingX = this.getBoard().getPositionOfCell(destinationCell).getX();
 
             Position rookToMovePosition;
             Position whereMoveRookPosition;
@@ -248,6 +281,21 @@ public class Game extends Observable implements Runnable {
                     whereMoveRookPosition = new Position(5, kingY);
                 }
                 applyMove(new Move(rookToMovePosition, whereMoveRookPosition));
+            }
+        }
+    }
+
+    private void checkPromotion(Cell destinationCell) {
+        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("pawn")) {
+            int pawnY = this.getBoard().getPositionOfCell(destinationCell).getY();
+            int pawnTeam = destinationCell.getPiece().getTeam();
+
+            if ((pawnY == 0 && pawnTeam == 0) || (pawnY == 7 && pawnTeam == 1)) {
+                String[] s = new String[]{"promotion"};
+                updateAllWithParams(s);
+
+                int pawnX = this.getBoard().getPositionOfCell(destinationCell).getX();
+                this.chessBoard.addPiece(this.promotionPiece, pawnX,pawnY);
             }
         }
     }
