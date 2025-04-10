@@ -2,7 +2,6 @@ package models;
 
 import models.pieces.*;
 import structure.Observable;
-import structure.Orientation;
 import structure.Position;
 
 import java.util.ArrayList;
@@ -187,7 +186,7 @@ public class Game extends Observable implements Runnable {
 
     private Piece tryMove(Move m) {
         Cell startCell = this.chessBoard.getCell(m.source());
-        Cell endCell = this.chessBoard.getCell(m.destination());
+        Cell endCell   = this.chessBoard.getCell(m.destination());
         Piece movedPiece = startCell.getPiece();
 
         this.chessBoard.placePiece(null, startCell);
@@ -198,6 +197,7 @@ public class Game extends Observable implements Runnable {
 
     private void applyMove(Move m) {
         Piece movedPiece = this.tryMove(m);
+        checkCastling(this.getBoard().getCell(m.destination()));
 
         movedPiece.setHasMoved(true);
         this.chessBoard.unselectAll();
@@ -224,10 +224,22 @@ public class Game extends Observable implements Runnable {
         return this.actualPlayer;
     }
 
-    private void checkCastling(Cell startCell, Cell endCell) {
-        if (startCell.hasPiece() && startCell.getPiece().getPieceName().equals("king")) {
-            if (this.getBoard().getCellAtRelativePosition(startCell, Orientation.LONG_LEFT.getVector()).equals(endCell)) {
+    private void checkCastling(Cell kingCell) {
+        if (kingCell.hasPiece() && kingCell.getPiece().getPieceName().equals("king") && !kingCell.getPiece().hasAlreadyMove()) {
+            int kingY = this.getBoard().getPositionOfCell(kingCell).getY();
+            int kingX = this.getBoard().getPositionOfCell(kingCell).getX();
 
+            Position rookToMovePosition;
+            Position whereMoveRookPosition;
+            if (kingX == 2 || kingX == 6) {
+                if (kingX == 2) {
+                    rookToMovePosition    = new Position(0, kingY);
+                    whereMoveRookPosition = new Position(3, kingY);
+                } else {
+                    rookToMovePosition    = new Position(7, kingY);
+                    whereMoveRookPosition = new Position(5, kingY);
+                }
+                applyMove(new Move(rookToMovePosition, whereMoveRookPosition));
             }
         }
     }
