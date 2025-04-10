@@ -1,6 +1,7 @@
 package structure;
 
 public enum Orientation {
+    LONG_FRONT(new Position(0, -2)),
     FRONT(new Position(0, -1)),
     BACK(new Position(0, 1)),
     LEFT(new Position(-1, 0)),

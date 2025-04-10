@@ -45,4 +45,12 @@ public abstract class Piece {
                 "team=" + team +
                 '}';
     }
+
+    public boolean hasAlreadyMove() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(Boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
 }

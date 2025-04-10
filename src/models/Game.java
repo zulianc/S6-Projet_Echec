@@ -118,6 +118,7 @@ public class Game extends Observable implements Runnable {
         Cell endCell = this.chessBoard.getCell(m.destination().getX(), m.destination().getY());
         movedPiece.setCell(endCell);
         endCell.setPiece(movedPiece);
+        movedPiece.setHasMoved(true);
         this.chessBoard.unselectAll();
     }
 

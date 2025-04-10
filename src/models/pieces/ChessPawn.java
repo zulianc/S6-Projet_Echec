@@ -1,12 +1,13 @@
 package models.pieces;
 
 import models.decorators.ChessPawnDecorator;
+import models.decorators.FirstMoveJumpDecorator;
 import models.decorators.LinesDecorator;
 
 public class ChessPawn extends Piece {
 
     public ChessPawn(int team) {
-        super(team, new ChessPawnDecorator(null));
+        super(team, new ChessPawnDecorator(new FirstMoveJumpDecorator(null)));
     }
 
     @Override
