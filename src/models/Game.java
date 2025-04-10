@@ -4,6 +4,7 @@ import models.pieces.*;
 import structure.Observable;
 import structure.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game extends Observable implements Runnable {
@@ -31,14 +32,20 @@ public class Game extends Observable implements Runnable {
         initializePieces();
         while (!(this.gameEnded())) {
             this.actualPlayer = this.nextPlayer();
-            Move m;
-            do {
-                m = this.actualPlayer.getMove();
-            } while (!this.validMove(m));
-            this.applyMove(m);
-            this.updateAll();
-            System.out.println("Move played");
+            if (!this.actualPlayer.hasLost()) {
+                Move m;
+                do {
+                    this.updateAll();
+                    m = this.actualPlayer.getMove();
+                } while (!this.isValidMove(m, this.actualPlayer));
+                this.applyMove(m);
+                this.checkIfPlayerLost(this.nextPlayer());
+                this.updateAll();
+            }
         }
+        this.chessBoard.unmarkValidMoveCells();
+        this.updateAll();
+        System.out.println("c la fin");
     }
 
     public void sendMove(Move m) {
@@ -49,45 +56,78 @@ public class Game extends Observable implements Runnable {
     }
 
     private void initializePieces() {
-
         System.out.println("Initializing pieces...");
-        this.chessBoard.placePieces(new Rook(1), 0, 0);
-        this.chessBoard.placePieces(new Rook(1), 7, 0);
-        this.chessBoard.placePieces(new Rook(0), 0, 7);
-        this.chessBoard.placePieces(new Rook(0), 7, 7);
+        this.chessBoard.placePiece(new Rook(1), 0, 0);
+        this.chessBoard.placePiece(new Rook(1), 7, 0);
+        this.chessBoard.placePiece(new Rook(0), 0, 7);
+        this.chessBoard.placePiece(new Rook(0), 7, 7);
 
-        this.chessBoard.placePieces(new Knight(1), 1, 0);
-        this.chessBoard.placePieces(new Knight(1), 6, 0);
-        this.chessBoard.placePieces(new Knight(0), 1, 7);
-        this.chessBoard.placePieces(new Knight(0), 6, 7);
+        this.chessBoard.placePiece(new Knight(1), 1, 0);
+        this.chessBoard.placePiece(new Knight(1), 6, 0);
+        this.chessBoard.placePiece(new Knight(0), 1, 7);
+        this.chessBoard.placePiece(new Knight(0), 6, 7);
 
-        this.chessBoard.placePieces(new Bishop(1), 2, 0);
-        this.chessBoard.placePieces(new Bishop(1), 5, 0);
-        this.chessBoard.placePieces(new Bishop(0), 2, 7);
-        this.chessBoard.placePieces(new Bishop(0), 5, 7);
+        this.chessBoard.placePiece(new Bishop(1), 2, 0);
+        this.chessBoard.placePiece(new Bishop(1), 5, 0);
+        this.chessBoard.placePiece(new Bishop(0), 2, 7);
+        this.chessBoard.placePiece(new Bishop(0), 5, 7);
 
-        this.chessBoard.placePieces(new Queen(1), 3, 0);
-        this.chessBoard.placePieces(new Queen(0), 3, 7);
+        this.chessBoard.placePiece(new Queen(1), 3, 0);
+        this.chessBoard.placePiece(new Queen(0), 3, 7);
 
-        this.chessBoard.placePieces(new King(1), 4, 0);
-        this.chessBoard.placePieces(new King(0), 4, 7);
+        this.chessBoard.placePiece(new King(1), 4, 0);
+        this.chessBoard.placePiece(new King(0), 4, 7);
 
         for (int x = 0; x < 8; x++) {
-            this.chessBoard.placePieces(new ChessPawn(1), x, 1);
+            this.chessBoard.placePiece(new ChessPawn(1), x, 1);
         }
         for (int x = 0; x < 8; x++) {
-            this.chessBoard.placePieces(new ChessPawn(0), x, 6);
+            this.chessBoard.placePiece(new ChessPawn(0), x, 6);
         }
     }
 
-    private boolean gameEnded() {
-        return false;
+    private void checkIfPlayerLost(Player p) {
+        if (this.isInMate(p)) {
+            p.makePlayerLose();
+        }
+    }
+
+    public boolean gameEnded() {
+        if (this.actualPlayer == null) {
+            return false;
+        }
+
+        int alivePlayers = 0;
+        for (Player player : this.players) {
+            if (!player.hasLost()) {
+                alivePlayers++;
+            }
+        }
+
+        return alivePlayers == 1;
     }
 
     private Player nextPlayer() {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.playerCount);
     }
-    private boolean validMove(Move m) {
+
+    public List<Cell> getValidCells(Piece piece, Player p) {
+        Position start = this.chessBoard.getPositionOfCell(piece.getCell());
+
+        List<Cell> accessibleCells = piece.getAccessibleCells(this.chessBoard);
+        List<Cell> validCells = new ArrayList<>();
+        for (Cell cell : accessibleCells) {
+            Position end = this.chessBoard.getPositionOfCell(cell);
+
+            if (this.isValidMove(new Move(start, end), p)) {
+                validCells.add(cell);
+            }
+        }
+
+        return validCells;
+    }
+
+    private boolean isValidMove(Move m, Player p) {
         boolean isValid = false;
 
         Position sourcePosition      = m.source();
@@ -97,13 +137,13 @@ public class Game extends Observable implements Runnable {
 
         if (sourceCell.hasPiece()) {
             Piece pieceToMove = sourceCell.getPiece();
-
-            if (pieceToMove.getTeam() == actualPlayer.getTeam()) {
+            if (pieceToMove.getTeam() == p.getTeam()) {
                 List<Cell> accessibleCells = pieceToMove.getAccessibleCells(chessBoard);
-                System.out.println(accessibleCells);
-                System.out.println(sourceCell);
                 if (accessibleCells.contains(destinationCell)) {
-                    isValid = true;
+                    Piece deadPiece = destinationCell.getPiece();
+                    this.tryMove(m);
+                    isValid = (!this.isInCheck(p));
+                    this.undoMove(m, deadPiece);
                 }
             }
         }
@@ -111,15 +151,57 @@ public class Game extends Observable implements Runnable {
         return isValid;
     }
 
-    private void applyMove(Move m) {
-        Cell startCell = this.chessBoard.getCell(m.source().getX(), m.source().getY());
+    private boolean isInCheck(Player p) {
+        List<Piece> pieces = this.chessBoard.getAllPieces();
+        for (Piece piece : pieces) {
+            if (piece.getTeam() != p.getTeam()) {
+                for (Cell c : piece.getAccessibleCells(chessBoard)) {
+                    if (c.getPiece() instanceof King) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isInMate(Player p) {
+        List<Piece> pieces = this.chessBoard.getAllPieces();
+        for (Piece piece : pieces) {
+            if (piece.getTeam() == p.getTeam() && !this.getValidCells(piece, p).isEmpty()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Piece tryMove(Move m) {
+        Cell startCell = this.chessBoard.getCell(m.source());
+        Cell endCell = this.chessBoard.getCell(m.destination());
         Piece movedPiece = startCell.getPiece();
-        startCell.setPiece(null);
-        Cell endCell = this.chessBoard.getCell(m.destination().getX(), m.destination().getY());
-        movedPiece.setCell(endCell);
-        endCell.setPiece(movedPiece);
+
+        this.chessBoard.placePiece(null, startCell);
+        this.chessBoard.placePiece(movedPiece, endCell);
+
+        return movedPiece;
+    }
+
+    private void applyMove(Move m) {
+        Piece movedPiece = this.tryMove(m);
+
         movedPiece.setHasMoved(true);
         this.chessBoard.unselectAll();
+    }
+
+    private void undoMove(Move m, Piece deadPiece) {
+        Cell startCell = this.chessBoard.getCell(m.source());
+        Cell endCell = this.chessBoard.getCell(m.destination());
+        Piece movedPiece = endCell.getPiece();
+
+        this.chessBoard.placePiece(movedPiece, startCell);
+        this.chessBoard.placePiece(deadPiece, endCell);
     }
 
     public ChessBoard getBoard() {
@@ -131,6 +213,6 @@ public class Game extends Observable implements Runnable {
     }
 
     public Player getActualPlayer() {
-        return actualPlayer;
+        return this.actualPlayer;
     }
 }

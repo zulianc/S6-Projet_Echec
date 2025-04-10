@@ -3,6 +3,7 @@ package models;
 import models.pieces.Piece;
 import structure.Position;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class ChessBoard {
@@ -33,22 +34,43 @@ public class ChessBoard {
         }
     }
 
-    public void placePieces(Piece piece, int x, int y) {
-        this.cells[x][y].setPiece(piece);
-        piece.setCell(cells[x][y]);
+    public void placePiece(Piece piece, Cell cell) {
+        cell.setPiece(piece);
+
+        if (piece != null) {
+            piece.setCell(cell);
+        }
+    }
+
+    public void placePiece(Piece piece, int x, int y) {
+        this.placePiece(piece, this.cells[x][y]);
+    }
+
+    public List<Piece> getAllPieces() {
+        List<Piece> pieces = new LinkedList<>();
+
+        for (Cell[] cellList : cells) {
+            for (Cell cell : cellList) {
+                if (cell.getPiece() != null) {
+                    pieces.add(cell.getPiece());
+                }
+            }
+        }
+
+        return pieces;
     }
 
     public Cell getCell(int x, int y) {
         return cells[x][y];
     }
+
     public Cell getCell(Position position) {
         return cells[position.getX()][position.getY()];
     }
 
     public Cell getCellAtRelativePosition(Cell startingCell, Position relativePosition) {
-        Position indexes = getIndexOfCell(startingCell);
+        Position indexes = getPositionOfCell(startingCell);
         if (indexes == null) {
-            System.out.println("NULL INDEX");
             return null;
         }
         int returnCellIndexX = indexes.getX() + relativePosition.getX();
@@ -59,13 +81,11 @@ public class ChessBoard {
         return cells[returnCellIndexX][returnCellIndexY];
     }
 
-    private Position getIndexOfCell(Cell startingCell) {
+    public Position getPositionOfCell(Cell startingCell) {
         assert startingCell != null;
         for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
             for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
-                System.out.println(startingCell.getId() + "   ==?   "+ cells[x][y].getId());
                 if (cells[x][y].equals(startingCell)) {
-                    System.out.println("AYAYAYA");
                     return new Position(x,y);
                 }
             }
@@ -77,15 +97,14 @@ public class ChessBoard {
         return game;
     }
 
-    public void markAccessibleCells(Piece piece) {
-        List<Cell> accessibleCells = piece.getAccessibleCells(this);
-        for (Cell cell : accessibleCells) {
+    public void markValidMoveCells(List<Cell> cells) {
+        for (Cell cell : cells) {
             cell.setCanMoveOnIt(true);
         }
         game.updateAll();
     }
 
-    public void unmarkAllAccessibleCells() {
+    public void unmarkValidMoveCells() {
         for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
             for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
                 this.cells[x][y].setCanMoveOnIt(false);

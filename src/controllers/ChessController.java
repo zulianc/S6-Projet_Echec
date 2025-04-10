@@ -38,22 +38,42 @@ public class ChessController {
 
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             System.out.println("Single left click");
-            if (before == null) {
-                before = new Position(vCell.getIndexX(), vCell.getIndexY());
+            if (!this.gameModel.gameEnded()) {
                 Cell selectedCell = vCell.getCell();
-                if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
-                    selectedCell.setSelected(true);
-                    gameModel.getBoard().markAccessibleCells(selectedCell.getPiece());
+                if (before == null) {
+                    this.selectFirstCell(vCell);
+                } else {
+                    if (selectedCell.canMoveOnIt()) {
+                        this.selectSecondCell(vCell);
+                    } else {
+                        this.unselectCells();
+                        this.selectFirstCell(vCell);
+                    }
                 }
-            } else {
-                after = new Position(vCell.getIndexX(), vCell.getIndexY());
-                gameModel.sendMove(new Move(before, after));
-                this.before = null;
-                this.after  = null;
-                gameModel.getBoard().unselectAll();
-                gameModel.getBoard().unmarkAllAccessibleCells();
-                gameModel.updateAll();
             }
         }
+    }
+
+    private void selectFirstCell(VCell vCell) {
+        Cell selectedCell = vCell.getCell();
+        before = new Position(vCell.getIndexX(), vCell.getIndexY());
+        if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
+            selectedCell.setSelected(true);
+            gameModel.getBoard().markValidMoveCells(gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer()));
+        }
+    }
+
+    private void selectSecondCell(VCell vCell) {
+        after = new Position(vCell.getIndexX(), vCell.getIndexY());
+        gameModel.sendMove(new Move(before, after));
+        this.unselectCells();
+    }
+
+    private void unselectCells() {
+        this.before = null;
+        this.after  = null;
+        gameModel.getBoard().unselectAll();
+        gameModel.getBoard().unmarkValidMoveCells();
+        gameModel.updateAll();
     }
 }

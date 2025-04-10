@@ -4,6 +4,7 @@ public class Player {
     private String name;
     private Game game;
     private final int team;
+    private boolean lost = false;
 
     public Player(String name, Game game, int team) {
         this.name = name;
@@ -40,9 +41,18 @@ public class Player {
 
     public void setGame(Game game) {
         this.game = game;
+        this.lost = false;
     }
 
     public int getTeam() {
         return team;
+    }
+
+    public void makePlayerLose() {
+        lost = true;
+    }
+
+    public boolean hasLost() {
+        return lost;
     }
 }
