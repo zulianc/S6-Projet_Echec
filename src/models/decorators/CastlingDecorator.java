@@ -26,11 +26,13 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
         if (startingCell.hasPiece() && !startingCell.getPiece().hasAlreadyMove()) {
 
             for (Orientation orientation : this.orientationPossibles) {
-                Cell previousCell;
+                Cell previousSquaredCell;
+                Cell previousCell = null;
                 Cell nextCell = startingCell;
                 boolean pieceIsBlocked = false;
 
                 while (!pieceIsBlocked) {
+                    previousSquaredCell = previousCell;
                     previousCell = nextCell;
                     nextCell = chessBoard.getCellAtRelativePosition(nextCell, orientation.getVector());
 
@@ -38,7 +40,11 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                         pieceIsBlocked = true;
                     } else if (nextCell.hasPiece()) {
                         if (cellHasRockWithItCanDoCastling(startingCell, nextCell)) {
-                            accessibleCells.add(previousCell);
+                            if (orientation == Orientation.RIGHT) {
+                                accessibleCells.add(previousCell);
+                            } else {
+                                accessibleCells.add(previousSquaredCell);
+                            }
                         }
                         pieceIsBlocked = true;
                     }
