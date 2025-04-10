@@ -41,9 +41,10 @@ public class VCell {
         if (cell.getPiece() != null) {
             Image img = VPiece.getImage(cell.getPiece());
             g.drawImage(img, cellX, cellY, size, size, null);
-        } else if (cell.canMoveOnIt()){
+        }
+        if (cell.canMoveOnIt()){
             g.setColor(Color.LIGHT_GRAY);
-            g.fillRect(cellX, cellY, size/2, size/2);
+            g.fillOval(cellX+(size/4), cellY+(size/4), size/2, size/2);
         }
     }
 

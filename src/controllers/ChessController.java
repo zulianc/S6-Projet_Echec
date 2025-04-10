@@ -51,6 +51,7 @@ public class ChessController {
                 this.before = null;
                 this.after  = null;
                 gameModel.getBoard().unselectAll();
+                gameModel.getBoard().unmarkAllAccessibleCells();
                 gameModel.updateAll();
             }
         }

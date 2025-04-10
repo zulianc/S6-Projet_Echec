@@ -80,7 +80,16 @@ public class ChessBoard {
     public void markAccessibleCells(Piece piece) {
         List<Cell> accessibleCells = piece.getAccessibleCells(this);
         for (Cell cell : accessibleCells) {
-            cell.setSelected(true);
+            cell.setCanMoveOnIt(true);
+        }
+        game.updateAll();
+    }
+
+    public void unmarkAllAccessibleCells() {
+        for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
+            for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
+                this.cells[x][y].setCanMoveOnIt(false);
+            }
         }
         game.updateAll();
     }
