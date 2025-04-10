@@ -21,6 +21,8 @@ public class KingDecorator extends AccessibleCellsDecorator{
         this.orientationPossibles.add(Orientation.BACK);
         this.orientationPossibles.add(Orientation.BACK_LEFT);
         this.orientationPossibles.add(Orientation.BACK_RIGHT);
+        this.orientationPossibles.add(Orientation.LEFT);
+        this.orientationPossibles.add(Orientation.RIGHT);
     }
 
     @Override
