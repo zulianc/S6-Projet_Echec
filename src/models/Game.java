@@ -57,32 +57,32 @@ public class Game extends Observable implements Runnable {
 
     private void initializePieces() {
         System.out.println("Initializing pieces...");
-        this.chessBoard.placePiece(new Rook(1), 0, 0);
-        this.chessBoard.placePiece(new Rook(1), 7, 0);
-        this.chessBoard.placePiece(new Rook(0), 0, 7);
-        this.chessBoard.placePiece(new Rook(0), 7, 7);
+        this.chessBoard.addPiece(new Rook(1), 0, 0);
+        this.chessBoard.addPiece(new Rook(1), 7, 0);
+        this.chessBoard.addPiece(new Rook(0), 0, 7);
+        this.chessBoard.addPiece(new Rook(0), 7, 7);
 
-        this.chessBoard.placePiece(new Knight(1), 1, 0);
-        this.chessBoard.placePiece(new Knight(1), 6, 0);
-        this.chessBoard.placePiece(new Knight(0), 1, 7);
-        this.chessBoard.placePiece(new Knight(0), 6, 7);
+        this.chessBoard.addPiece(new Knight(1), 1, 0);
+        this.chessBoard.addPiece(new Knight(1), 6, 0);
+        this.chessBoard.addPiece(new Knight(0), 1, 7);
+        this.chessBoard.addPiece(new Knight(0), 6, 7);
 
-        this.chessBoard.placePiece(new Bishop(1), 2, 0);
-        this.chessBoard.placePiece(new Bishop(1), 5, 0);
-        this.chessBoard.placePiece(new Bishop(0), 2, 7);
-        this.chessBoard.placePiece(new Bishop(0), 5, 7);
+        this.chessBoard.addPiece(new Bishop(1), 2, 0);
+        this.chessBoard.addPiece(new Bishop(1), 5, 0);
+        this.chessBoard.addPiece(new Bishop(0), 2, 7);
+        this.chessBoard.addPiece(new Bishop(0), 5, 7);
 
-        this.chessBoard.placePiece(new Queen(1), 3, 0);
-        this.chessBoard.placePiece(new Queen(0), 3, 7);
+        this.chessBoard.addPiece(new Queen(1), 3, 0);
+        this.chessBoard.addPiece(new Queen(0), 3, 7);
 
-        this.chessBoard.placePiece(new King(1), 4, 0);
-        this.chessBoard.placePiece(new King(0), 4, 7);
+        this.chessBoard.addPiece(new King(1), 4, 0);
+        this.chessBoard.addPiece(new King(0), 4, 7);
 
         for (int x = 0; x < 8; x++) {
-            this.chessBoard.placePiece(new ChessPawn(1), x, 1);
+            this.chessBoard.addPiece(new ChessPawn(1), x, 1);
         }
         for (int x = 0; x < 8; x++) {
-            this.chessBoard.placePiece(new ChessPawn(0), x, 6);
+            this.chessBoard.addPiece(new ChessPawn(0), x, 6);
         }
     }
 
@@ -167,14 +167,14 @@ public class Game extends Observable implements Runnable {
     }
 
     public boolean isInCheckmate(Player p) {
-        return (this.isInCheck(p) && !this.playerHasAnAvaibleMove(p));
+        return (this.isInCheck(p) && this.playerHasNoAvailableMove(p));
     }
 
     public boolean isInStalemate(Player p) {
-        return (!this.isInCheck(p) && !this.playerHasAnAvaibleMove(p));
+        return (!this.isInCheck(p) && this.playerHasNoAvailableMove(p));
     }
 
-    private boolean playerHasAnAvaibleMove(Player p) {
+    private boolean playerHasNoAvailableMove(Player p) {
         List<Piece> pieces = this.chessBoard.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() == p.getTeam() && !this.getValidCells(piece, p).isEmpty()) {
@@ -189,8 +189,8 @@ public class Game extends Observable implements Runnable {
         Cell endCell = this.chessBoard.getCell(m.destination());
         Piece movedPiece = startCell.getPiece();
 
-        this.chessBoard.placePiece(null, startCell);
-        this.chessBoard.placePiece(movedPiece, endCell);
+        this.chessBoard.movePiece(null, startCell);
+        this.chessBoard.movePiece(movedPiece, endCell);
 
         return movedPiece;
     }
@@ -207,8 +207,8 @@ public class Game extends Observable implements Runnable {
         Cell endCell = this.chessBoard.getCell(m.destination());
         Piece movedPiece = endCell.getPiece();
 
-        this.chessBoard.placePiece(movedPiece, startCell);
-        this.chessBoard.placePiece(deadPiece, endCell);
+        this.chessBoard.movePiece(movedPiece, startCell);
+        this.chessBoard.movePiece(deadPiece, endCell);
     }
 
     public ChessBoard getBoard() {

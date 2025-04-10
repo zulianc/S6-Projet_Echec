@@ -3,12 +3,14 @@ package models;
 import models.pieces.Piece;
 import structure.Position;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
+    private final HashMap<Cell, Position> cellsPosition = new HashMap<>();
     private final Game game;
 
     public ChessBoard(Game game) {
@@ -22,6 +24,7 @@ public class ChessBoard {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
                 baseColor = ((x+y) % 2 == 0) ? 0 : 1 ;
                 this.cells[x][y] = new Cell(baseColor);
+                this.cellsPosition.put(this.cells[x][y], new Position(x, y));
             }
         }
     }
@@ -34,7 +37,11 @@ public class ChessBoard {
         }
     }
 
-    public void placePiece(Piece piece, Cell cell) {
+    public void addPiece(Piece piece, int x, int y) {
+        this.movePiece(piece, x, y);
+    }
+
+    public void movePiece(Piece piece, Cell cell) {
         cell.setPiece(piece);
 
         if (piece != null) {
@@ -42,8 +49,8 @@ public class ChessBoard {
         }
     }
 
-    public void placePiece(Piece piece, int x, int y) {
-        this.placePiece(piece, this.cells[x][y]);
+    public void movePiece(Piece piece, int x, int y) {
+        this.movePiece(piece, this.cells[x][y]);
     }
 
     public List<Piece> getAllPieces() {
@@ -82,15 +89,11 @@ public class ChessBoard {
     }
 
     public Position getPositionOfCell(Cell startingCell) {
-        assert startingCell != null;
-        for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
-            for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
-                if (cells[x][y].equals(startingCell)) {
-                    return new Position(x,y);
-                }
-            }
+        if (startingCell == null) {
+            return null;
         }
-        return null;
+
+        return this.cellsPosition.get(startingCell);
     }
 
     public Game getGame() {
