@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class VCell {
 
-    private static final Color MARKED_COLOR = Color.RED;
+    private static final Color MARKED_COLOR   = Color.RED;
     private static final Color SELECTED_COLOR = Color.BLUE;
 
     private final Cell cell;
