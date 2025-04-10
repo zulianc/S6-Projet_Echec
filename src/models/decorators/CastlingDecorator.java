@@ -2,7 +2,9 @@ package models.decorators;
 
 import models.Cell;
 import models.ChessBoard;
+import models.Move;
 import structure.Orientation;
+import structure.Position;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,29 +26,37 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
         List<Cell> accessibleCells = new LinkedList<>();
         if (startingCell.hasPiece() && !startingCell.getPiece().hasAlreadyMove()) {
+            if (startingCell.getPiece().getTeam() == chessBoard.getGame().getActualPlayer().getTeam()) {
+                for (Orientation orientation : this.orientationPossibles) {
+                    Cell cellPassingBy = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
+                    Cell cellStoppingAt = chessBoard.getCellAtRelativePosition(cellPassingBy, orientation.getVector());
 
-            for (Orientation orientation : this.orientationPossibles) {
-                Cell previousSquaredCell;
-                Cell previousCell = null;
-                Cell nextCell = startingCell;
-                boolean pieceIsBlocked = false;
+                    Cell rookCell = cellStoppingAt;
+                    boolean canCastle = false;
+                    boolean endOfBoard = false;
+                    do {
+                        rookCell = chessBoard.getCellAtRelativePosition(rookCell, orientation.getVector());
+                        if (rookCell == null) {
+                            endOfBoard = true;
+                        } else {
+                            canCastle = cellHasRockWithItCanDoCastling(startingCell, rookCell);
+                        }
+                    } while (!canCastle && !endOfBoard);
 
-                while (!pieceIsBlocked) {
-                    previousSquaredCell = previousCell;
-                    previousCell = nextCell;
-                    nextCell = chessBoard.getCellAtRelativePosition(nextCell, orientation.getVector());
+                    if (canCastle) {
+                        if (cellPassingBy != null && cellStoppingAt != null) {
+                            if (cellPassingBy.getPiece() == null && cellStoppingAt.getPiece() == null) {
+                                Move goToStartingCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(startingCell));
+                                Move goToPassingByCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellPassingBy));
+                                Move goToStoppingAtCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellStoppingAt));
 
-                    if (nextCell == null) {
-                        pieceIsBlocked = true;
-                    } else if (nextCell.hasPiece()) {
-                        if (cellHasRockWithItCanDoCastling(startingCell, nextCell)) {
-                            if (orientation == Orientation.RIGHT) {
-                                accessibleCells.add(previousCell);
-                            } else {
-                                accessibleCells.add(previousSquaredCell);
+                                boolean notInCheck = !chessBoard.getGame().isInCheckIfMove(goToStartingCell) && !chessBoard.getGame().isInCheckIfMove(goToPassingByCell) && !chessBoard.getGame().isInCheckIfMove(goToStoppingAtCell);
+
+                                if (notInCheck) {
+                                    accessibleCells.add(cellStoppingAt);
+                                }
                             }
                         }
-                        pieceIsBlocked = true;
                     }
                 }
             }

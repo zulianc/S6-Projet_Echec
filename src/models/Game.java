@@ -166,6 +166,14 @@ public class Game extends Observable implements Runnable {
         return false;
     }
 
+    public boolean isInCheckIfMove(Move m) {
+        Piece deadPiece = this.chessBoard.getCell(m.destination()).getPiece();
+        this.tryMove(m);
+        boolean isInCheck = this.isInCheck(this.actualPlayer);
+        this.undoMove(m, deadPiece);
+        return isInCheck;
+    }
+
     public boolean isInCheckmate(Player p) {
         return (this.isInCheck(p) && this.playerHasNoAvailableMove(p));
     }
@@ -178,10 +186,10 @@ public class Game extends Observable implements Runnable {
         List<Piece> pieces = this.chessBoard.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() == p.getTeam() && !this.getValidCells(piece, p).isEmpty()) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private Piece tryMove(Move m) {

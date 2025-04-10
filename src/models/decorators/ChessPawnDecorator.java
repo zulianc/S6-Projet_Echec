@@ -22,7 +22,6 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
 
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
-
         List<Position> orientationVectors = new LinkedList<>();
         for (Orientation orientation : this.orientationPossibles) {
             if (startingCell.getPiece().getTeam() == 1) {
