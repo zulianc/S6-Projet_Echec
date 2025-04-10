@@ -44,7 +44,7 @@ public class VCell {
         }
         if (cell.canMoveOnIt()){
             g.setColor(Color.LIGHT_GRAY);
-            g.fillOval(cellX+(size/4), cellY+(size/4), size/2, size/2);
+            g.fillOval(cellX+(size/4)+1, cellY+(size/4)+1, size/2, size/2);
         }
     }
 
