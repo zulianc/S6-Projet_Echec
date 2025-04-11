@@ -4,6 +4,7 @@ import models.pieces.*;
 import structure.Observable;
 import structure.Position;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Game extends Observable implements Runnable {
 
     public void playGame() {
         initializePieces();
-        while (!(this.gameEnded())) {
+        while (!(this.hasGameEnded())) {
             this.actualPlayer = this.nextPlayer();
             if (this.actualPlayer.hasWon()) {
                 Move m;
@@ -46,6 +47,10 @@ public class Game extends Observable implements Runnable {
         }
         this.chessBoard.unmarkValidMoveCells();
         this.updateAll();
+
+        String[] s = new String[]{"gameEnded"};
+        updateAllWithParams(s);
+
         System.out.println("c la fin");
     }
 
@@ -122,7 +127,7 @@ public class Game extends Observable implements Runnable {
         }
     }
 
-    public boolean gameEnded() {
+    public boolean hasGameEnded() {
         if (this.actualPlayer == null) {
             return false;
         }

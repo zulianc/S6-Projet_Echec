@@ -38,7 +38,7 @@ public class ChessController {
 
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             System.out.println("Single left click");
-            if (!this.gameModel.gameEnded()) {
+            if (!this.gameModel.hasGameEnded()) {
                 Cell selectedCell = vCell.getCell();
                 if (before == null) {
                     this.selectFirstCell(vCell);

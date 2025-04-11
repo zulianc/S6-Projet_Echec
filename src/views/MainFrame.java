@@ -53,14 +53,18 @@ public class MainFrame extends JFrame implements Observer {
 
     @Override
     public void updateParams(Object[] params) {
-        System.out.println("UPDATE PROMOTION");
         if (params instanceof String[]) {
-            if (params[0].toString().equals("promotion")) {
+            String signal = (String) params[0];
+
+            if (signal.equals("promotion")) {
                 PromotionDialog diag = new PromotionDialog(this);
                 diag.display();
 
                 String result = diag.getResultPieceName();
                 chessController.promotionControl(result);
+
+            } else if (signal.equals("gameEnded")) {
+                JOptionPane.showMessageDialog(this, "Partie fini");
             }
         }
     }
