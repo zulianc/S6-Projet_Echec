@@ -26,10 +26,10 @@ public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
 
             List<Position> orientationVectors = new LinkedList<>();
             for (Orientation orientation : this.orientationPossibles) {
-                if (startingCell.getPiece().getTeam() == 1) {
-                    orientationVectors.add(Orientation.getVectorRotatedBy180Degrees(orientation));
-                }
-                orientationVectors.add(orientation.getVector());
+                double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
+                int totalPlayer    = chessBoard.getGame().getPlayerCount();
+                int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
+                orientationVectors.add(Orientation.rotatingVector(orientation, rotationDegree));
             }
 
 

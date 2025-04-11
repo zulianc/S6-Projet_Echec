@@ -23,11 +23,11 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
         List<Position> orientationVectors = new LinkedList<>();
+        double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
+        int totalPlayer    = chessBoard.getGame().getPlayerCount();
+        int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
         for (Orientation orientation : this.orientationPossibles) {
-            if (startingCell.getPiece().getTeam() == 1) {
-                orientationVectors.add(Orientation.getVectorRotatedBy180Degrees(orientation));
-            }
-            orientationVectors.add(orientation.getVector());
+            orientationVectors.add(Orientation.rotatingVector(orientation, rotationDegree));
         }
 
 
@@ -40,7 +40,7 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
             }
         }
 
-        Cell nextCell = startingCell.getPiece().getTeam() == 1 ? chessBoard.getCellAtRelativePosition(startingCell, Orientation.getVectorRotatedBy180Degrees(Orientation.FRONT)) : chessBoard.getCellAtRelativePosition(startingCell, Orientation.FRONT.getVector());
+        Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, Orientation.rotatingVector(Orientation.FRONT, rotationDegree));
 
         if (nextCell != null ) {
             if (!nextCell.hasPiece()) {
