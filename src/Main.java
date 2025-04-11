@@ -2,6 +2,7 @@ import models.Game;
 import models.Player;
 import views.MainFrame;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Main {
 
         game.addObserver(frame);
 
-        frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
 
         Thread thread = new Thread(game);
         thread.start();
