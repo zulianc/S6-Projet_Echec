@@ -8,7 +8,6 @@ import models.pieces.Rook;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 class PromotionDialog {
     private final MainFrame parent;
@@ -47,49 +46,44 @@ class PromotionDialog {
 
         int imageSize = 72;
 
-        queenButton.setPreferredSize(new Dimension(imageSize, imageSize));
-        rookButton.setPreferredSize(new Dimension(imageSize, imageSize));
-        bishopButton.setSize(imageSize, imageSize);
-        knightButton.setSize(imageSize, imageSize);
+        queenButton.setPreferredSize( new Dimension(imageSize, imageSize));
+        rookButton.setPreferredSize(  new Dimension(imageSize, imageSize));
+        bishopButton.setPreferredSize(new Dimension(imageSize, imageSize));
+        knightButton.setPreferredSize(new Dimension(imageSize, imageSize));
 
-        Image queenImage = VPiece.getImage(new Queen(actualTeam));
-        Image rookImage = VPiece.getImage(new Rook(actualTeam));
+        Image queenImage  = VPiece.getImage(new Queen(actualTeam));
+        Image rookImage   = VPiece.getImage(new Rook(actualTeam));
         Image bishopImage = VPiece.getImage(new Bishop(actualTeam));
         Image knightImage = VPiece.getImage(new Knight(actualTeam));
 
-        queenButton.setIcon(new ImageIcon(queenImage.getScaledInstance(imageSize, imageSize,  java.awt.Image.SCALE_SMOOTH)));
-        rookButton.setIcon(new ImageIcon(rookImage.getScaledInstance(imageSize, imageSize,  java.awt.Image.SCALE_SMOOTH)));
+        queenButton.setIcon( new ImageIcon(queenImage.getScaledInstance( imageSize, imageSize,  java.awt.Image.SCALE_SMOOTH)));
+        rookButton.setIcon(  new ImageIcon(rookImage.getScaledInstance(  imageSize, imageSize,  java.awt.Image.SCALE_SMOOTH)));
         bishopButton.setIcon(new ImageIcon(bishopImage.getScaledInstance(imageSize, imageSize,  java.awt.Image.SCALE_SMOOTH)));
         knightButton.setIcon(new ImageIcon(knightImage.getScaledInstance(imageSize, imageSize,  java.awt.Image.SCALE_SMOOTH)));
 
-        queenButton.addActionListener(e -> {
-            resultPieceName = "queen";
-        });
-        rookButton.addActionListener(e -> {
-            resultPieceName = "rook";
-        });
-        bishopButton.addActionListener(e -> {
-            resultPieceName = "bishop";
-        });
-        knightButton.addActionListener(e -> {
-            resultPieceName = "knight";
-        });
+        queenButton.addActionListener(e  -> resultPieceName = "queen");
+        rookButton.addActionListener(e   -> resultPieceName = "rook");
+        bishopButton.addActionListener(e -> resultPieceName = "bishop");
+        knightButton.addActionListener(e -> resultPieceName = "knight");
 
         JButton validButton = new JButton ("Valid");
-        validButton.setPreferredSize(new Dimension(imageSize, imageSize/2));
+        validButton.setPreferredSize( new Dimension(imageSize, imageSize/2));
         validButton.addActionListener (a -> dialog.dispose());
 
+        JPanel imagePanel  = new JPanel();
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setPreferredSize(new Dimension(imageSize*5, imageSize));
+        JPanel labelPanel  = new JPanel();
 
-        buttonPanel.add(queenButton, BorderLayout.CENTER);
-        buttonPanel.add(rookButton, BorderLayout.CENTER);
-        buttonPanel.add(bishopButton, BorderLayout.CENTER);
-        buttonPanel.add(knightButton, BorderLayout.CENTER);
+        imagePanel.add(queenButton,  BorderLayout.CENTER);
+        imagePanel.add(rookButton,   BorderLayout.CENTER);
+        imagePanel.add(bishopButton, BorderLayout.CENTER);
+        imagePanel.add(knightButton, BorderLayout.CENTER);
+        buttonPanel.add(validButton);
+        labelPanel.add(dialogTitleLabel);
 
-        panel.add(buttonPanel, BorderLayout.CENTER);
-        panel.add(dialogTitleLabel, BorderLayout.NORTH);
-        panel.add(validButton, BorderLayout.SOUTH);
+        panel.add(imagePanel, BorderLayout.CENTER);
+        panel.add(labelPanel, BorderLayout.NORTH);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         return panel;
     }
