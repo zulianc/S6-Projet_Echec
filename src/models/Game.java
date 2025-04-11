@@ -33,7 +33,7 @@ public class Game extends Observable implements Runnable {
         initializePieces();
         while (!(this.gameEnded())) {
             this.actualPlayer = this.nextPlayer();
-            if (!this.actualPlayer.hasLost()) {
+            if (this.actualPlayer.hasWon()) {
                 Move m;
                 do {
                     this.updateAll();
@@ -129,7 +129,7 @@ public class Game extends Observable implements Runnable {
 
         int alivePlayers = 0;
         for (Player player : this.players) {
-            if (!player.hasLost() && !isInStalemate(player)) {
+            if (player.hasWon() && !isInStalemate(player)) {
                 alivePlayers++;
             }
         }
@@ -196,12 +196,12 @@ public class Game extends Observable implements Runnable {
         return false;
     }
 
-    public boolean isInCheckIfMove(Move m) {
+    public boolean isntInCheckIfMove(Move m) {
         Piece deadPiece = this.chessBoard.getCell(m.destination()).getPiece();
         this.tryMove(m);
         boolean isInCheck = this.isInCheck(this.actualPlayer);
         this.undoMove(m, deadPiece);
-        return isInCheck;
+        return !isInCheck;
     }
 
     public boolean isInCheckmate(Player p) {

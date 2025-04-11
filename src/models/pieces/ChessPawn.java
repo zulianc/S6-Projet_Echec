@@ -2,7 +2,6 @@ package models.pieces;
 
 import models.decorators.ChessPawnDecorator;
 import models.decorators.FirstMoveJumpDecorator;
-import models.decorators.LinesDecorator;
 
 public class ChessPawn extends Piece {
 

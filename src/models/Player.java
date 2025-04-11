@@ -52,7 +52,7 @@ public class Player {
         lost = true;
     }
 
-    public boolean hasLost() {
-        return lost;
+    public boolean hasWon() {
+        return !lost;
     }
 }

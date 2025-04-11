@@ -4,7 +4,6 @@ import models.Cell;
 import models.ChessBoard;
 import models.Move;
 import structure.Orientation;
-import structure.Position;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -46,13 +45,11 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                     if (canCastle) {
                         if (cellPassingBy != null && cellStoppingAt != null) {
                             if (cellPassingBy.getPiece() == null && cellStoppingAt.getPiece() == null) {
-                                Move goToStartingCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(startingCell));
-                                Move goToPassingByCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellPassingBy));
+                                Move goToStartingCell   = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(startingCell));
+                                Move goToPassingByCell  = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellPassingBy));
                                 Move goToStoppingAtCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellStoppingAt));
 
-                                boolean notInCheck = !chessBoard.getGame().isInCheckIfMove(goToStartingCell) && !chessBoard.getGame().isInCheckIfMove(goToPassingByCell) && !chessBoard.getGame().isInCheckIfMove(goToStoppingAtCell);
-
-                                if (notInCheck) {
+                                if (notInCheck(chessBoard, goToStartingCell, goToPassingByCell, goToStoppingAtCell)) {
                                     accessibleCells.add(cellStoppingAt);
                                 }
                             }
@@ -67,5 +64,9 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
 
     private boolean cellHasRockWithItCanDoCastling(Cell startingCell, Cell cellToTest) {
         return cellToTest.hasPiece() && !doesntContainsSameTeamPieces(startingCell, cellToTest) && cellToTest.getPiece().getPieceName().equals("rook") && !cellToTest.getPiece().hasAlreadyMove();
+    }
+
+    private boolean notInCheck(ChessBoard chessBoard, Move goToStartingCell, Move goToPassingByCell, Move goToStoppingAtCell) {
+        return chessBoard.getGame().isntInCheckIfMove(goToStartingCell) && chessBoard.getGame().isntInCheckIfMove(goToPassingByCell) && chessBoard.getGame().isntInCheckIfMove(goToStoppingAtCell);
     }
 }

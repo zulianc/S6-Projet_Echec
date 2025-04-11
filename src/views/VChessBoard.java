@@ -34,11 +34,9 @@ public class VChessBoard extends JPanel implements Observer {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("mouse clicked");
 
                 int caseX = (int) ((e.getPoint().getX()-1) / cellSize);
                 int caseY = (int) ((e.getPoint().getY()-1) / cellSize);
-                System.out.println("caseX: " + caseX + " caseY: " + caseY);
                 int index = caseY * ChessBoard.CHESS_BOARD_SIZE + caseX;
 
                 VCell cellClicked = vCells.get(index);

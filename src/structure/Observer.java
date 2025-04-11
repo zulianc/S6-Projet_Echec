@@ -1,7 +1,7 @@
 package structure;
 
 public interface Observer {
-    public void update();
+    void update();
 
-    public void updateParams(Object[] params);
+    void updateParams(Object[] params);
 }

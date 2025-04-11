@@ -1,4 +1,3 @@
-import models.ChessBoard;
 import models.Game;
 import models.Player;
 import views.MainFrame;
