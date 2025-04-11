@@ -64,4 +64,8 @@ public class MainFrame extends JFrame implements Observer {
             }
         }
     }
+
+    public Game getGameModel() {
+        return gameModel;
+    }
 }
