@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class VChessBoard extends JPanel implements Observer {
     private final int cellSize;
@@ -74,11 +73,9 @@ public class VChessBoard extends JPanel implements Observer {
     }
 
     public void markValidMoveCells(List<Cell> cellsToMark) {
-        List<VCell> vCellsToMark = vCells.stream().filter(vCell -> cellsToMark.contains(vCell.getCell())).toList();
-
-        for (VCell vCell : vCellsToMark) {
-            vCell.setCanMoveOnIt(true);
-        }
+        vCells.stream()
+                .filter(vCell -> cellsToMark.contains(vCell.getCell()))
+                .forEach(vCellToMark -> vCellToMark.setCanMoveOnIt(true));
         update();
     }
 
