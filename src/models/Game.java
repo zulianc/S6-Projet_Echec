@@ -30,7 +30,7 @@ public class Game extends Observable implements Runnable {
 
     public void playGame() {
         initializePieces();
-        while (!(this.hasGameEnded())) {
+        while (!this.hasGameEnded()) {
             this.actualPlayer = this.nextPlayer();
             if (this.actualPlayer.hasWon()) {
                 Move m;
@@ -49,7 +49,7 @@ public class Game extends Observable implements Runnable {
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
 
-        System.out.println("c la fin");
+        System.out.println("game ended");
     }
 
     public void sendMove(Move m) {
@@ -172,7 +172,7 @@ public class Game extends Observable implements Runnable {
                 if (accessibleCells.contains(destinationCell)) {
                     Piece deadPiece = destinationCell.getPiece();
                     this.tryMove(m);
-                    isValid = (!this.isInCheck(p));
+                    isValid = !this.isInCheck(p);
                     this.undoMove(m, deadPiece);
                 }
             }
@@ -185,8 +185,8 @@ public class Game extends Observable implements Runnable {
         List<Piece> pieces = this.chessBoard.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() != p.getTeam()) {
-                for (Cell c : piece.getAccessibleCells(chessBoard)) {
-                    if (c.getPiece() instanceof King) {
+                for (Cell cell : piece.getAccessibleCells(chessBoard)) {
+                    if (cell.getPiece() instanceof King) {
                         return true;
                     }
                 }
@@ -205,11 +205,11 @@ public class Game extends Observable implements Runnable {
     }
 
     public boolean isInCheckmate(Player p) {
-        return (this.isInCheck(p) && this.playerHasNoAvailableMove(p));
+        return this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
 
     public boolean isInStalemate(Player p) {
-        return (!this.isInCheck(p) && this.playerHasNoAvailableMove(p));
+        return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
 
     private boolean playerHasNoAvailableMove(Player p) {
@@ -250,19 +250,7 @@ public class Game extends Observable implements Runnable {
         Piece movedPiece = endCell.getPiece();
 
         this.chessBoard.movePiece(movedPiece, startCell);
-        this.chessBoard.movePiece(deadPiece, endCell);
-    }
-
-    public ChessBoard getBoard() {
-        return this.chessBoard;
-    }
-
-    public int getPlayerCount() {
-        return this.playerCount;
-    }
-
-    public Player getActualPlayer() {
-        return this.actualPlayer;
+        this.chessBoard.movePiece(deadPiece,  endCell);
     }
 
     private void checkCastling(Cell destinationCell) {
@@ -295,8 +283,20 @@ public class Game extends Observable implements Runnable {
                 updateAllWithParams(s);
 
                 int pawnX = this.getBoard().getPositionOfCell(destinationCell).getX();
-                this.chessBoard.addPiece(this.promotionPiece, pawnX,pawnY);
+                this.chessBoard.addPiece(this.promotionPiece, pawnX, pawnY);
             }
         }
+    }
+
+    public ChessBoard getBoard() {
+        return this.chessBoard;
+    }
+
+    public int getPlayerCount() {
+        return this.playerCount;
+    }
+
+    public Player getActualPlayer() {
+        return this.actualPlayer;
     }
 }

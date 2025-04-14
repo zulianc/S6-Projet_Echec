@@ -17,7 +17,7 @@ public class ChessController {
 
     public ChessController(Game gameModel, MainFrame mainView) {
         this.gameModel = gameModel;
-        this.mainView = mainView;
+        this.mainView  = mainView;
 
         this.before = null;
         this.after  = null;

@@ -41,10 +41,6 @@ public class Cell {
         isSelected = selected;
     }
 
-    public void toggleSelect() {
-        isSelected = !isSelected;
-    }
-
     public boolean canMoveOnIt() {
         return canMoveOnIt;
     }
@@ -91,7 +87,4 @@ public class Cell {
                 '}';
     }
 
-    public int getId() {
-        return this.id;
-    }
 }

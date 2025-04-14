@@ -47,25 +47,6 @@ public class VChessBoard extends JPanel implements Observer {
             }
         });
     }
-    @Override
-    public void paintComponent(Graphics g) {
-        if (isRotating) {
-            tryToRotate();
-        }
-        for (VCell vCell : vCells) {
-            vCell.paint(g, this.getVCellPosition(vCell));
-        }
-    }
-
-    private void tryToRotate() {
-        double actualPlayerTeam = model.getActualPlayer().getTeam();
-        int playerCount = model.getPlayerCount();
-        int rotationDegree = (int)(actualPlayerTeam/playerCount * 360);
-        if (rotationDegree != this.currentRotationDegree) {
-            vCells = new ArrayList<>(vCells.reversed());
-            this.currentRotationDegree = rotationDegree;
-        }
-    }
 
     private void generateCells() {
         this.vCells = new ArrayList<>();
@@ -79,8 +60,14 @@ public class VChessBoard extends JPanel implements Observer {
         }
     }
 
-    public List<Color> getBaseColors() {
-        return baseColors;
+    private void tryToRotate() {
+        double actualPlayerTeam = model.getActualPlayer().getTeam();
+        int playerCount = model.getPlayerCount();
+        int rotationDegree = (int)(actualPlayerTeam/playerCount * 360);
+        if (rotationDegree != this.currentRotationDegree) {
+            vCells = new ArrayList<>(vCells.reversed());
+            this.currentRotationDegree = rotationDegree;
+        }
     }
 
     public void setBaseColors(List<Color> baseColors) {
@@ -96,6 +83,16 @@ public class VChessBoard extends JPanel implements Observer {
         isRotating = !isRotating;
         tryToRotate();
         update();
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        if (isRotating) {
+            tryToRotate();
+        }
+        for (VCell vCell : vCells) {
+            vCell.paint(g, this.getVCellPosition(vCell));
+        }
     }
 
     @Override

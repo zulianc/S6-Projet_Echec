@@ -67,14 +67,6 @@ public class ChessBoard {
         return pieces;
     }
 
-    public Cell getCell(int x, int y) {
-        return cells[x][y];
-    }
-
-    public Cell getCell(Position position) {
-        return cells[position.getX()][position.getY()];
-    }
-
     public Cell getCellAtRelativePosition(Cell startingCell, Position relativePosition) {
         Position indexes = getPositionOfCell(startingCell);
         if (indexes == null) {
@@ -94,10 +86,6 @@ public class ChessBoard {
         }
 
         return this.cellsPosition.get(startingCell);
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public void markValidMoveCells(List<Cell> cells) {
@@ -122,6 +110,18 @@ public class ChessBoard {
                 this.cells[i][j].setSelected(false);
             }
         }
+    }
+
+    public Cell getCell(int x, int y) {
+        return cells[x][y];
+    }
+
+    public Cell getCell(Position position) {
+        return cells[position.getX()][position.getY()];
+    }
+
+    public Game getGame() {
+        return game;
     }
 
 }

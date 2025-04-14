@@ -17,6 +17,10 @@ public class MainFrame extends JFrame implements Observer {
     private JLabel titleLabel;
     private JToggleButton toggleRotationMode;
 
+    public MainFrame(Game model) {
+        this.gameModel = model;
+        this.build();
+    }
 
     private void build() {
         this.chessController = new ChessController(gameModel, this);
@@ -66,9 +70,8 @@ public class MainFrame extends JFrame implements Observer {
         this.setResizable(false);
     }
 
-    public MainFrame(Game model) {
-        this.gameModel = model;
-        this.build();
+    public Game getGameModel() {
+        return gameModel;
     }
 
     @Override
@@ -93,9 +96,4 @@ public class MainFrame extends JFrame implements Observer {
             }
         }
     }
-
-    public Game getGameModel() {
-        return gameModel;
-    }
-
 }
