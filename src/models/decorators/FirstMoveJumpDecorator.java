@@ -22,7 +22,7 @@ public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
 
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
-        if (startingCell.hasPiece() && !startingCell.getPiece().hasAlreadyMove()) {
+        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMove()) {
 
             List<Position> orientationVectors = new LinkedList<>();
             for (Orientation orientation : this.orientationPossibles) {

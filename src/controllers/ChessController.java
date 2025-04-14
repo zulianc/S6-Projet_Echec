@@ -3,17 +3,17 @@ package controllers;
 import models.Cell;
 import models.Game;
 import models.Move;
-import structure.Position;
 import views.MainFrame;
 import views.VCell;
+import views.VChessBoard;
 
 import java.awt.event.MouseEvent;
 
 public class ChessController {
     private final Game gameModel;
     private final MainFrame mainView;
-    private Position before;
-    private Position after;
+    private Cell before;
+    private Cell after;
 
     public ChessController(Game gameModel, MainFrame mainView) {
         this.gameModel = gameModel;
@@ -56,7 +56,7 @@ public class ChessController {
 
     private void selectFirstCell(VCell vCell) {
         Cell selectedCell = vCell.getCell();
-        before = new Position(vCell.getIndexX(), vCell.getIndexY());
+        before = vCell.getCell();
         if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
             selectedCell.setSelected(true);
             gameModel.getBoard().markValidMoveCells(gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer()));
@@ -64,7 +64,7 @@ public class ChessController {
     }
 
     private void selectSecondCell(VCell vCell) {
-        after = new Position(vCell.getIndexX(), vCell.getIndexY());
+        after = vCell.getCell();
         gameModel.sendMove(new Move(before, after));
         this.unselectCells();
     }

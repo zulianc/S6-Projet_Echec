@@ -20,6 +20,8 @@ public class VChessBoard extends JPanel implements Observer {
     private final ChessController controller;
     private final Game model;
     private List<Color> baseColors;
+    private boolean isRotating = false;
+    private int currentRotationDegree = 0;
 
     public VChessBoard(int size, Game model, ChessController controller, List<Color> baseColors) {
         this.model = model;
@@ -47,8 +49,21 @@ public class VChessBoard extends JPanel implements Observer {
     }
     @Override
     public void paintComponent(Graphics g) {
-        for (VCell currentCell : vCells) {
-            currentCell.paint(g);
+        if (isRotating) {
+            tryToRotate();
+        }
+        for (VCell vCell : vCells) {
+            vCell.paint(g, this.getVCellPosition(vCell));
+        }
+    }
+
+    private void tryToRotate() {
+        double actualPlayerTeam = model.getActualPlayer().getTeam();
+        int playerCount = model.getPlayerCount();
+        int rotationDegree = (int)(actualPlayerTeam/playerCount * 360);
+        if (rotationDegree != this.currentRotationDegree) {
+            vCells = new ArrayList<>(vCells.reversed());
+            this.currentRotationDegree = rotationDegree;
         }
     }
 
@@ -59,7 +74,7 @@ public class VChessBoard extends JPanel implements Observer {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
                 Cell cell = this.model.getBoard().getCell(x, y);
                 color = cell.getBaseColor() == 0 ? this.baseColors.get(0) : this.baseColors.get(1) ;
-                vCells.add(new VCell(cell, color, cellSize, new Position(x, y)));
+                vCells.add(new VCell(cell, color, cellSize));
             }
         }
     }
@@ -70,6 +85,17 @@ public class VChessBoard extends JPanel implements Observer {
 
     public void setBaseColors(List<Color> baseColors) {
         this.baseColors = baseColors;
+    }
+
+    public Position getVCellPosition(VCell vCell) {
+        int position = vCells.indexOf(vCell);
+        return Position.getPositionFromIndex(position);
+    }
+
+    public void toggleRotating() {
+        isRotating = !isRotating;
+        tryToRotate();
+        update();
     }
 
     @Override

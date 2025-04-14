@@ -24,7 +24,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
         List<Cell> accessibleCells = new LinkedList<>();
-        if (startingCell.hasPiece() && !startingCell.getPiece().hasAlreadyMove()) {
+        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMove()) {
             if (startingCell.getPiece().getTeam() == chessBoard.getGame().getActualPlayer().getTeam()) {
                 for (Orientation orientation : this.orientationPossibles) {
                     Cell cellPassingBy = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
@@ -45,9 +45,9 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                     if (canCastle) {
                         if (cellPassingBy != null && cellStoppingAt != null) {
                             if (cellPassingBy.getPiece() == null && cellStoppingAt.getPiece() == null) {
-                                Move goToStartingCell   = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(startingCell));
-                                Move goToPassingByCell  = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellPassingBy));
-                                Move goToStoppingAtCell = new Move(chessBoard.getPositionOfCell(startingCell), chessBoard.getPositionOfCell(cellStoppingAt));
+                                Move goToStartingCell   = new Move(startingCell, startingCell);
+                                Move goToPassingByCell  = new Move(startingCell, cellPassingBy);
+                                Move goToStoppingAtCell = new Move(startingCell, cellStoppingAt);
 
                                 if (notInCheck(chessBoard, goToStartingCell, goToPassingByCell, goToStoppingAtCell)) {
                                     accessibleCells.add(cellStoppingAt);
@@ -63,7 +63,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
     }
 
     private boolean cellHasRockWithItCanDoCastling(Cell startingCell, Cell cellToTest) {
-        return cellToTest.hasPiece() && !doesntContainsSameTeamPieces(startingCell, cellToTest) && cellToTest.getPiece().getPieceName().equals("rook") && !cellToTest.getPiece().hasAlreadyMove();
+        return cellToTest.hasPiece() && !doesntContainsSameTeamPieces(startingCell, cellToTest) && cellToTest.getPiece().getPieceName().equals("rook") && cellToTest.getPiece().hasNeverMove();
     }
 
     private boolean notInCheck(ChessBoard chessBoard, Move goToStartingCell, Move goToPassingByCell, Move goToStoppingAtCell) {

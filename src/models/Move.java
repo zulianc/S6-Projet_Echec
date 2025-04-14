@@ -1,6 +1,4 @@
 package models;
 
-import structure.Position;
-
-public record Move(Position source, Position destination) {
+public record Move(Cell source, Cell destination) {
 }

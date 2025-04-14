@@ -13,24 +13,22 @@ public class VCell {
     private final Cell cell;
 
     private int size;
-    private final Position coordinates;
 
     private final Color baseColor;
 
 
-    public VCell(Cell cell, Color baseColor, int size, Position coordinates) {
+    public VCell(Cell cell, Color baseColor, int size) {
         this.cell = cell;
         this.baseColor = baseColor;
         this.size = size;
-        this.coordinates = coordinates;
     }
 
-    public void paint(Graphics g) {
-        int cellX = coordinates.getX() * size;
-        int cellY = coordinates.getY() * size;
+    public void paint(Graphics g, Position position) {
+        int cellX = position.getX() * size;
+        int cellY = position.getY() * size;
 
-        Color cellColor = this.cell.isMarked() ? MARKED_COLOR : this.getBaseColor();
-        cellColor = this.cell.isSelected() ? SELECTED_COLOR : cellColor;
+        Color cellColor = this.cell.isMarked()   ? MARKED_COLOR   : this.getBaseColor();
+        cellColor       = this.cell.isSelected() ? SELECTED_COLOR : cellColor;
         g.setColor(cellColor);
 
         g.fillRect(cellX, cellY, size, size);
@@ -62,13 +60,5 @@ public class VCell {
 
     public void setSize(int size) {
         this.size = size;
-    }
-
-    public int getIndexX() {
-        return coordinates.getX();
-    }
-
-    public int getIndexY() {
-        return coordinates.getY();
     }
 }

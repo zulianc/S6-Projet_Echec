@@ -24,4 +24,11 @@ public class Position {
     public void setY(int y) {
         this.y = y;
     }
+
+    public static Position getPositionFromIndex(int index) {
+        //position = y*8+x <=> x = position%8 && y = position-x/8
+        int x = index%8;
+        int y = (index-x)/8;
+        return new Position(x, y);
+    }
 }

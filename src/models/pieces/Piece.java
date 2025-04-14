@@ -46,8 +46,8 @@ public abstract class Piece {
                 '}';
     }
 
-    public boolean hasAlreadyMove() {
-        return hasMoved;
+    public boolean hasNeverMove() {
+        return !hasMoved;
     }
 
     public void setHasMoved(Boolean hasMoved) {

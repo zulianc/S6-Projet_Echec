@@ -2,9 +2,7 @@ package models;
 
 import models.pieces.*;
 import structure.Observable;
-import structure.Position;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,14 +145,13 @@ public class Game extends Observable implements Runnable {
     }
 
     public List<Cell> getValidCells(Piece piece, Player p) {
-        Position start = this.chessBoard.getPositionOfCell(piece.getCell());
+        Cell startCell = piece.getCell();
 
         List<Cell> accessibleCells = piece.getAccessibleCells(this.chessBoard);
         List<Cell> validCells = new ArrayList<>();
         for (Cell cell : accessibleCells) {
-            Position end = this.chessBoard.getPositionOfCell(cell);
 
-            if (this.isValidMove(new Move(start, end), p)) {
+            if (this.isValidMove(new Move(startCell, cell), p)) {
                 validCells.add(cell);
             }
         }
@@ -165,10 +162,8 @@ public class Game extends Observable implements Runnable {
     private boolean isValidMove(Move m, Player p) {
         boolean isValid = false;
 
-        Position sourcePosition      = m.source();
-        Position destinationPosition = m.destination();
-        Cell sourceCell      = this.chessBoard.getCell(sourcePosition);
-        Cell destinationCell = this.chessBoard.getCell(destinationPosition);
+        Cell sourceCell      = m.source();
+        Cell destinationCell = m.destination();
 
         if (sourceCell.hasPiece()) {
             Piece pieceToMove = sourceCell.getPiece();
@@ -202,7 +197,7 @@ public class Game extends Observable implements Runnable {
     }
 
     public boolean isntInCheckIfMove(Move m) {
-        Piece deadPiece = this.chessBoard.getCell(m.destination()).getPiece();
+        Piece deadPiece = m.destination().getPiece();
         this.tryMove(m);
         boolean isInCheck = this.isInCheck(this.actualPlayer);
         this.undoMove(m, deadPiece);
@@ -228,8 +223,8 @@ public class Game extends Observable implements Runnable {
     }
 
     private Piece tryMove(Move m) {
-        Cell startCell = this.chessBoard.getCell(m.source());
-        Cell endCell   = this.chessBoard.getCell(m.destination());
+        Cell startCell = m.source();
+        Cell endCell   = m.destination();
         Piece movedPiece = startCell.getPiece();
 
         this.chessBoard.movePiece(null, startCell);
@@ -241,7 +236,7 @@ public class Game extends Observable implements Runnable {
     private void applyMove(Move m) {
         Piece movedPiece = this.tryMove(m);
 
-        Cell destinationCell = this.getBoard().getCell(m.destination());
+        Cell destinationCell = m.destination();
         checkCastling(destinationCell);
         checkPromotion(destinationCell);
 
@@ -250,8 +245,8 @@ public class Game extends Observable implements Runnable {
     }
 
     private void undoMove(Move m, Piece deadPiece) {
-        Cell startCell = this.chessBoard.getCell(m.source());
-        Cell endCell = this.chessBoard.getCell(m.destination());
+        Cell startCell = m.source();
+        Cell endCell   = m.destination();
         Piece movedPiece = endCell.getPiece();
 
         this.chessBoard.movePiece(movedPiece, startCell);
@@ -271,21 +266,21 @@ public class Game extends Observable implements Runnable {
     }
 
     private void checkCastling(Cell destinationCell) {
-        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && !destinationCell.getPiece().hasAlreadyMove()) {
+        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMove()) {
             int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
             int kingX = this.getBoard().getPositionOfCell(destinationCell).getX();
 
-            Position rookToMovePosition;
-            Position whereMoveRookPosition;
+            Cell rookToMoveCell;
+            Cell whereMoveRookCell;
             if (kingX == 2 || kingX == 6) {
                 if (kingX == 2) {
-                    rookToMovePosition    = new Position(0, kingY);
-                    whereMoveRookPosition = new Position(3, kingY);
+                    rookToMoveCell    = this.chessBoard.getCell(0, kingY);
+                    whereMoveRookCell = this.chessBoard.getCell(3, kingY);
                 } else {
-                    rookToMovePosition    = new Position(7, kingY);
-                    whereMoveRookPosition = new Position(5, kingY);
+                    rookToMoveCell    = this.chessBoard.getCell(7, kingY);
+                    whereMoveRookCell = this.chessBoard.getCell(5, kingY);
                 }
-                applyMove(new Move(rookToMovePosition, whereMoveRookPosition));
+                applyMove(new Move(rookToMoveCell, whereMoveRookCell));
             }
         }
     }

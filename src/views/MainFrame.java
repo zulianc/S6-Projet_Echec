@@ -9,11 +9,14 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements Observer {
-    private JPanel contentPane;
-    private VChessBoard board;
-    private JLabel label;
     private final Game gameModel;
     private ChessController chessController;
+
+    private VChessBoard board;
+    private JPanel contentPane;
+    private JLabel label;
+    private JToggleButton toggleRotationMode;
+
 
     private void build() {
         this.chessController = new ChessController(gameModel, this);
@@ -27,10 +30,25 @@ public class MainFrame extends JFrame implements Observer {
         basesColors.add(Color.BLACK);
 
         this.board = new VChessBoard(600, gameModel, chessController, basesColors);
-        this.contentPane.add(board, BorderLayout.CENTER);
 
         this.label = new JLabel("Super jeu d'échecs");
+
+        this.toggleRotationMode = new JToggleButton("No Rotation");
+        this.toggleRotationMode.addActionListener(e -> {
+            if (toggleRotationMode.isSelected()) {
+                toggleRotationMode.setSelected(false);
+                toggleRotationMode.setText("No Rotation");
+                this.board.toggleRotating();
+            } else {
+                toggleRotationMode.setSelected(true);
+                toggleRotationMode.setText("Rotation each turn");
+                this.board.toggleRotating();
+            }
+        });
+
+        this.contentPane.add(board, BorderLayout.CENTER);
         this.contentPane.add(label, BorderLayout.NORTH);
+        this.contentPane.add(toggleRotationMode, BorderLayout.EAST);
 
         this.setContentPane(this.contentPane);
 
@@ -71,5 +89,9 @@ public class MainFrame extends JFrame implements Observer {
 
     public Game getGameModel() {
         return gameModel;
+    }
+
+    public VChessBoard getVBoard() {
+        return this.board;
     }
 }
