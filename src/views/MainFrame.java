@@ -74,6 +74,10 @@ public class MainFrame extends JFrame implements Observer {
         return gameModel;
     }
 
+    public VChessBoard getBoard() {
+        return board;
+    }
+
     @Override
     public void update() {
         board.update();
@@ -92,7 +96,11 @@ public class MainFrame extends JFrame implements Observer {
                 chessController.promotionControl(result);
 
             } else if (signal.equals("gameEnded")) {
+                this.board.unmarkValidMoveCells();
                 JOptionPane.showMessageDialog(this, "Partie fini");
+
+            } else if (signal.equals("unselectAll")) {
+                this.board.unselectAll();
             }
         }
     }

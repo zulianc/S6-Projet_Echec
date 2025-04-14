@@ -19,20 +19,10 @@ public class ChessBoard {
     }
 
     private void initializeEmptyBoard() {
-        int baseColor;
         for (int y = 0; y < ChessBoard.CHESS_BOARD_SIZE; y++) {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
-                baseColor = ((x+y) % 2 == 0) ? 0 : 1 ;
-                this.cells[x][y] = new Cell(baseColor);
+                this.cells[x][y] = new Cell();
                 this.cellsPosition.put(this.cells[x][y], new Position(x, y));
-            }
-        }
-    }
-
-    public void clearNotes() {
-        for (Cell[] cellList : cells) {
-            for (Cell cell : cellList) {
-                cell.setMarked(false);
             }
         }
     }
@@ -86,30 +76,6 @@ public class ChessBoard {
         }
 
         return this.cellsPosition.get(startingCell);
-    }
-
-    public void markValidMoveCells(List<Cell> cells) {
-        for (Cell cell : cells) {
-            cell.setCanMoveOnIt(true);
-        }
-        game.updateAll();
-    }
-
-    public void unmarkValidMoveCells() {
-        for (int x = 0; x < CHESS_BOARD_SIZE; x++) {
-            for (int y = 0; y < CHESS_BOARD_SIZE; y++) {
-                this.cells[x][y].setCanMoveOnIt(false);
-            }
-        }
-        game.updateAll();
-    }
-
-    public void unselectAll() {
-        for (int i = 0; i < CHESS_BOARD_SIZE; i++) {
-            for (int j = 0; j < CHESS_BOARD_SIZE; j++) {
-                this.cells[i][j].setSelected(false);
-            }
-        }
     }
 
     public Cell getCell(int x, int y) {

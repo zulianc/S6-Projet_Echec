@@ -8,6 +8,7 @@ import views.VCell;
 import views.VChessBoard;
 
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class ChessController {
     private final Game gameModel;
@@ -26,21 +27,19 @@ public class ChessController {
     public void control(VCell vCell, MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
             if (e.getClickCount() != 2) {
-                Cell cell = vCell.getCell();
-                cell.toggleMark();
+                vCell.toggleMark();
             } else {
-                this.gameModel.getBoard().clearNotes();
+                this.mainView.getBoard().clearNotes();
             }
 
             mainView.update();
 
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             if (!this.gameModel.hasGameEnded()) {
-                Cell selectedCell = vCell.getCell();
                 if (before == null) {
                     this.selectFirstCell(vCell);
                 } else {
-                    if (selectedCell.canMoveOnIt()) {
+                    if (vCell.canMoveOnIt()) {
                         this.selectSecondCell(vCell);
                     } else {
                         this.unselectCells();
@@ -55,8 +54,9 @@ public class ChessController {
         Cell selectedCell = vCell.getCell();
         before = vCell.getCell();
         if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
-            selectedCell.setSelected(true);
-            gameModel.getBoard().markValidMoveCells(gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer()));
+            vCell.setSelected(true);
+            List<Cell> cellsToMark = gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer());
+            this.mainView.getBoard().markValidMoveCells(cellsToMark);
         }
     }
 
@@ -69,8 +69,8 @@ public class ChessController {
     private void unselectCells() {
         this.before = null;
         this.after  = null;
-        gameModel.getBoard().unselectAll();
-        gameModel.getBoard().unmarkValidMoveCells();
+        this.mainView.getBoard().unselectAll();
+        this.mainView.getBoard().unmarkValidMoveCells();
         gameModel.updateAll();
     }
 

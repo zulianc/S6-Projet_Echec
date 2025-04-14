@@ -43,9 +43,6 @@ public class Game extends Observable implements Runnable {
                 this.updateAll();
             }
         }
-        this.chessBoard.unmarkValidMoveCells();
-        this.updateAll();
-
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
 
@@ -241,7 +238,8 @@ public class Game extends Observable implements Runnable {
         checkPromotion(destinationCell);
 
         movedPiece.setHasMoved(true);
-        this.chessBoard.unselectAll();
+        String[] s = new String[]{"unselectAll"};
+        updateAllWithParams(s);
     }
 
     private void undoMove(Move m, Piece deadPiece) {

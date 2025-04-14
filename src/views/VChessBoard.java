@@ -12,11 +12,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VChessBoard extends JPanel implements Observer {
     private final int cellSize;
     private List<VCell> vCells;
+    private final List<VArrow> vArrows = new LinkedList<>();
     private final ChessController controller;
     private final Game model;
     private List<Color> baseColors;
@@ -54,7 +57,7 @@ public class VChessBoard extends JPanel implements Observer {
         for (int y = 0; y < ChessBoard.CHESS_BOARD_SIZE; y++) {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
                 Cell cell = this.model.getBoard().getCell(x, y);
-                color = cell.getBaseColor() == 0 ? this.baseColors.get(0) : this.baseColors.get(1) ;
+                color = ((x+y) % 2 == 0) ? this.baseColors.get(0) : this.baseColors.get(1) ;
                 vCells.add(new VCell(cell, color, cellSize));
             }
         }
@@ -68,6 +71,35 @@ public class VChessBoard extends JPanel implements Observer {
             vCells = new ArrayList<>(vCells.reversed());
             this.currentRotationDegree = rotationDegree;
         }
+    }
+
+    public void markValidMoveCells(List<Cell> cellsToMark) {
+        List<VCell> vCellsToMark = vCells.stream().filter(vCell -> cellsToMark.contains(vCell.getCell())).toList();
+
+        for (VCell vCell : vCellsToMark) {
+            vCell.setCanMoveOnIt(true);
+        }
+        update();
+    }
+
+    public void unmarkValidMoveCells() {
+        for (VCell vCell : vCells) {
+            vCell.setCanMoveOnIt(false);
+        }
+        update();
+    }
+
+    public void unselectAll() {
+        for (VCell vCell : vCells) {
+            vCell.setSelected(false);
+        }
+    }
+
+    public void clearNotes() {
+        for (VCell vCell : vCells) {
+            vCell.setMarked(false);
+        }
+        this.vArrows.clear();
     }
 
     public void setBaseColors(List<Color> baseColors) {
@@ -92,6 +124,11 @@ public class VChessBoard extends JPanel implements Observer {
         }
         for (VCell vCell : vCells) {
             vCell.paint(g, this.getVCellPosition(vCell));
+        }
+        if (!vArrows.isEmpty()) {
+            for (VArrow vArrow : vArrows) {
+                vArrow.paint(g, this);
+            }
         }
     }
 

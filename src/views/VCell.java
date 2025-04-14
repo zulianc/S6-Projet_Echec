@@ -12,6 +12,9 @@ public class VCell {
 
     private final Cell cell;
 
+    private boolean isMarked;
+    private boolean canMoveOnIt;
+    private boolean isSelected;
     private int size;
 
     private final Color baseColor;
@@ -21,14 +24,17 @@ public class VCell {
         this.cell = cell;
         this.baseColor = baseColor;
         this.size = size;
+        this.isMarked = false;
+        this.canMoveOnIt = false;
+        this.isSelected  = false;
     }
 
     public void paint(Graphics g, Position position) {
         int cellX = position.getX() * size;
         int cellY = position.getY() * size;
 
-        Color cellColor = this.cell.isMarked()   ? MARKED_COLOR   : this.getBaseColor();
-        cellColor       = this.cell.isSelected() ? SELECTED_COLOR : cellColor;
+        Color cellColor = this.isMarked   ? MARKED_COLOR   : this.getBaseColor();
+        cellColor       = this.isSelected ? SELECTED_COLOR : cellColor;
         g.setColor(cellColor);
 
         g.fillRect(cellX, cellY, size, size);
@@ -40,7 +46,7 @@ public class VCell {
             Image img = VPiece.getImage(cell.getPiece());
             g.drawImage(img, cellX, cellY, size, size, null);
         }
-        if (cell.canMoveOnIt()){
+        if (this.canMoveOnIt){
             g.setColor(Color.LIGHT_GRAY);
             g.fillOval(cellX+(size/4)+1, cellY+(size/4)+1, size/2, size/2);
         }
@@ -60,5 +66,33 @@ public class VCell {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isMarked() {
+        return isMarked;
+    }
+
+    public void setMarked(boolean marked) {
+        isMarked = marked;
+    }
+
+    public void toggleMark() {
+        this.isMarked = !this.isMarked;
+    }
+
+    public boolean canMoveOnIt() {
+        return canMoveOnIt;
+    }
+
+    public void setCanMoveOnIt(boolean canMoveOnIt) {
+        this.canMoveOnIt = canMoveOnIt;
     }
 }
