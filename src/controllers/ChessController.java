@@ -25,19 +25,16 @@ public class ChessController {
 
     public void control(VCell vCell, MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-            System.out.println("Single right click");
             if (e.getClickCount() != 2) {
                 Cell cell = vCell.getCell();
                 cell.toggleMark();
             } else {
-                System.out.println("Double right click");
                 this.gameModel.getBoard().clearNotes();
             }
 
             mainView.update();
 
         } else if (e.getButton() == MouseEvent.BUTTON1) {
-            System.out.println("Single left click");
             if (!this.gameModel.hasGameEnded()) {
                 Cell selectedCell = vCell.getCell();
                 if (before == null) {
