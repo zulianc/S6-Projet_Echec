@@ -14,7 +14,7 @@ public class MainFrame extends JFrame implements Observer {
 
     private VChessBoard board;
     private JPanel contentPane;
-    private JLabel label;
+    private JLabel titleLabel;
     private JToggleButton toggleRotationMode;
 
 
@@ -31,29 +31,36 @@ public class MainFrame extends JFrame implements Observer {
 
         this.board = new VChessBoard(600, gameModel, chessController, basesColors);
 
-        this.label = new JLabel("Super jeu d'échecs");
+        this.titleLabel = new JLabel("Super jeu d'échecs");
+        this.titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
-        this.toggleRotationMode = new JToggleButton("No Rotation");
+        this.toggleRotationMode = new JToggleButton("No Rotation", false);
         this.toggleRotationMode.addActionListener(e -> {
             if (toggleRotationMode.isSelected()) {
-                toggleRotationMode.setSelected(false);
-                toggleRotationMode.setText("No Rotation");
+                toggleRotationMode.setText("Rotation each turn");
                 this.board.toggleRotating();
             } else {
-                toggleRotationMode.setSelected(true);
-                toggleRotationMode.setText("Rotation each turn");
+                toggleRotationMode.setText("No Rotation");
                 this.board.toggleRotating();
             }
         });
 
-        this.contentPane.add(board, BorderLayout.CENTER);
-        this.contentPane.add(label, BorderLayout.NORTH);
-        this.contentPane.add(toggleRotationMode, BorderLayout.EAST);
+        JPanel northPan = new JPanel();
+        JPanel westPan  = new JPanel();
+        JPanel eastPan  = new JPanel();
+
+        westPan.add(board);
+        northPan.add(titleLabel);
+        eastPan.add(toggleRotationMode);
+
+        this.contentPane.add(westPan,  BorderLayout.WEST);
+        this.contentPane.add(northPan, BorderLayout.NORTH);
+        this.contentPane.add(eastPan,  BorderLayout.EAST);
 
         this.setContentPane(this.contentPane);
 
         this.setTitle("Échecs");
-        this.setSize(800, 650);
+        this.setSize(772, 690);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -91,7 +98,4 @@ public class MainFrame extends JFrame implements Observer {
         return gameModel;
     }
 
-    public VChessBoard getVBoard() {
-        return this.board;
-    }
 }
