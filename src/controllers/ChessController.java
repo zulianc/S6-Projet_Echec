@@ -4,6 +4,7 @@ import models.Cell;
 import models.Game;
 import models.Move;
 import views.MainFrame;
+import views.VArrow;
 import views.VCell;
 import views.VChessBoard;
 
@@ -15,6 +16,7 @@ public class ChessController {
     private final MainFrame mainView;
     private Cell before;
     private Cell after;
+    private VCell startCell;
 
     public ChessController(Game gameModel, MainFrame mainView) {
         this.gameModel = gameModel;
@@ -24,8 +26,9 @@ public class ChessController {
         this.after  = null;
     }
 
-    public void control(VCell vCell, MouseEvent e) {
+    public void controlClicked(VCell vCell, MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
+
             if (e.getClickCount() != 2) {
                 vCell.toggleMark();
             } else {
@@ -48,6 +51,19 @@ public class ChessController {
                 }
             }
         }
+    }
+
+    public void controlPressed(VCell vCell) {
+        System.out.println("Mouse right pressed");
+        this.startCell = vCell;
+    }
+
+    public void controlReleased(VCell endCell) {
+        if (startCell != null && !startCell.equals(endCell)) {
+            this.mainView.getBoard().addArrow(new VArrow(this.startCell, endCell));
+            mainView.update();
+        }
+        startCell = null;
     }
 
     private void selectFirstCell(VCell vCell) {
@@ -77,4 +93,5 @@ public class ChessController {
     public void promotionControl(String result) {
         gameModel.sendPromotion(result);
     }
+
 }

@@ -4,6 +4,7 @@ import models.Cell;
 import structure.Position;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class VCell {
 
@@ -94,5 +95,16 @@ public class VCell {
 
     public void setCanMoveOnIt(boolean canMoveOnIt) {
         this.canMoveOnIt = canMoveOnIt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof VCell vCell)) return false;
+        return Objects.equals(cell, vCell.cell);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(cell);
     }
 }

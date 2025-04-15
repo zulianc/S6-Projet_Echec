@@ -39,15 +39,34 @@ public class VChessBoard extends JPanel implements Observer {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                int caseX = (int) ((e.getPoint().getX()-1) / cellSize);
-                int caseY = (int) ((e.getPoint().getY()-1) / cellSize);
-                int index = caseY * ChessBoard.CHESS_BOARD_SIZE + caseX;
+                VCell cellClicked = collectVCellFromEvent(e);
+                controller.controlClicked(cellClicked, e);
+            }
 
-                VCell cellClicked = vCells.get(index);
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("mousePressed");
 
-                controller.control(cellClicked, e);
+                VCell cellEnd = collectVCellFromEvent(e);
+                controller.controlPressed(cellEnd);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println("mouseReleased");
+
+                VCell cellEnd = collectVCellFromEvent(e);
+                controller.controlReleased(cellEnd);
             }
         });
+    }
+
+    private VCell collectVCellFromEvent(MouseEvent e) {
+        int caseX = (int) ((e.getPoint().getX() - 1) / cellSize);
+        int caseY = (int) ((e.getPoint().getY() - 1) / cellSize);
+        int index = caseY * ChessBoard.CHESS_BOARD_SIZE + caseX;
+
+        return vCells.get(index);
     }
 
     private void generateCells() {
@@ -112,6 +131,16 @@ public class VChessBoard extends JPanel implements Observer {
         isRotating = !isRotating;
         tryToRotate();
         update();
+    }
+
+    public void addArrow(VArrow vArrow) {
+        if (!this.vArrows.contains(vArrow)) {
+            this.vArrows.add(vArrow);
+        }
+    }
+
+    public int getCellSize() {
+        return cellSize;
     }
 
     @Override
