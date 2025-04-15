@@ -97,7 +97,7 @@ public class MainFrame extends JFrame implements Observer {
 
             } else if (signal.equals("gameEnded")) {
                 this.board.unmarkValidMoveCells();
-                JOptionPane.showMessageDialog(this, "Partie fini");
+                JOptionPane.showMessageDialog(this, "Partie finie");
 
             } else if (signal.equals("unselectAll")) {
                 this.board.unselectAll();

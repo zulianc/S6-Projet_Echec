@@ -16,31 +16,32 @@ public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
         if (base != null) {
             this.base = base;
         }
-        this.orientationPossibles = new ArrayList<>();
-        this.orientationPossibles.add(Orientation.LONG_FRONT);
     }
 
     @Override
     protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
         if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMove()) {
 
-            List<Position> orientationVectors = new LinkedList<>();
-            for (Orientation orientation : this.orientationPossibles) {
-                double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
-                int totalPlayer    = chessBoard.getGame().getPlayerCount();
-                int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
-                orientationVectors.add(Orientation.rotatingVector(orientation, rotationDegree));
-            }
+            double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
+            int totalPlayer    = chessBoard.getGame().getPlayerCount();
+            int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
+            Position vector = Orientation.rotatingVector(Orientation.FRONT, rotationDegree);
 
 
             List<Cell> accessibleCells = new LinkedList<>();
-            for (Position vector : orientationVectors) {
-                Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, vector);
+            Cell nextCell = startingCell;
+            boolean cellCanMove = true;
+            for (int i = 0; i < 2; i++) {
+                nextCell = chessBoard.getCellAtRelativePosition(nextCell, vector);
 
-                if (nextCell != null && !nextCell.hasPiece()) {
-                    accessibleCells.add(nextCell);
+                if (nextCell == null || nextCell.hasPiece()) {
+                    cellCanMove = false;
                 }
             }
+            if (nextCell != null && cellCanMove) {
+                accessibleCells.add(nextCell);
+            }
+            System.out.println(accessibleCells);
             return accessibleCells;
         }
 

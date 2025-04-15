@@ -42,10 +42,8 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
 
         Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, Orientation.rotatingVector(Orientation.FRONT, rotationDegree));
 
-        if (nextCell != null ) {
-            if (!nextCell.hasPiece()) {
-                accessibleCells.add(nextCell);
-            }
+        if (nextCell != null && !nextCell.hasPiece()) {
+            accessibleCells.add(nextCell);
         }
 
         return accessibleCells;

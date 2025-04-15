@@ -72,6 +72,7 @@ public class ChessController {
         if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
             vCell.setSelected(true);
             List<Cell> cellsToMark = gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer());
+            System.out.println("cells accessible "+ cellsToMark);
             this.mainView.getBoard().markValidMoveCells(cellsToMark);
         }
     }
