@@ -127,6 +127,10 @@ public class VChessBoard extends JPanel implements Observer {
         return Position.getPositionFromIndex(position);
     }
 
+    public void setRotating(boolean isRotating) {
+        this.isRotating = isRotating;
+    }
+
     public void toggleRotating() {
         isRotating = !isRotating;
         tryToRotate();
