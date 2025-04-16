@@ -1,6 +1,7 @@
 package models;
 
 import models.pieces.*;
+import models.players.Player;
 import structure.Observable;
 
 import java.util.ArrayList;

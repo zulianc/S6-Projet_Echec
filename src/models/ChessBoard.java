@@ -94,4 +94,18 @@ public class ChessBoard {
     public Game getGame() {
         return game;
     }
+
+    public List<Piece> getAllPiecesOfTeam(int team) {
+        List<Piece> pieces = new LinkedList<>();
+
+        for (Cell[] cellList : cells) {
+            for (Cell cell : cellList) {
+                if (cell.getPiece() != null && cell.getPiece().getTeam() == team) {
+                    pieces.add(cell.getPiece());
+                }
+            }
+        }
+
+        return pieces;
+    }
 }

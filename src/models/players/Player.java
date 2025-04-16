@@ -1,10 +1,13 @@
-package models;
+package models.players;
 
-public class Player {
-    private String name;
-    private Game game;
-    private final int team;
-    private boolean lost = false;
+import models.Game;
+import models.Move;
+
+public abstract class Player {
+    protected String name;
+    protected Game game;
+    protected final int team;
+    protected boolean lost = false;
 
     public Player(String name, Game game, int team) {
         this.name = name;
@@ -16,16 +19,11 @@ public class Player {
         this(name, null, team);
     }
 
-    public Move getMove() {
-        try {
-            synchronized (game) {
-                game.wait();
-            }
-            return game.move;
-        } catch (Exception ignored) {
-            return null;
-        }
+    public Player(int team) {
+        this(null, team);
     }
+
+    public abstract Move getMove();
 
     public String getName() {
         return name;

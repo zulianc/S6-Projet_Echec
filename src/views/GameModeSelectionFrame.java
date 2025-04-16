@@ -1,7 +1,9 @@
 package views;
 
 import models.Game;
-import models.Player;
+import models.players.HumanPlayer;
+import models.players.Player;
+import models.players.RandomBotPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,17 +30,14 @@ public class GameModeSelectionFrame extends JFrame {
     private void build() {
 
         List<Player> playersTmp = new ArrayList<>();
-        playersTmp.add(new Player("Bernard", 0));
-        playersTmp.add(new Player("Bernardette", 1));
+        playersTmp.add(new HumanPlayer("Bernard", 0));
+        playersTmp.add(new HumanPlayer("Bernardette", 1));
         this.game = new Game(playersTmp);
 
         this.humanDuoBtn     = new JButton(" Mode 1v1 ");
         this.botDuoBtn       = new JButton("Mode 1vBot");
         this.onlineDuoBtn    = new JButton("Mode online");
         this.humanQuartetBtn = new JButton("Mode 1v1v1v1");
-
-        //Change when features would be done
-        this.botDuoBtn.setEnabled(false);
 
         Dimension buttonDim = new Dimension(150, 50);
 
@@ -57,10 +56,19 @@ public class GameModeSelectionFrame extends JFrame {
             String secondPlayerName = JOptionPane.showInputDialog("Nom du 2e joueur");
 
             List<Player> players = new ArrayList<>();
-            players.add(new Player(firstPlayerName, 0));
-            players.add(new Player(secondPlayerName, 1));
+            players.add(new HumanPlayer(firstPlayerName, 0));
+            players.add(new HumanPlayer(secondPlayerName, 1));
 
             this.needSetUpRotate = true;
+
+            this.game = new Game(players);
+            this.startGame();
+        });
+
+        this.botDuoBtn.addActionListener(e -> {
+            List<Player> players = new ArrayList<>();
+            players.add(new HumanPlayer("joueur", 0));
+            players.add(new RandomBotPlayer(1));
 
             this.game = new Game(players);
             this.startGame();
