@@ -48,7 +48,7 @@ public class VChessBoard extends JPanel implements Observer {
                 System.out.println("mousePressed");
 
                 VCell cellEnd = collectVCellFromEvent(e);
-                controller.controlPressed(cellEnd);
+                controller.controlPressed(cellEnd, e);
             }
 
             @Override
@@ -56,7 +56,7 @@ public class VChessBoard extends JPanel implements Observer {
                 System.out.println("mouseReleased");
 
                 VCell cellEnd = collectVCellFromEvent(e);
-                controller.controlReleased(cellEnd);
+                controller.controlReleased(cellEnd, e);
             }
         });
     }

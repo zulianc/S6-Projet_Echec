@@ -1,6 +1,7 @@
 package views;
 
 import models.Game;
+import models.players.CalculatorBotPlayer;
 import models.players.HumanPlayer;
 import models.players.Player;
 import models.players.RandomBotPlayer;
@@ -20,6 +21,7 @@ public class GameModeSelectionFrame extends JFrame {
     private JLabel titleLabel;
     private JButton humanDuoBtn;
     private JButton botDuoBtn;
+    private JButton botvBotBtn;
     private JButton onlineDuoBtn;
     private JButton humanQuartetBtn;
 
@@ -36,6 +38,7 @@ public class GameModeSelectionFrame extends JFrame {
 
         this.humanDuoBtn     = new JButton(" Mode 1v1 ");
         this.botDuoBtn       = new JButton("Mode 1vBot");
+        this.botvBotBtn      = new JButton("Mode BotvBot");
         this.onlineDuoBtn    = new JButton("Mode online");
         this.humanQuartetBtn = new JButton("Mode 1v1v1v1");
 
@@ -43,11 +46,13 @@ public class GameModeSelectionFrame extends JFrame {
 
         this.humanDuoBtn.setPreferredSize(buttonDim);
         this.botDuoBtn.setPreferredSize(buttonDim);
+        this.botvBotBtn.setPreferredSize(buttonDim);
         this.onlineDuoBtn.setPreferredSize(buttonDim);
         this.humanQuartetBtn.setPreferredSize(buttonDim);
 
         this.humanDuoBtn.setMaximumSize(buttonDim);
         this.botDuoBtn.setMaximumSize(buttonDim);
+        this.botvBotBtn.setMaximumSize(buttonDim);
         this.onlineDuoBtn.setMaximumSize(buttonDim);
         this.humanQuartetBtn.setMaximumSize(buttonDim);
 
@@ -68,6 +73,15 @@ public class GameModeSelectionFrame extends JFrame {
         this.botDuoBtn.addActionListener(e -> {
             List<Player> players = new ArrayList<>();
             players.add(new HumanPlayer("joueur", 0));
+            players.add(new CalculatorBotPlayer(1));
+
+            this.game = new Game(players);
+            this.startGame();
+        });
+
+        this.botvBotBtn.addActionListener(e -> {
+            List<Player> players = new ArrayList<>();
+            players.add(new CalculatorBotPlayer(0));
             players.add(new RandomBotPlayer(1));
 
             this.game = new Game(players);
@@ -83,6 +97,7 @@ public class GameModeSelectionFrame extends JFrame {
 
         this.tmpPan.add(this.humanDuoBtn);
         this.tmpPan.add(this.botDuoBtn);
+        this.tmpPan.add(this.botvBotBtn);
         /* here too
         this.tmpPan.add(this.onlineDuoBtn);
         this.tmpPan.add(this.humanQuartetBtn);
@@ -94,7 +109,7 @@ public class GameModeSelectionFrame extends JFrame {
         this.setContentPane(this.contentPane);
 
         this.setTitle("Échecs");
-        this.setSize(400, 200);
+        this.setSize(400, 250);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -111,6 +126,7 @@ public class GameModeSelectionFrame extends JFrame {
         game.addObserver(frame);
 
         SwingUtilities.invokeLater(() -> frame.setVisible(true));
+
         this.setVisible(false);
     }
 }

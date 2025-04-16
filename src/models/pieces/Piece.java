@@ -12,12 +12,18 @@ public abstract class Piece {
     private final AccessibleCellsDecorator decorator;
     private int moveCount;
     private int lastMoveTurn;
+    protected int value;
 
-    public Piece(int team, AccessibleCellsDecorator decorator) {
+    public Piece(int team, AccessibleCellsDecorator decorator, int value) {
         this.team = team;
         this.decorator = decorator;
+        this.value = value;
         this.lastMoveTurn = -1;
         this.moveCount = 0;
+    }
+
+    public Piece(int team, AccessibleCellsDecorator decorator) {
+        this(team, decorator, 1);
     }
 
     public int getTeam() {
@@ -42,13 +48,6 @@ public abstract class Piece {
         this.cell = cell;
     }
 
-    @Override
-    public String toString() {
-        return "Piece{" +
-                "team=" + team +
-                '}';
-    }
-
     public boolean hasNeverMoved() {
         return this.moveCount == 0;
     }
@@ -67,5 +66,17 @@ public abstract class Piece {
             return null;
         }
         return this.lastMoveTurn;
+    }
+
+    public int getValue() {
+        return this.value;
+    }
+
+    @Override
+    public String toString() {
+        return "Piece{" +
+                "team=" + team +
+                "value=" + value +
+                '}';
     }
 }

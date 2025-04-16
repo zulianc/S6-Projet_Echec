@@ -1,6 +1,5 @@
 package models;
 
-import models.pieces.ChessPawn;
 import models.pieces.Piece;
 import structure.Position;
 
@@ -62,6 +61,20 @@ public class ChessBoard {
         return pieces;
     }
 
+    public List<Piece> getAllPiecesOfTeam(int team) {
+        List<Piece> pieces = new LinkedList<>();
+
+        for (Cell[] cellList : cells) {
+            for (Cell cell : cellList) {
+                if (cell.getPiece() != null && cell.getPiece().getTeam() == team) {
+                    pieces.add(cell.getPiece());
+                }
+            }
+        }
+
+        return pieces;
+    }
+
     public Cell getCellAtRelativePosition(Cell startingCell, Position relativePosition) {
         Position indexes = getPositionOfCell(startingCell);
         if (indexes == null) {
@@ -91,21 +104,11 @@ public class ChessBoard {
         return cells[position.getX()][position.getY()];
     }
 
-    public Game getGame() {
-        return game;
+    public Cell[][] getCells() {
+        return this.cells;
     }
 
-    public List<Piece> getAllPiecesOfTeam(int team) {
-        List<Piece> pieces = new LinkedList<>();
-
-        for (Cell[] cellList : cells) {
-            for (Cell cell : cellList) {
-                if (cell.getPiece() != null && cell.getPiece().getTeam() == team) {
-                    pieces.add(cell.getPiece());
-                }
-            }
-        }
-
-        return pieces;
+    public Game getGame() {
+        return game;
     }
 }

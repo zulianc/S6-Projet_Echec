@@ -18,6 +18,10 @@ public abstract class AccessibleCellsDecorator {
     protected abstract List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell);
 
     public List<Cell> getAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
+        assert startingCell.hasPiece();
+        if (!startingCell.hasPiece()) {
+            throw new RuntimeException("Cannot access cells of a Piece");
+        }
         List<Cell> cells = this.getDecoratorAccessibleCells(chessBoard, startingCell);
         AccessibleCellsDecorator baseDecorator = this.base;
         while (baseDecorator != null) {
@@ -28,6 +32,9 @@ public abstract class AccessibleCellsDecorator {
     }
 
     protected boolean doesntContainsSameTeamPieces(Cell cell1, Cell cell2) {
+        if (!cell2.hasPiece()) {
+            throw new RuntimeException("Cannot access cells of a Piece");
+        }
         return !cell1.hasPiece() || cell1.getPiece().getTeam() != cell2.getPiece().getTeam();
     }
 }

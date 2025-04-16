@@ -30,6 +30,12 @@ public class RandomBotPlayer extends Player {
                 }
             }
         }
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         Random random = new Random();
         int max = accessibleCells.size();
 

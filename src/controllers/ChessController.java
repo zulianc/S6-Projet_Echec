@@ -37,6 +37,13 @@ public class ChessController {
 
             mainView.update();
 
+        }
+    }
+
+    public void controlPressed(VCell vCell, MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            startCell = vCell;
+
         } else if (e.getButton() == MouseEvent.BUTTON1) {
             if (!this.gameModel.hasGameEnded()) {
                 if (before == null) {
@@ -53,21 +60,6 @@ public class ChessController {
         }
     }
 
-    public void controlPressed(VCell vCell, MouseEvent e) {
-        System.out.println("Mouse right pressed");
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            this.startCell = vCell;
-        } else if (e.getButton() == MouseEvent.BUTTON1) {
-            if (before == null) {
-                this.selectFirstCell(vCell);
-            } else {
-                if (!vCell.canMoveOnIt()) {
-                    this.selectFirstCell(vCell);
-                }
-            }
-        }
-    }
-
     public void controlReleased(VCell endCell, MouseEvent e) {
         if (startCell != null && !startCell.equals(endCell)) {
             if (e.getButton() == MouseEvent.BUTTON3) {
@@ -77,10 +69,11 @@ public class ChessController {
             }
         }
         if (e.getButton() == MouseEvent.BUTTON1) {
-            if (endCell.canMoveOnIt()) {
-                this.selectSecondCell(endCell);
+            if (!this.gameModel.hasGameEnded()) {
+                if (before != null && endCell.canMoveOnIt()) {
+                    this.selectSecondCell(endCell);
+                }
             }
-            this.unselectCells();
         }
     }
 

@@ -5,7 +5,7 @@ import models.decorators.LinesDecorator;
 
 public class Queen extends Piece {
     public Queen(int team) {
-        super(team, new LinesDecorator(new DiagonalsDecorator(null)));
+        super(team, new LinesDecorator(new DiagonalsDecorator(null)), 9);
     }
 
     @Override

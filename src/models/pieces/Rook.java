@@ -4,7 +4,7 @@ import models.decorators.LinesDecorator;
 
 public class Rook extends Piece {
     public Rook(int team) {
-        super(team, new LinesDecorator(null));
+        super(team, new LinesDecorator(null), 5);
     }
 
     @Override
