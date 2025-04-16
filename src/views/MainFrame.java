@@ -70,6 +70,10 @@ public class MainFrame extends JFrame implements Observer {
         this.setResizable(false);
     }
 
+    public void toggleRotating() {
+        this.toggleRotationMode.doClick();
+    }
+
     public Game getGameModel() {
         return gameModel;
     }
@@ -88,19 +92,20 @@ public class MainFrame extends JFrame implements Observer {
         if (params instanceof String[]) {
             String signal = (String) params[0];
 
-            if (signal.equals("promotion")) {
-                PromotionDialog diag = new PromotionDialog(this);
-                diag.display();
+            switch (signal) {
+                case "promotion" -> {
+                    PromotionDialog diag = new PromotionDialog(this);
+                    diag.display();
 
-                String result = diag.getResultPieceName();
-                chessController.promotionControl(result);
-
-            } else if (signal.equals("gameEnded")) {
-                this.board.unmarkValidMoveCells();
-                JOptionPane.showMessageDialog(this, "Partie finie");
-
-            } else if (signal.equals("unselectAll")) {
-                this.board.unselectAll();
+                    String result = diag.getResultPieceName();
+                    chessController.promotionControl(result);
+                }
+                case "gameEnded" -> {
+                    this.board.unmarkValidMoveCells();
+                    JOptionPane.showMessageDialog(this, "Partie finie");
+                    this.setVisible(false);
+                }
+                case "unselectAll" -> this.board.unselectAll();
             }
         }
     }
