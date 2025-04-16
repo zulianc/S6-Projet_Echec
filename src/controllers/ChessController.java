@@ -53,17 +53,35 @@ public class ChessController {
         }
     }
 
-    public void controlPressed(VCell vCell) {
+    public void controlPressed(VCell vCell, MouseEvent e) {
         System.out.println("Mouse right pressed");
-        this.startCell = vCell;
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            this.startCell = vCell;
+        } else if (e.getButton() == MouseEvent.BUTTON1) {
+            if (before == null) {
+                this.selectFirstCell(vCell);
+            } else {
+                if (!vCell.canMoveOnIt()) {
+                    this.selectFirstCell(vCell);
+                }
+            }
+        }
     }
 
-    public void controlReleased(VCell endCell) {
+    public void controlReleased(VCell endCell, MouseEvent e) {
         if (startCell != null && !startCell.equals(endCell)) {
-            this.mainView.getBoard().addArrow(new VArrow(this.startCell, endCell));
-            mainView.update();
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                this.mainView.getBoard().addArrow(new VArrow(this.startCell, endCell));
+                startCell = null;
+                mainView.update();
+            }
         }
-        startCell = null;
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            if (endCell.canMoveOnIt()) {
+                this.selectSecondCell(endCell);
+            }
+            this.unselectCells();
+        }
     }
 
     private void selectFirstCell(VCell vCell) {
