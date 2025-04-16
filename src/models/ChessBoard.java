@@ -1,5 +1,6 @@
 package models;
 
+import models.pieces.ChessPawn;
 import models.pieces.Piece;
 import structure.Position;
 
@@ -29,6 +30,10 @@ public class ChessBoard {
 
     public void addPiece(Piece piece, int x, int y) {
         this.movePiece(piece, x, y);
+    }
+
+    public void addPiece(Piece piece, Cell cell) {
+        this.movePiece(piece, cell);
     }
 
     public void movePiece(Piece piece, Cell cell) {
@@ -89,5 +94,4 @@ public class ChessBoard {
     public Game getGame() {
         return game;
     }
-
 }

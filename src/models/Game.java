@@ -6,6 +6,8 @@ import structure.Observable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 public class Game extends Observable implements Runnable {
     private final ChessBoard chessBoard;
     private final List<Player> players;
@@ -13,6 +15,7 @@ public class Game extends Observable implements Runnable {
     private Player actualPlayer;
     public Move move;
     private Piece promotionPiece;
+    private int turn;
 
     public Game(List<Player> players) {
         this.players     = players;
@@ -21,6 +24,7 @@ public class Game extends Observable implements Runnable {
             player.setGame(this);
         }
         this.chessBoard = new ChessBoard(this);
+        this.turn = 0;
     }
 
     @Override
@@ -31,8 +35,9 @@ public class Game extends Observable implements Runnable {
     public void playGame() {
         initializePieces();
         while (!this.hasGameEnded()) {
+            this.turn++;
             this.actualPlayer = this.nextPlayer();
-            if (this.actualPlayer.hasWon()) {
+            if (this.actualPlayer.isAlive()) {
                 Move m;
                 do {
                     this.updateAll();
@@ -129,7 +134,7 @@ public class Game extends Observable implements Runnable {
 
         int alivePlayers = 0;
         for (Player player : this.players) {
-            if (player.hasWon() && !isInStalemate(player)) {
+            if (player.isAlive() && !isInStalemate(player)) {
                 alivePlayers++;
             }
         }
@@ -224,6 +229,8 @@ public class Game extends Observable implements Runnable {
         Cell endCell   = m.destination();
         Piece movedPiece = startCell.getPiece();
 
+        this.checkTryingEnPassant(m);
+
         this.chessBoard.movePiece(null, startCell);
         this.chessBoard.movePiece(movedPiece, endCell);
 
@@ -237,7 +244,7 @@ public class Game extends Observable implements Runnable {
         checkCastling(destinationCell);
         checkPromotion(destinationCell);
 
-        movedPiece.setHasMoved(true);
+        movedPiece.pieceHasMoved(this.turn);
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
     }
@@ -247,12 +254,14 @@ public class Game extends Observable implements Runnable {
         Cell endCell   = m.destination();
         Piece movedPiece = endCell.getPiece();
 
+        this.checkUndoingEnPassant(m, deadPiece);
+
         this.chessBoard.movePiece(movedPiece, startCell);
         this.chessBoard.movePiece(deadPiece,  endCell);
     }
 
     private void checkCastling(Cell destinationCell) {
-        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMove()) {
+        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMoved()) {
             int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
             int kingX = this.getBoard().getPositionOfCell(destinationCell).getX();
 
@@ -286,6 +295,33 @@ public class Game extends Observable implements Runnable {
         }
     }
 
+    private void checkTryingEnPassant(Move m) {
+        Cell sourceCell = m.source();
+        Cell destinationCell = m.destination();
+        int sourceX = this.getBoard().getPositionOfCell(sourceCell).getX();
+        int destinationX = this.getBoard().getPositionOfCell(destinationCell).getX();
+        if (sourceCell.getPiece() instanceof ChessPawn && abs(sourceX - destinationX) == 1 && !destinationCell.hasPiece()) {
+            int destinationY = this.getBoard().getPositionOfCell(destinationCell).getY();
+            int pieceToRemoveY = (destinationY == 2) ? destinationY + 1 : destinationY - 1;
+            Cell pieceToRemove = this.chessBoard.getCell(destinationX, pieceToRemoveY);
+            this.chessBoard.movePiece(null, pieceToRemove);
+        }
+    }
+
+    private void checkUndoingEnPassant(Move m, Piece deadPiece) {
+        Cell sourceCell = m.source();
+        Cell destinationCell = m.destination();
+        int sourceX = this.getBoard().getPositionOfCell(sourceCell).getX();
+        int destinationX = this.getBoard().getPositionOfCell(destinationCell).getX();
+        if (destinationCell.getPiece() instanceof ChessPawn && abs(sourceX - destinationX) == 1 && deadPiece == null) {
+            int destinationY = this.getBoard().getPositionOfCell(destinationCell).getY();
+            int pieceToReviveY = (destinationY == 2) ? destinationY + 1 : destinationY - 1;
+            Cell pieceToRevive = this.chessBoard.getCell(destinationX, pieceToReviveY);
+            this.chessBoard.addPiece(new ChessPawn(1 - destinationCell.getPiece().getTeam()), pieceToRevive);
+            pieceToRevive.getPiece().pieceHasMoved(this.turn - 1);
+        }
+    }
+
     public ChessBoard getBoard() {
         return this.chessBoard;
     }
@@ -296,5 +332,9 @@ public class Game extends Observable implements Runnable {
 
     public Player getActualPlayer() {
         return this.actualPlayer;
+    }
+
+    public int getTurn() {
+        return this.turn;
     }
 }

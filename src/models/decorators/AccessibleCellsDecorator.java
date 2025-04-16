@@ -2,6 +2,7 @@ package models.decorators;
 
 import models.Cell;
 import models.ChessBoard;
+import models.pieces.ChessPawn;
 import structure.Orientation;
 
 import java.util.List;
@@ -14,14 +15,15 @@ public abstract class AccessibleCellsDecorator {
         this.base = base;
     }
 
-    protected abstract List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell);
+    protected abstract List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell);
 
     public List<Cell> getAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
-        List<Cell> cells = getAccessibleCellsMess(chessBoard, startingCell);
-        if (base != null) {
-            cells.addAll(base.getAccessibleCellsMess(chessBoard, startingCell));
+        List<Cell> cells = this.getDecoratorAccessibleCells(chessBoard, startingCell);
+        AccessibleCellsDecorator baseDecorator = this.base;
+        while (baseDecorator != null) {
+            cells.addAll(baseDecorator.getDecoratorAccessibleCells(chessBoard, startingCell));
+            baseDecorator = baseDecorator.base;
         }
-
         return cells;
     }
 

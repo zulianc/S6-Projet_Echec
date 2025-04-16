@@ -3,7 +3,6 @@ package models.pieces;
 import models.decorators.LinesDecorator;
 
 public class Rook extends Piece {
-
     public Rook(int team) {
         super(team, new LinesDecorator(null));
     }
@@ -12,5 +11,4 @@ public class Rook extends Piece {
     public String getPieceName() {
         return "rook";
     }
-
 }

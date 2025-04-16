@@ -10,21 +10,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CastlingDecorator extends AccessibleCellsDecorator {
-
     public CastlingDecorator (AccessibleCellsDecorator base) {
-        super(null);
-        if (base != null) {
-            this.base = base;
-        }
+        super(base);
         this.orientationPossibles = new ArrayList<>();
         this.orientationPossibles.add(Orientation.LEFT);
         this.orientationPossibles.add(Orientation.RIGHT);
     }
 
     @Override
-    protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
+    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
         List<Cell> accessibleCells = new LinkedList<>();
-        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMove()) {
+        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMoved()) {
             if (startingCell.getPiece().getTeam() == chessBoard.getGame().getActualPlayer().getTeam()) {
                 for (Orientation orientation : this.orientationPossibles) {
                     Cell cellPassingBy = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
@@ -63,7 +59,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
     }
 
     private boolean cellHasRockWithItCanDoCastling(Cell startingCell, Cell cellToTest) {
-        return cellToTest.hasPiece() && !doesntContainsSameTeamPieces(startingCell, cellToTest) && cellToTest.getPiece().getPieceName().equals("rook") && cellToTest.getPiece().hasNeverMove();
+        return cellToTest.hasPiece() && !doesntContainsSameTeamPieces(startingCell, cellToTest) && cellToTest.getPiece().getPieceName().equals("rook") && cellToTest.getPiece().hasNeverMoved();
     }
 
     private boolean notInCheck(ChessBoard chessBoard, Move goToStartingCell, Move goToPassingByCell, Move goToStoppingAtCell) {

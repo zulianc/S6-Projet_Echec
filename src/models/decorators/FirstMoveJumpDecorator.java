@@ -5,28 +5,21 @@ import models.ChessBoard;
 import structure.Orientation;
 import structure.Position;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
-
     public FirstMoveJumpDecorator (AccessibleCellsDecorator base) {
-        super(null);
-        if (base != null) {
-            this.base = base;
-        }
+        super(base);
     }
 
     @Override
-    protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
-        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMove()) {
-
+    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
+        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMoved()) {
             double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
             int totalPlayer    = chessBoard.getGame().getPlayerCount();
             int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
             Position vector = Orientation.rotatingVector(Orientation.FRONT, rotationDegree);
-
 
             List<Cell> accessibleCells = new LinkedList<>();
             Cell nextCell = startingCell;
@@ -41,7 +34,6 @@ public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
             if (nextCell != null && cellCanMove) {
                 accessibleCells.add(nextCell);
             }
-            System.out.println(accessibleCells);
             return accessibleCells;
         }
 

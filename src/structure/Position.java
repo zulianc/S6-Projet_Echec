@@ -31,4 +31,9 @@ public class Position {
         int y = (index-x)/8;
         return new Position(x, y);
     }
+
+    @Override
+    public String toString() {
+        return "Position [x=" + this.x + ", y=" + this.y + "]";
+    }
 }

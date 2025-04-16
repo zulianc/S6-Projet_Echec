@@ -10,10 +10,7 @@ import java.util.List;
 
 public class KingDecorator extends AccessibleCellsDecorator{
     public KingDecorator(AccessibleCellsDecorator base) {
-        super(null);
-        if (base != null) {
-            this.base = base;
-        }
+        super(base);
         this.orientationPossibles = new ArrayList<>();
         this.orientationPossibles.add(Orientation.FRONT);
         this.orientationPossibles.add(Orientation.FRONT_LEFT);
@@ -26,7 +23,7 @@ public class KingDecorator extends AccessibleCellsDecorator{
     }
 
     @Override
-    protected List<Cell> getAccessibleCellsMess(ChessBoard chessBoard, Cell startingCell) {
+    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
         List<Cell> accessibleCells = new LinkedList<>();
         for (Orientation orientation : this.orientationPossibles) {
             Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());

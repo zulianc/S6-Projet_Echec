@@ -10,11 +10,14 @@ public abstract class Piece {
     private final int team;
     private Cell cell;
     private final AccessibleCellsDecorator decorator;
-    private Boolean hasMoved = false;
+    private int moveCount;
+    private int lastMoveTurn;
 
     public Piece(int team, AccessibleCellsDecorator decorator) {
         this.team = team;
         this.decorator = decorator;
+        this.lastMoveTurn = -1;
+        this.moveCount = 0;
     }
 
     public int getTeam() {
@@ -46,11 +49,23 @@ public abstract class Piece {
                 '}';
     }
 
-    public boolean hasNeverMove() {
-        return !hasMoved;
+    public boolean hasNeverMoved() {
+        return this.moveCount == 0;
     }
 
-    public void setHasMoved(Boolean hasMoved) {
-        this.hasMoved = hasMoved;
+    public int getMoveCount() {
+        return this.moveCount;
+    }
+
+    public void pieceHasMoved(int turn) {
+        this.moveCount++;
+        this.lastMoveTurn = turn;
+    }
+
+    public Integer getLastMoveTurn() {
+        if (this.lastMoveTurn == -1) {
+            return null;
+        }
+        return this.lastMoveTurn;
     }
 }
