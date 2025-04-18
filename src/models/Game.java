@@ -58,6 +58,12 @@ public class Game extends Observable implements Runnable {
         updateAllWithParams(s);
 
         System.out.println("game ended");
+
+        for (Player player : players) {
+            synchronized (player) {
+                player.notify();
+            }
+        }
     }
 
     public void sendMove(Move m) {
