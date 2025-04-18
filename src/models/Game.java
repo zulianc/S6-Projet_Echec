@@ -1,8 +1,10 @@
 package models;
 
 import models.pieces.*;
+import models.players.HumanPlayer;
 import models.players.Player;
 import structure.Observable;
+import structure.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,9 @@ public class Game extends Observable implements Runnable {
         this.players     = players;
         this.playerCount = players.size();
         for (Player player : players) {
+            if (player instanceof Observer) {
+                this.addObserver((Observer) player);
+            }
             player.setGame(this);
         }
         this.chessBoard = new ChessBoard(this);
@@ -287,7 +292,12 @@ public class Game extends Observable implements Runnable {
             int pawnTeam = destinationCell.getPiece().getTeam();
 
             if ((pawnY == 0 && pawnTeam == 0) || (pawnY == 7 && pawnTeam == 1)) {
-                String[] s = new String[]{"promotion"};
+                String[] s;
+                if (this.actualPlayer instanceof HumanPlayer) {
+                    s = new String[]{"humanPromotion"};
+                } else {
+                    s = new String[]{"botPromotion"};
+                }
                 updateAllWithParams(s);
 
                 int pawnX = this.getBoard().getPositionOfCell(destinationCell).getX();

@@ -93,7 +93,7 @@ public class MainFrame extends JFrame implements Observer {
             String signal = (String) params[0];
 
             switch (signal) {
-                case "promotion" -> {
+                case "humanPromotion" -> {
                     PromotionDialog diag = new PromotionDialog(this);
                     diag.display();
 

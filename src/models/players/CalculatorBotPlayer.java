@@ -4,13 +4,14 @@ import models.Cell;
 import models.ChessBoard;
 import models.Move;
 import models.pieces.Piece;
+import structure.Observer;
 import structure.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class CalculatorBotPlayer extends Player {
+public class CalculatorBotPlayer extends Player implements Observer {
 
     private int[][] weightedMatrix;
 
@@ -102,6 +103,21 @@ public class CalculatorBotPlayer extends Player {
                 System.out.print(this.weightedMatrix[i][j] + " ");
             }
             System.out.println();
+        }
+    }
+
+    @Override
+    public void update() {
+        //nothing to do
+    }
+
+    @Override
+    public void updateParams(Object[] params) {
+        if (params instanceof String[]) {
+            String signal = (String) params[0];
+            if (signal.equals("botPromotion")) {
+                this.game.sendPromotion("queen");
+            }
         }
     }
 }
