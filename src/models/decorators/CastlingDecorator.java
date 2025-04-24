@@ -6,6 +6,7 @@ import models.Move;
 import models.pieces.Piece;
 import models.pieces.Rook;
 import structure.Orientation;
+import structure.Position2D;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,9 +15,9 @@ import java.util.List;
 public class CastlingDecorator extends AccessibleCellsDecorator {
     public CastlingDecorator (AccessibleCellsDecorator base) {
         super(base);
-        this.possibleOrientations = new ArrayList<>();
-        this.possibleOrientations.add(Orientation.LEFT);
-        this.possibleOrientations.add(Orientation.RIGHT);
+        this.possibleVectors = new ArrayList<>();
+        this.possibleVectors.add(Orientation.LEFT.getVector());
+        this.possibleVectors.add(Orientation.RIGHT.getVector());
     }
 
     @Override
@@ -37,13 +38,13 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
         if (piece.hasNeverMoved()) {
             // Check team to prevent infinite loop when checking for checks, works because castling is not a capturing move
             if (piece.getTeam() == game.getActualPlayer().getTeam()) {
-                for (Orientation orientation : this.possibleOrientations) {
-                    boolean longCastling = (orientation == Orientation.LEFT);
+                for (Position2D vector : this.possibleVectors) {
+                    boolean longCastling = (vector.equals(Orientation.LEFT.getVector()));
 
-                    Orientation pieceOrientation = orientation.copy();
+                    Position2D pieceVector = vector.copy();
                     // The kings' files are the same in 2 players chess but not in 4 players
                     if (game.getPlayerCount() == 4) {
-                        pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+                        pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
                     }
 
                     // STEP 1: find the final position of the king
@@ -53,7 +54,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                         Cell nextCell = startingCell;
                         boolean endOfBoard = false;
                         do {
-                            Cell followingCell = game.getBoard().getCellAtRelativePosition(nextCell, orientation.getVector());
+                            Cell followingCell = game.getBoard().getCellAtRelativePosition(nextCell, vector);
                             if (followingCell == null) {
                                 endOfBoard = true;
                             }
@@ -62,30 +63,30 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                             }
                         } while (!endOfBoard);
 
-                        Orientation inversedOrientation = pieceOrientation.copy();
-                        inversedOrientation.rotate180Clockwise();
-                        Orientation kingOrientation = inversedOrientation.copy();
+                        Position2D inversedVector = pieceVector.copy();
+                        inversedVector.rotate180Clockwise();
+                        Position2D boardEndToKingVector = inversedVector.copy();
                         if (longCastling) {
-                            kingOrientation.add(inversedOrientation);
+                            boardEndToKingVector.add(inversedVector);
                         }
 
-                        finalKingCell = game.getBoard().getCellAtRelativePosition(nextCell, kingOrientation.getVector());
+                        finalKingCell = game.getBoard().getCellAtRelativePosition(nextCell, boardEndToKingVector);
 
-                        kingOrientation.add(inversedOrientation);
+                        boardEndToKingVector.add(inversedVector);
 
-                        finalRookCell = game.getBoard().getCellAtRelativePosition(nextCell, kingOrientation.getVector());
+                        finalRookCell = game.getBoard().getCellAtRelativePosition(nextCell, boardEndToKingVector);
                     }
 
                     // STEP 2: check for the rook's existence and that the path is clear
                     {
                         Cell nextCell = startingCell;
-                        boolean endOfBoard = false;
+                        boolean reachedEndOfBoard = false;
                         boolean foundValidRook = false;
                         boolean reachedFinalKingCell = false;
                         boolean blockedPath = false;
                         do {
                             if (nextCell == null) {
-                                endOfBoard = true;
+                                reachedEndOfBoard = true;
                             } else {
                                 if (this.containsPiecesOfSameTeams(nextCell, startingCell)
                                         && nextCell.getPiece() instanceof Rook
@@ -93,7 +94,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                     foundValidRook = true;
                                 }
                                 else {
-                                    if (nextCell.hasPiece()) {
+                                    if (nextCell.hasPiece() && !nextCell.equals(startingCell)) {
                                         blockedPath = true;
                                     } else {
                                         if (!reachedFinalKingCell) {
@@ -109,17 +110,15 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                 }
                             }
 
-                            if (!endOfBoard) {
-                                nextCell = game.getBoard().getCellAtRelativePosition(nextCell, orientation.getVector());
+                            if (!reachedEndOfBoard) {
+                                nextCell = game.getBoard().getCellAtRelativePosition(nextCell, vector);
                             }
-                        } while (!(foundValidRook && reachedFinalKingCell) && !endOfBoard && !blockedPath);
+                        } while (!(foundValidRook && reachedFinalKingCell) && !reachedEndOfBoard && !blockedPath);
 
-                        if (endOfBoard || blockedPath) {
-                            continue;
+                        if (!reachedEndOfBoard && !blockedPath) {
+                            accessibleCells.add(finalKingCell);
                         }
                     }
-
-                    accessibleCells.add(finalKingCell);
                 }
             }
         }

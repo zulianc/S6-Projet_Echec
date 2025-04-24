@@ -4,6 +4,7 @@ import models.Cell;
 import models.Game;
 import models.pieces.Piece;
 import structure.Orientation;
+import structure.Position2D;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,17 +13,20 @@ import java.util.List;
 public class KnightDecorator extends AccessibleCellsDecorator{
     public KnightDecorator(AccessibleCellsDecorator base) {
         super(base);
-        this.possibleOrientations = new ArrayList<>();
-        Orientation firstL = Orientation.LONG_FRONT;
-        firstL.add(Orientation.LEFT);
-        Orientation secondL = Orientation.LONG_FRONT;
-        secondL.add(Orientation.RIGHT);
+
+        this.possibleVectors = new ArrayList<>();
+
+        Position2D firstL = Orientation.LONG_FRONT.getVector();
+        firstL.add(Orientation.LEFT.getVector());
+
+        Position2D secondL = Orientation.LONG_FRONT.getVector();
+        secondL.add(Orientation.RIGHT.getVector());
 
         for (int i = 0; i < 4; i++) {
+            this.possibleVectors.add(firstL.copy());
+            this.possibleVectors.add(secondL.copy());
             firstL.rotate90Clockwise();
             secondL.rotate90Clockwise();
-            this.possibleOrientations.add(firstL);
-            this.possibleOrientations.add(secondL);
         }
     }
 
@@ -32,10 +36,10 @@ public class KnightDecorator extends AccessibleCellsDecorator{
 
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
-        for (Orientation orientation : this.possibleOrientations) {
-            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, orientation.getVector());
+        for (Position2D vector : this.possibleVectors) {
+            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, vector);
 
-            if (nextCell != null && containsPiecesOfDifferentTeams(nextCell, startingCell)) {
+            if (nextCell != null && !this.containsPiecesOfSameTeams(nextCell, startingCell)) {
                 accessibleCells.add(nextCell);
             }
         }

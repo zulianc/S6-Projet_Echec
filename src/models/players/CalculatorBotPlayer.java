@@ -5,7 +5,7 @@ import models.ChessBoard;
 import models.Move;
 import models.pieces.Piece;
 import structure.Observer;
-import structure.Position;
+import structure.Position2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class CalculatorBotPlayer extends Player implements Observer {
         }
 
         for (Move possibleMove : accessibleCells) {
-            Position currentPosition = this.game.getBoard().getPositionOfCell(possibleMove.destination());
+            Position2D currentPosition = this.game.getBoard().getPositionOfCell(possibleMove.destination());
             int currentValue = this.weightedMatrix[currentPosition.getX()][currentPosition.getY()];
             if (currentValue > bestMoveValue) {
                 bestMoves = new ArrayList<>();

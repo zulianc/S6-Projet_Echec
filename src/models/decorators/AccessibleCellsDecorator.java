@@ -3,14 +3,14 @@ package models.decorators;
 import models.Cell;
 import models.Game;
 import models.pieces.Piece;
-import structure.Orientation;
+import structure.Position2D;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AccessibleCellsDecorator {
     protected AccessibleCellsDecorator base;
-    protected List<Orientation> possibleOrientations;
+    protected List<Position2D> possibleVectors;
 
     protected AccessibleCellsDecorator(AccessibleCellsDecorator base) {
         this.base = base;

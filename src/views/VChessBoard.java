@@ -5,7 +5,7 @@ import models.Cell;
 import models.ChessBoard;
 import models.Game;
 import structure.Observer;
-import structure.Position;
+import structure.Position2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,9 +122,9 @@ public class VChessBoard extends JPanel implements Observer {
         this.baseColors = baseColors;
     }
 
-    public Position getVCellPosition(VCell vCell) {
+    public Position2D getVCellPosition(VCell vCell) {
         int position = vCells.indexOf(vCell);
-        return Position.getPositionFromIndex(position, 8, 8);
+        return Position2D.getPositionFromIndex(position, 8);
     }
 
     public void setRotating(boolean isRotating) {

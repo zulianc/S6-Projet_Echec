@@ -5,6 +5,7 @@ import models.Game;
 import models.pieces.ChessPawn;
 import models.pieces.Piece;
 import structure.Orientation;
+import structure.Position2D;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,9 +14,9 @@ import java.util.List;
 public class EnPassantDecorator extends AccessibleCellsDecorator {
     public EnPassantDecorator(AccessibleCellsDecorator base) {
         super(base);
-        this.possibleOrientations = new ArrayList<>();
-        this.possibleOrientations.add(Orientation.FRONT_LEFT);
-        this.possibleOrientations.add(Orientation.FRONT_RIGHT);
+        this.possibleVectors = new ArrayList<>();
+        this.possibleVectors.add(Orientation.FRONT_LEFT.getVector());
+        this.possibleVectors.add(Orientation.FRONT_RIGHT.getVector());
     }
 
     @Override
@@ -24,16 +25,16 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
 
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
-        for (Orientation orientation : this.possibleOrientations) {
-            Orientation pieceOrientation = orientation.copy();
-            pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+        for (Position2D vector : this.possibleVectors) {
+            Position2D pieceVector = vector.copy();
+            pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
 
-            Orientation capturedPawnOrientation = pieceOrientation.copy();
-            capturedPawnOrientation.add(Orientation.BACK);
-            capturedPawnOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+            Position2D capturedPawnVector = vector.copy();
+            capturedPawnVector.add(Orientation.BACK.getVector());
+            capturedPawnVector.rotate(piece.getTeam(), game.getPlayerCount());
 
-            Cell cellToMoveAt = game.getBoard().getCellAtRelativePosition(startingCell, pieceOrientation.getVector());
-            Cell cellToCapture = game.getBoard().getCellAtRelativePosition(cellToMoveAt, capturedPawnOrientation.getVector());
+            Cell cellToMoveAt = game.getBoard().getCellAtRelativePosition(startingCell, pieceVector);
+            Cell cellToCapture = game.getBoard().getCellAtRelativePosition(startingCell, capturedPawnVector);
 
             if (cellToMoveAt != null && cellToCapture != null && cellToCapture.getPiece() != null) {
                 if (this.containsPiecesOfDifferentTeams(startingCell, cellToCapture)) {
@@ -47,7 +48,7 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
                 }
             }
         }
-
+        
         return accessibleCells;
     }
 }

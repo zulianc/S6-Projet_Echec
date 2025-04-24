@@ -1,7 +1,7 @@
 package models;
 
 import models.pieces.Piece;
-import structure.Position;
+import structure.Position2D;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,7 +10,7 @@ import java.util.List;
 public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
-    private final HashMap<Cell, Position> cellsPosition = new HashMap<>();
+    private final HashMap<Cell, Position2D> cellsPosition = new HashMap<>();
 
     public ChessBoard() {
         initializeEmptyBoard();
@@ -20,7 +20,7 @@ public class ChessBoard {
         for (int y = 0; y < ChessBoard.CHESS_BOARD_SIZE; y++) {
             for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
                 this.cells[x][y] = new Cell();
-                this.cellsPosition.put(this.cells[x][y], new Position(x, y));
+                this.cellsPosition.put(this.cells[x][y], new Position2D(x, y));
             }
         }
     }
@@ -69,8 +69,8 @@ public class ChessBoard {
         return pieces;
     }
 
-    public Cell getCellAtRelativePosition(Cell startingCell, Position relativePosition) {
-        Position indexes = getPositionOfCell(startingCell);
+    public Cell getCellAtRelativePosition(Cell startingCell, Position2D relativePosition) {
+        Position2D indexes = getPositionOfCell(startingCell);
         if (indexes == null) {
             return null;
         }
@@ -82,7 +82,7 @@ public class ChessBoard {
         return cells[returnCellIndexX][returnCellIndexY];
     }
 
-    public Position getPositionOfCell(Cell startingCell) {
+    public Position2D getPositionOfCell(Cell startingCell) {
         if (startingCell == null) {
             return null;
         }
@@ -105,7 +105,7 @@ public class ChessBoard {
         return cells[x][y];
     }
 
-    public Cell getCell(Position position) {
+    public Cell getCell(Position2D position) {
         return cells[position.getX()][position.getY()];
     }
 

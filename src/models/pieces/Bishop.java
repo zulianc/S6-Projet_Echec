@@ -4,7 +4,7 @@ import models.decorators.DiagonalsDecorator;
 
 public class Bishop extends Piece {
     public Bishop(int team) {
-        super(team, new DiagonalsDecorator(null), 3);
+        super(team, 3, new DiagonalsDecorator(null));
     }
 
     @Override

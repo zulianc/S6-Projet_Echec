@@ -6,7 +6,6 @@ import models.Move;
 import views.MainFrame;
 import views.VArrow;
 import views.VCell;
-import views.VChessBoard;
 
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -83,7 +82,6 @@ public class ChessController {
         if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
             vCell.setSelected(true);
             List<Cell> cellsToMark = gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer());
-            System.out.println("cells accessible "+ cellsToMark);
             this.mainView.getBoard().markValidMoveCells(cellsToMark);
         }
     }

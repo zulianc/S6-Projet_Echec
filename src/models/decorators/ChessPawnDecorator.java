@@ -4,6 +4,7 @@ import models.Cell;
 import models.Game;
 import models.pieces.Piece;
 import structure.Orientation;
+import structure.Position2D;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,9 +13,9 @@ import java.util.List;
 public class ChessPawnDecorator extends AccessibleCellsDecorator{
     public ChessPawnDecorator(AccessibleCellsDecorator base) {
         super(base);
-        this.possibleOrientations = new ArrayList<>();
-        this.possibleOrientations.add(Orientation.FRONT_LEFT);
-        this.possibleOrientations.add(Orientation.FRONT_RIGHT);
+        this.possibleVectors = new ArrayList<>();
+        this.possibleVectors.add(Orientation.FRONT_LEFT.getVector());
+        this.possibleVectors.add(Orientation.FRONT_RIGHT.getVector());
     }
 
     @Override
@@ -24,11 +25,11 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
         // EATING
-        for (Orientation orientation : this.possibleOrientations) {
-            Orientation pieceOrientation = orientation.copy();
-            pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+        for (Position2D vector : this.possibleVectors) {
+            Position2D pieceVector = vector.copy();
+            pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
 
-            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceOrientation.getVector());
+            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceVector);
 
             if (nextCell != null && containsPiecesOfDifferentTeams(nextCell, startingCell)) {
                 accessibleCells.add(nextCell);
@@ -36,10 +37,10 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
         }
 
         // MOVING
-        Orientation pieceOrientation = Orientation.FRONT;
-        pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+        Position2D pieceVector = Orientation.FRONT.getVector();
+        pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
 
-        Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceOrientation.getVector());
+        Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceVector);
 
         if (nextCell != null && !nextCell.hasPiece()) {
             accessibleCells.add(nextCell);

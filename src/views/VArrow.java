@@ -1,6 +1,6 @@
 package views;
 
-import structure.Position;
+import structure.Position2D;
 
 import java.awt.*;
 import java.util.Objects;
@@ -16,8 +16,8 @@ public class VArrow {
     }
 
     public void paint(Graphics g, VChessBoard vBoard) {
-        Position sourcePosition = vBoard.getVCellPosition(sourceCell);
-        Position targetPosition = vBoard.getVCellPosition(targetCell);
+        Position2D sourcePosition = vBoard.getVCellPosition(sourceCell);
+        Position2D targetPosition = vBoard.getVCellPosition(targetCell);
 
         int cellSize = vBoard.getCellSize();
 

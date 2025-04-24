@@ -1,7 +1,7 @@
 package views;
 
 import models.Cell;
-import structure.Position;
+import structure.Position2D;
 
 import java.awt.*;
 import java.util.Objects;
@@ -30,7 +30,7 @@ public class VCell {
         this.isSelected  = false;
     }
 
-    public void paint(Graphics g, Position position) {
+    public void paint(Graphics g, Position2D position) {
         int cellX = position.getX() * size;
         int cellY = position.getY() * size;
 

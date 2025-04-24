@@ -4,6 +4,7 @@ import models.Cell;
 import models.Game;
 import models.pieces.Piece;
 import structure.Orientation;
+import structure.Position2D;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,15 +13,15 @@ import java.util.List;
 public class KingDecorator extends AccessibleCellsDecorator{
     public KingDecorator(AccessibleCellsDecorator base) {
         super(base);
-        this.possibleOrientations = new ArrayList<>();
-        this.possibleOrientations.add(Orientation.FRONT);
-        this.possibleOrientations.add(Orientation.FRONT_LEFT);
-        this.possibleOrientations.add(Orientation.FRONT_RIGHT);
-        this.possibleOrientations.add(Orientation.BACK);
-        this.possibleOrientations.add(Orientation.BACK_LEFT);
-        this.possibleOrientations.add(Orientation.BACK_RIGHT);
-        this.possibleOrientations.add(Orientation.LEFT);
-        this.possibleOrientations.add(Orientation.RIGHT);
+        this.possibleVectors = new ArrayList<>();
+        this.possibleVectors.add(Orientation.FRONT.getVector());
+        this.possibleVectors.add(Orientation.FRONT_LEFT.getVector());
+        this.possibleVectors.add(Orientation.FRONT_RIGHT.getVector());
+        this.possibleVectors.add(Orientation.BACK.getVector());
+        this.possibleVectors.add(Orientation.BACK_LEFT.getVector());
+        this.possibleVectors.add(Orientation.BACK_RIGHT.getVector());
+        this.possibleVectors.add(Orientation.LEFT.getVector());
+        this.possibleVectors.add(Orientation.RIGHT.getVector());
     }
 
     @Override
@@ -29,10 +30,10 @@ public class KingDecorator extends AccessibleCellsDecorator{
 
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
-        for (Orientation orientation : this.possibleOrientations) {
-            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, orientation.getVector());
+        for (Position2D vector : this.possibleVectors) {
+            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, vector);
 
-            if (nextCell != null && containsPiecesOfDifferentTeams(nextCell, startingCell)) {
+            if (nextCell != null && !this.containsPiecesOfSameTeams(nextCell, startingCell)) {
                 accessibleCells.add(nextCell);
             }
         }

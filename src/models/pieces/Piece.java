@@ -1,28 +1,31 @@
 package models.pieces;
 
 import models.Cell;
-import models.ChessBoard;
 import models.Game;
 import models.decorators.AccessibleCellsDecorator;
 
 import java.util.List;
 
 public abstract class Piece {
-    private final int team;
     private final AccessibleCellsDecorator decorator;
+    private final int team;
+    protected int value;
     private int moveCount;
     private int lastMoveTurn;
-    protected int value;
 
-    public Piece(int team, AccessibleCellsDecorator decorator, int value) {
-        this.team = team;
+    public Piece(int team, int value, AccessibleCellsDecorator decorator) {
         this.decorator = decorator;
+        this.team = team;
         this.value = value;
-        this.lastMoveTurn = -1;
         this.moveCount = 0;
+        this.lastMoveTurn = -1;
     }
 
     public abstract String getPieceName();
+
+    public List<Cell> getAccessibleCells(Game game) {
+        return decorator.getAccessibleCells(game, this);
+    }
 
     public void signalPieceJustMoved(int turn) {
         this.moveCount++;
@@ -33,8 +36,8 @@ public abstract class Piece {
         return team;
     }
 
-    public List<Cell> getAccessibleCells(Game game) {
-        return decorator.getAccessibleCells(game, this);
+    public int getValue() {
+        return this.value;
     }
 
     public int getMoveCount() {
@@ -52,15 +55,11 @@ public abstract class Piece {
         return this.lastMoveTurn;
     }
 
-    public int getValue() {
-        return this.value;
-    }
-
     @Override
     public String toString() {
         return "Piece{" +
                 "team=" + team +
-                "value=" + value +
+                ", value=" + value +
                 '}';
     }
 }
