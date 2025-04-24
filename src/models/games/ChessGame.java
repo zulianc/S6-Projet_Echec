@@ -15,7 +15,6 @@ import static java.lang.Math.abs;
 
 public class ChessGame extends Game {
     protected Piece promotionPiece;
-    private boolean isStaleMate = false;
 
     public ChessGame(List<Player> players) {
         super(players);
@@ -128,7 +127,7 @@ public class ChessGame extends Game {
         checkCastling(m);
         checkPromotion(destinationCell);
 
-        movedPiece.pieceHasMoved(this.turn);
+        movedPiece.signalPieceJustMoved(this.turn);
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
     }
@@ -313,9 +312,5 @@ public class ChessGame extends Game {
             this.board.setPieceToCell(new ChessPawn(1 - destinationCell.getPiece().getTeam()), pieceToRevive);
             pieceToRevive.getPiece().signalPieceJustMoved(this.turn - 1);
         }
-    }
-
-    public boolean isStaleMate() {
-        return isStaleMate;
     }
 }

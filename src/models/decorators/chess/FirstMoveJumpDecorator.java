@@ -22,8 +22,6 @@ public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
     protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
         List<Cell> accessibleCells = new LinkedList<>();
 
-        System.out.println(piece);
-
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
         if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMoved()) {

@@ -19,6 +19,7 @@ public abstract class Game extends Observable implements Runnable {
     protected int turn;
     protected List<String> moves = new ArrayList<>();
     public PieceMove playerMove;
+    protected boolean isStaleMate = false;
 
     public Game(List<Player> players) {
         this.players = players;
@@ -119,5 +120,9 @@ public abstract class Game extends Observable implements Runnable {
 
     public List<Player> getPlayers() {
         return this.players;
+    }
+
+    public boolean isStaleMate() {
+        return isStaleMate;
     }
 }
