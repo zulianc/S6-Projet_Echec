@@ -4,7 +4,7 @@ import models.boards.Cell;
 import models.decorators.AccessibleCellsDecorator;
 import models.games.ChessGame;
 import models.games.Game;
-import models.boards.Move;
+import models.boards.PieceMove;
 import models.pieces.Piece;
 import models.pieces.chess.Rook;
 import structure.Orientation;
@@ -100,7 +100,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                         blockedPath = true;
                                     } else {
                                         if (!reachedFinalKingCell) {
-                                            if (!((ChessGame) game).isntInCheckIfMove(new Move(startingCell, nextCell))) {
+                                            if (!((ChessGame) game).isntInCheckIfMove(new PieceMove(startingCell, nextCell))) {
                                                 blockedPath = true;
                                             }
                                         }

@@ -2,7 +2,7 @@ package models.games;
 
 import models.boards.Cell;
 import models.boards.GameBoard;
-import models.boards.Move;
+import models.boards.PieceMove;
 import models.pieces.Piece;
 import models.players.Player;
 import structure.Observable;
@@ -11,12 +11,12 @@ import structure.Observer;
 import java.util.List;
 
 public abstract class Game extends Observable implements Runnable {
-    protected final GameBoard chessBoard;
+    protected final GameBoard board;
     protected final List<Player> players;
     protected Player actualPlayer;
     protected int turn;
     protected Piece promotionPiece;
-    public Move playerMove;
+    public PieceMove playerMove;
 
     public Game(List<Player> players) {
         this.players = players;
@@ -26,7 +26,7 @@ public abstract class Game extends Observable implements Runnable {
             }
             player.startGame(this);
         }
-        this.chessBoard = new GameBoard(8);
+        this.board = new GameBoard(8);
         this.turn = 0;
     }
 
@@ -41,7 +41,7 @@ public abstract class Game extends Observable implements Runnable {
             this.turn++;
             this.actualPlayer = this.nextPlayer();
             if (this.actualPlayer.isAlive()) {
-                Move m;
+                PieceMove m;
                 do {
                     this.updateAll();
                     m = this.actualPlayer.getMove();
@@ -55,7 +55,7 @@ public abstract class Game extends Observable implements Runnable {
         updateAllWithParams(s);
     }
 
-    public void sendMove(Move m) {
+    public void sendMove(PieceMove m) {
         this.playerMove = m;
         synchronized (this) {
             notify();
@@ -66,20 +66,20 @@ public abstract class Game extends Observable implements Runnable {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.players.size());
     }
 
+    public abstract List<Cell> getValidCells(Piece piece, Player p);
+
     protected abstract void initializePieces();
 
     protected abstract void checkIfPlayerLost(Player p);
 
     public abstract boolean hasGameEnded();
 
-    public abstract List<Cell> getValidCells(Piece piece, Player p);
+    protected abstract boolean isValidMove(PieceMove m, Player p);
 
-    protected abstract boolean isValidMove(Move m, Player p);
-
-    protected abstract void applyMove(Move m);
+    protected abstract void applyMove(PieceMove m);
 
     public GameBoard getBoard() {
-        return this.chessBoard;
+        return this.board;
     }
 
     public int getPlayerCount() {

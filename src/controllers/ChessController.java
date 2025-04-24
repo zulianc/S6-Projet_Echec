@@ -3,7 +3,7 @@ package controllers;
 import models.boards.Cell;
 import models.games.ChessGame;
 import models.games.Game;
-import models.boards.Move;
+import models.boards.PieceMove;
 import views.MainFrame;
 import views.VArrow;
 import views.VCell;
@@ -89,7 +89,7 @@ public class ChessController {
 
     private void selectSecondCell(VCell vCell) {
         after = vCell.getCell();
-        gameModel.sendMove(new Move(before, after));
+        gameModel.sendMove(new PieceMove(before, after));
         this.unselectCells();
     }
 
