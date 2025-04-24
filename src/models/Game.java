@@ -19,6 +19,7 @@ public class Game extends Observable implements Runnable {
     public Move move;
     private Piece promotionPiece;
     private int turn;
+    private boolean isStaleMate = false;
 
     public Game(List<Player> players) {
         this.players     = players;
@@ -219,10 +220,12 @@ public class Game extends Observable implements Runnable {
     }
 
     public boolean isInCheckmate(Player p) {
+        this.isStaleMate = false;
         return this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
 
     public boolean isInStalemate(Player p) {
+        this.isStaleMate = true;
         return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
 
@@ -353,5 +356,9 @@ public class Game extends Observable implements Runnable {
 
     public int getTurn() {
         return this.turn;
+    }
+
+    public boolean isStaleMate() {
+        return isStaleMate;
     }
 }

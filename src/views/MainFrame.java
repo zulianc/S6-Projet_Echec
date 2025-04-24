@@ -107,11 +107,18 @@ public class MainFrame extends JFrame implements Observer {
                     String winnerName = winner.getName();
                     int winnerTeamNum = winner.getTeam();
                     int totalPlayer = this.gameModel.getPlayerCount();
-                    String teamName = "";
+                    String teamWinning = "";
                     if (totalPlayer == 2) {
-                        teamName = winnerTeamNum == 0 ? "blancs" : "noirs";
+                        teamWinning = winnerTeamNum == 0 ? "\nLes blancs ont gagnés" : "\nLes noirs ont gagnés";
                     }
-                    String finalMessage = "Partie finie\nVictoire de "+winnerName+"\nLes "+teamName+" ont gagnés";
+                    String winningMessage = "\nVictoire de "+winnerName+teamWinning;
+
+                    String finalMessage;
+                    if (!this.gameModel.isStaleMate()) {
+                        finalMessage = "Partie finie" + winningMessage;
+                    } else {
+                        finalMessage = "Partie finie\nC'est une égalité";
+                    }
 
                     JOptionPane.showMessageDialog(this, finalMessage);
                     this.dispose();
