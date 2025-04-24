@@ -14,4 +14,9 @@ public class ChessPawn extends Piece {
     public String getPieceName() {
         return "pawn";
     }
+
+    @Override
+    public String getPieceCode() {
+        return "";
+    }
 }

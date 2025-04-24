@@ -13,4 +13,9 @@ public class King extends Piece {
     public String getPieceName() {
         return "king";
     }
+
+    @Override
+    public String getPieceCode() {
+        return "K";
+    }
 }

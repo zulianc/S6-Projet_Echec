@@ -1,5 +1,6 @@
 package models.games;
 
+import models.PGNConverter;
 import models.boards.Cell;
 import models.boards.PieceMove;
 import models.pieces.*;
@@ -13,6 +14,8 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 public class ChessGame extends Game {
+    protected Piece promotionPiece;
+    private boolean isStaleMate = false;
 
     public ChessGame(List<Player> players) {
         super(players);
@@ -113,13 +116,19 @@ public class ChessGame extends Game {
 
     @Override
     protected void applyMove(PieceMove m) {
+        this.applyMove(m, true);
+    }
+
+    private void applyMove(PieceMove m, boolean recordMove) {
+        if (recordMove) this.moves.add(PGNConverter.convertMoveToPGN(this, m));
+
         Piece movedPiece = this.tryMove(m);
 
         Cell destinationCell = m.destination();
-        checkCastling(destinationCell);
+        checkCastling(m);
         checkPromotion(destinationCell);
 
-        movedPiece.signalPieceJustMoved(this.turn);
+        movedPiece.pieceHasMoved(this.turn);
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
     }
@@ -201,12 +210,32 @@ public class ChessGame extends Game {
         return !isInCheck;
     }
 
+    public boolean wouldBeInCheckIfMove(PieceMove m) {
+        Player actualPlayer = this.actualPlayer;
+        Piece deadPiece = m.destination().getPiece();
+        this.tryMove(m);
+        boolean isInCheck = this.isInCheck(this.nextPlayer());
+        this.undoMove(m, deadPiece);
+        this.actualPlayer = actualPlayer;
+        return isInCheck;
+    }
+
     public boolean isInCheckmate(Player p) {
-        return this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        boolean isInCheckmate = this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        if (isInCheckmate) {
+            this.isStaleMate = false;
+        }
+
+        return isInCheckmate;
     }
 
     public boolean isInStalemate(Player p) {
-        return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        boolean isInStalemate = !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        if (isInStalemate) {
+            this.isStaleMate = true;
+        }
+
+        return isInStalemate;
     }
 
     private boolean playerHasNoAvailableMove(Player p) {
@@ -219,22 +248,22 @@ public class ChessGame extends Game {
         return true;
     }
 
-    private void checkCastling(Cell destinationCell) {
+    private void checkCastling(PieceMove m) {
+        Cell destinationCell = m.destination();
         if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMoved()) {
             int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
-            int kingX = this.getBoard().getPositionOfCell(destinationCell).getX();
 
             Cell rookToMoveCell;
             Cell whereMoveRookCell;
-            if (kingX == 2 || kingX == 6) {
-                if (kingX == 2) {
+            if (Math.abs(this.board.getDistanceFromMove(m).getX()) == 2) {
+                if (this.board.getDistanceFromMove(m).getX() < 0) {
                     rookToMoveCell    = this.board.getCell(0, kingY);
                     whereMoveRookCell = this.board.getCell(3, kingY);
                 } else {
                     rookToMoveCell    = this.board.getCell(7, kingY);
                     whereMoveRookCell = this.board.getCell(5, kingY);
                 }
-                applyMove(new PieceMove(rookToMoveCell, whereMoveRookCell));
+                applyMove(new PieceMove(rookToMoveCell, whereMoveRookCell), false);
             }
         }
     }
@@ -284,5 +313,9 @@ public class ChessGame extends Game {
             this.board.setPieceToCell(new ChessPawn(1 - destinationCell.getPiece().getTeam()), pieceToRevive);
             pieceToRevive.getPiece().signalPieceJustMoved(this.turn - 1);
         }
+    }
+
+    public boolean isStaleMate() {
+        return isStaleMate;
     }
 }

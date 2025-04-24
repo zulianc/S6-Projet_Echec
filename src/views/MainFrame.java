@@ -2,6 +2,7 @@ package views;
 
 import controllers.ChessController;
 import models.games.Game;
+import models.players.Player;
 import structure.Observer;
 
 import javax.swing.*;
@@ -102,8 +103,26 @@ public class MainFrame extends JFrame implements Observer {
                 }
                 case "gameEnded" -> {
                     this.board.unmarkValidMoveCells();
-                    JOptionPane.showMessageDialog(this, "Partie finie");
-                    this.setVisible(false);
+                    Player winner = this.gameModel.getActualPlayer();
+                    String winnerName = winner.getName();
+                    int winnerTeamNum = winner.getTeam();
+                    int totalPlayer = this.gameModel.getPlayerCount();
+                    String teamWinning = "";
+                    if (totalPlayer == 2) {
+                        teamWinning = winnerTeamNum == 0 ? "\nLes blancs ont gagnés" : "\nLes noirs ont gagnés";
+                    }
+                    String winningMessage = "\nVictoire de "+winnerName+teamWinning;
+
+                    String finalMessage;
+                    if (!this.gameModel.isStaleMate()) {
+                        finalMessage = "Partie finie" + winningMessage;
+                    } else {
+                        finalMessage = "Partie finie\nC'est une égalité";
+                    }
+
+                    JOptionPane.showMessageDialog(this, finalMessage);
+                    this.dispose();
+                    System.exit(0);
                 }
                 case "unselectAll" -> this.board.unselectAll();
             }

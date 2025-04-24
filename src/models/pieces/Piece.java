@@ -23,6 +23,8 @@ public abstract class Piece {
 
     public abstract String getPieceName();
 
+    public abstract String getPieceCode();
+
     public List<Cell> getAccessibleCells(Game game) {
         return decorator.getAccessibleCells(game, this);
     }
@@ -63,6 +65,4 @@ public abstract class Piece {
                 ", value=" + value +
                 '}';
     }
-
-    public abstract String getPieceCode();
 }

@@ -115,4 +115,45 @@ public class GameBoard {
     public int getBoardSize() {
         return this.boardSize;
     }
+
+    public String getCellCoordinates(Cell cell) {
+        Position2D pos = getPositionOfCell(cell);
+        int y = pos.getY();
+        int x = pos.getX();
+        int xToChar = x + 97;
+        int cordY = -y + 8;
+
+        char xChar = (char) xToChar;
+
+        return String.valueOf(xChar) + cordY;
+    }
+
+    public String getCellColumn(Cell cell) {
+        Position2D pos = getPositionOfCell(cell);
+        int x = pos.getX();
+        int xToChar = x + 97;
+
+        char xChar = (char) xToChar;
+
+        return String.valueOf(xChar);
+    }
+
+    public String getCellRow(Cell cell) {
+        Position2D pos = getPositionOfCell(cell);
+        int y = pos.getY();
+        int cordY = -y + 8;
+
+        return "" + cordY;
+    }
+
+    public Position2D getDistanceFromMove(PieceMove m) {
+        Position2D sourcePosition      = this.getPositionOfCell(m.source());
+        Position2D destinationPosition = this.getPositionOfCell(m.destination());
+
+        return new Position2D(destinationPosition.getX() - sourcePosition.getX(), destinationPosition.getY() - sourcePosition.getY());
+    }
+
+    public boolean isCastling(PieceMove m) {
+        return m.source().getPiece().getPieceName().equals("king") && Math.abs(getDistanceFromMove(m).getX()) == 2;
+    }
 }
