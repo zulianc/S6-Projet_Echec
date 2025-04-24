@@ -155,7 +155,7 @@ public class Game extends Observable implements Runnable {
     public List<Cell> getValidCells(Piece piece, Player p) {
         Cell startCell = this.chessBoard.getCellOfPiece(piece);
 
-        List<Cell> accessibleCells = piece.getAccessibleCells(this.chessBoard);
+        List<Cell> accessibleCells = piece.getAccessibleCells(this);
         List<Cell> validCells = new ArrayList<>();
         for (Cell cell : accessibleCells) {
 
@@ -176,7 +176,7 @@ public class Game extends Observable implements Runnable {
         if (sourceCell.hasPiece()) {
             Piece pieceToMove = sourceCell.getPiece();
             if (pieceToMove.getTeam() == p.getTeam()) {
-                List<Cell> accessibleCells = pieceToMove.getAccessibleCells(chessBoard);
+                List<Cell> accessibleCells = pieceToMove.getAccessibleCells(this);
                 if (accessibleCells.contains(destinationCell)) {
                     Piece deadPiece = destinationCell.getPiece();
                     this.tryMove(m);
@@ -193,7 +193,7 @@ public class Game extends Observable implements Runnable {
         List<Piece> pieces = this.chessBoard.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() != p.getTeam()) {
-                for (Cell cell : piece.getAccessibleCells(chessBoard)) {
+                for (Cell cell : piece.getAccessibleCells(this)) {
                     if (cell.getPiece() instanceof King) {
                         return true;
                     }

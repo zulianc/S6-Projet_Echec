@@ -25,10 +25,10 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
         for (Orientation orientation : this.possibleOrientations) {
-            Orientation pieceOrientation = orientation;
+            Orientation pieceOrientation = orientation.copy();
             pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
 
-            Orientation capturedPawnOrientation = pieceOrientation;
+            Orientation capturedPawnOrientation = pieceOrientation.copy();
             capturedPawnOrientation.add(Orientation.BACK);
             capturedPawnOrientation.rotate(piece.getTeam(), game.getPlayerCount());
 

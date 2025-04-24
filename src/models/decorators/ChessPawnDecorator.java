@@ -25,7 +25,7 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator{
 
         // EATING
         for (Orientation orientation : this.possibleOrientations) {
-            Orientation pieceOrientation = orientation;
+            Orientation pieceOrientation = orientation.copy();
             pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
 
             Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceOrientation.getVector());

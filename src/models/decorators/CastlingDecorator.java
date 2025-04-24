@@ -1,7 +1,6 @@
 package models.decorators;
 
 import models.Cell;
-import models.ChessBoard;
 import models.Game;
 import models.Move;
 import models.pieces.Piece;
@@ -40,9 +39,8 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
             if (piece.getTeam() == game.getActualPlayer().getTeam()) {
                 for (Orientation orientation : this.possibleOrientations) {
                     boolean longCastling = (orientation == Orientation.LEFT);
-                    boolean canCastle = true;
 
-                    Orientation pieceOrientation = orientation;
+                    Orientation pieceOrientation = orientation.copy();
                     // The kings' files are the same in 2 players chess but not in 4 players
                     if (game.getPlayerCount() == 4) {
                         pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
@@ -64,9 +62,9 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                             }
                         } while (!endOfBoard);
 
-                        Orientation inversedOrientation = pieceOrientation;
+                        Orientation inversedOrientation = pieceOrientation.copy();
                         inversedOrientation.rotate180Clockwise();
-                        Orientation kingOrientation = inversedOrientation;
+                        Orientation kingOrientation = inversedOrientation.copy();
                         if (longCastling) {
                             kingOrientation.add(inversedOrientation);
                         }

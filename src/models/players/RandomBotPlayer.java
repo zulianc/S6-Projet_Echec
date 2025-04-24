@@ -20,7 +20,7 @@ public class RandomBotPlayer extends Player implements Observer {
         List<Piece> piecesToMove = this.game.getBoard().getAllPiecesOfTeam(this.team);
         List<Move> accessibleCells = new ArrayList<>();
         for (Piece piece : piecesToMove) {
-            Cell sourceCell = piece.getCell();
+            Cell sourceCell = this.game.getBoard().getCellOfPiece(piece);
 
             List<Cell> accessibleCellsForOnePiece = this.game.getValidCells(piece, this);
             if (accessibleCellsForOnePiece != null) {

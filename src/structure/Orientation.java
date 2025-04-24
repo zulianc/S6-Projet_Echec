@@ -1,6 +1,9 @@
 package structure;
 
+import java.awt.*;
+
 public enum Orientation {
+    NULL(            new Position( 0,  0)),
     FRONT(           new Position( 0, -1)),
     LONG_FRONT(      new Position( 0, -2)),
     BACK(            new Position( 0,  1)),
@@ -18,6 +21,12 @@ public enum Orientation {
 
     Orientation(Position vector) {
         this.vector = vector;
+    }
+
+    public Orientation copy() {
+        Orientation base = Orientation.NULL;
+        base.add(this);
+        return base;
     }
 
     public void add(Orientation orientation) {

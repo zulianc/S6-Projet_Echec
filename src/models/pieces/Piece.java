@@ -2,6 +2,7 @@ package models.pieces;
 
 import models.Cell;
 import models.ChessBoard;
+import models.Game;
 import models.decorators.AccessibleCellsDecorator;
 
 import java.util.List;
@@ -32,8 +33,8 @@ public abstract class Piece {
         return team;
     }
 
-    public List<Cell> getAccessibleCells(ChessBoard chessBoard) {
-        return decorator.getAccessibleCells(chessBoard, this.cell);
+    public List<Cell> getAccessibleCells(Game game) {
+        return decorator.getAccessibleCells(game, this);
     }
 
     public int getMoveCount() {

@@ -57,7 +57,7 @@ public class CalculatorBotPlayer extends Player implements Observer {
         List<Move> bestMoves = new ArrayList<>();
         int bestMoveValue = -1;
         for (Piece piece : piecesToMove) {
-            Cell sourceCell = piece.getCell();
+            Cell sourceCell = this.game.getBoard().getCellOfPiece(piece);
 
             List<Cell> accessibleCellsForOnePiece = this.game.getValidCells(piece, this);
             if (accessibleCellsForOnePiece != null) {
