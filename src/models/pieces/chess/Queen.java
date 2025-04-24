@@ -1,7 +1,8 @@
-package models.pieces;
+package models.pieces.chess;
 
-import models.decorators.DiagonalsDecorator;
-import models.decorators.LinesDecorator;
+import models.decorators.chess.DiagonalsDecorator;
+import models.decorators.chess.LinesDecorator;
+import models.pieces.Piece;
 
 public class Queen extends Piece {
     public Queen(int team) {

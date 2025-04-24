@@ -1,11 +1,14 @@
 package models;
 
+import models.boards.GameBoard;
+import models.boards.Move;
+
 public class PGNConverter {
-    public static String convertMoveToPGN(ChessBoard chessBoard, Move move) {
+    public static String convertMoveToPGN(GameBoard chessBoard, Move move) {
         return null;
     }
 
-    public static Move convertPGNToMove(ChessBoard chessBoard, String pgn) {
+    public static Move convertPGNToMove(GameBoard chessBoard, String pgn) {
         return null;
     }
 }

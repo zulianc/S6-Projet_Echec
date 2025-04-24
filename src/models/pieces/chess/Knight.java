@@ -1,6 +1,7 @@
-package models.pieces;
+package models.pieces.chess;
 
-import models.decorators.KnightDecorator;
+import models.decorators.chess.KnightDecorator;
+import models.pieces.Piece;
 
 public class Knight extends Piece {
     public Knight(int team) {

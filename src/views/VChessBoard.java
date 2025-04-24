@@ -1,9 +1,9 @@
 package views;
 
 import controllers.ChessController;
-import models.Cell;
-import models.ChessBoard;
-import models.Game;
+import models.boards.Cell;
+import models.boards.GameBoard;
+import models.games.Game;
 import structure.Observer;
 import structure.Position2D;
 
@@ -28,7 +28,7 @@ public class VChessBoard extends JPanel implements Observer {
     public VChessBoard(int size, Game model, ChessController controller, List<Color> baseColors) {
         this.model = model;
         this.controller = controller;
-        this.cellSize = size / ChessBoard.CHESS_BOARD_SIZE;
+        this.cellSize = size / this.model.getBoard().getBoardSize();
         this.setPreferredSize(new Dimension(size, size));
 
         this.baseColors = new ArrayList<>(baseColors);
@@ -64,7 +64,7 @@ public class VChessBoard extends JPanel implements Observer {
     private VCell collectVCellFromEvent(MouseEvent e) {
         int caseX = (int) ((e.getPoint().getX() - 1) / cellSize);
         int caseY = (int) ((e.getPoint().getY() - 1) / cellSize);
-        int index = caseY * ChessBoard.CHESS_BOARD_SIZE + caseX;
+        int index = caseY * this.model.getBoard().getBoardSize() + caseX;
 
         return vCells.get(index);
     }
@@ -72,8 +72,8 @@ public class VChessBoard extends JPanel implements Observer {
     private void generateCells() {
         this.vCells = new ArrayList<>();
         Color color;
-        for (int y = 0; y < ChessBoard.CHESS_BOARD_SIZE; y++) {
-            for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
+        for (int y = 0; y < this.model.getBoard().getBoardSize(); y++) {
+            for (int x = 0; x < this.model.getBoard().getBoardSize(); x++) {
                 Cell cell = this.model.getBoard().getCell(x, y);
                 color = ((x+y) % 2 == 0) ? this.baseColors.get(0) : this.baseColors.get(1) ;
                 vCells.add(new VCell(cell, color, cellSize));

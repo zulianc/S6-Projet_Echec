@@ -1,6 +1,6 @@
 package views;
 
-import models.Cell;
+import models.boards.Cell;
 import structure.Position2D;
 
 import java.awt.*;

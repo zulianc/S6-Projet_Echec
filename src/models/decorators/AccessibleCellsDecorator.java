@@ -1,7 +1,7 @@
 package models.decorators;
 
-import models.Cell;
-import models.Game;
+import models.boards.Cell;
+import models.games.Game;
 import models.pieces.Piece;
 import structure.Position2D;
 

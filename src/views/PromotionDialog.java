@@ -1,10 +1,10 @@
 package views;
 
 
-import models.pieces.Bishop;
-import models.pieces.Knight;
-import models.pieces.Queen;
-import models.pieces.Rook;
+import models.pieces.chess.Bishop;
+import models.pieces.chess.Knight;
+import models.pieces.chess.Queen;
+import models.pieces.chess.Rook;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,7 +1,8 @@
 package models.players;
 
-import models.Cell;
-import models.Move;
+import models.boards.Cell;
+import models.boards.Move;
+import models.games.ChessGame;
 import models.pieces.Piece;
 import structure.Observer;
 
@@ -52,7 +53,7 @@ public class RandomBotPlayer extends Player implements Observer {
         if (params instanceof String[]) {
             String signal = (String) params[0];
             if (signal.equals("botPromotion")) {
-                this.game.sendPromotion("queen");
+                ((ChessGame) this.game).sendPromotion("queen");
             }
         }
     }

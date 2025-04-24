@@ -1,7 +1,7 @@
 package models.pieces;
 
-import models.Cell;
-import models.Game;
+import models.boards.Cell;
+import models.games.Game;
 import models.decorators.AccessibleCellsDecorator;
 
 import java.util.List;
@@ -58,7 +58,8 @@ public abstract class Piece {
     @Override
     public String toString() {
         return "Piece{" +
-                "team=" + team +
+                "name=" + this.getPieceName() +
+                ", team=" + team +
                 ", value=" + value +
                 '}';
     }

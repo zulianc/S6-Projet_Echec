@@ -1,7 +1,7 @@
 package views;
 
 import controllers.ChessController;
-import models.Game;
+import models.games.Game;
 import structure.Observer;
 
 import javax.swing.*;

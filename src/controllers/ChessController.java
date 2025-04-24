@@ -1,8 +1,9 @@
 package controllers;
 
-import models.Cell;
-import models.Game;
-import models.Move;
+import models.boards.Cell;
+import models.games.ChessGame;
+import models.games.Game;
+import models.boards.Move;
 import views.MainFrame;
 import views.VArrow;
 import views.VCell;
@@ -101,7 +102,6 @@ public class ChessController {
     }
 
     public void promotionControl(String result) {
-        gameModel.sendPromotion(result);
+        ((ChessGame) gameModel).sendPromotion(result);
     }
-
 }

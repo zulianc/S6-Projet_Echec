@@ -1,4 +1,4 @@
-package models;
+package models.boards;
 
 import models.pieces.Piece;
 

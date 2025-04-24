@@ -1,6 +1,7 @@
-package models.pieces;
+package models.pieces.chess;
 
-import models.decorators.LinesDecorator;
+import models.decorators.chess.LinesDecorator;
+import models.pieces.Piece;
 
 public class Rook extends Piece {
     public Rook(int team) {

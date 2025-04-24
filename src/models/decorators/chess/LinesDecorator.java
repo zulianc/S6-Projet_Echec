@@ -1,7 +1,8 @@
-package models.decorators;
+package models.decorators.chess;
 
-import models.Cell;
-import models.Game;
+import models.boards.Cell;
+import models.decorators.AccessibleCellsDecorator;
+import models.games.Game;
 import models.pieces.Piece;
 import structure.Orientation;
 import structure.Position2D;

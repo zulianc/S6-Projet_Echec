@@ -1,6 +1,7 @@
 package views;
 
-import models.Game;
+import models.games.ChessGame;
+import models.games.Game;
 import models.players.CalculatorBotPlayer;
 import models.players.HumanPlayer;
 import models.players.Player;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameModeSelectionFrame extends JFrame {
-
     private Game game;
     private boolean needSetUpRotate = false;
 
@@ -30,11 +30,10 @@ public class GameModeSelectionFrame extends JFrame {
     }
 
     private void build() {
-
         List<Player> playersTmp = new ArrayList<>();
         playersTmp.add(new HumanPlayer("Bernard", 0));
         playersTmp.add(new HumanPlayer("Bernardette", 1));
-        this.game = new Game(playersTmp);
+        this.game = new ChessGame(playersTmp);
 
         this.humanDuoBtn     = new JButton(" Mode 1v1 ");
         this.botDuoBtn       = new JButton("Mode 1vBot");
@@ -66,7 +65,7 @@ public class GameModeSelectionFrame extends JFrame {
 
             this.needSetUpRotate = true;
 
-            this.game = new Game(players);
+            this.game = new ChessGame(players);
             this.startGame();
         });
 
@@ -75,7 +74,7 @@ public class GameModeSelectionFrame extends JFrame {
             players.add(new HumanPlayer("joueur", 0));
             players.add(new CalculatorBotPlayer(1));
 
-            this.game = new Game(players);
+            this.game = new ChessGame(players);
             this.startGame();
         });
 
@@ -84,7 +83,7 @@ public class GameModeSelectionFrame extends JFrame {
             players.add(new CalculatorBotPlayer(0));
             players.add(new RandomBotPlayer(1));
 
-            this.game = new Game(players);
+            this.game = new ChessGame(players);
             this.startGame();
         });
 

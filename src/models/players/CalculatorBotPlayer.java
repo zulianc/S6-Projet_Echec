@@ -1,8 +1,9 @@
 package models.players;
 
-import models.Cell;
-import models.ChessBoard;
-import models.Move;
+import models.boards.Cell;
+import models.boards.GameBoard;
+import models.boards.Move;
+import models.games.ChessGame;
 import models.pieces.Piece;
 import structure.Observer;
 import structure.Position2D;
@@ -34,12 +35,12 @@ public class CalculatorBotPlayer extends Player implements Observer {
     }
 
     private void updateWeightedMatrix() {
-        ChessBoard board = this.game.getBoard();
+        GameBoard board = this.game.getBoard();
 
         setupMatrix();
 
-        for (int x = 0; x < ChessBoard.CHESS_BOARD_SIZE; x++) {
-            for (int y = 0; y < ChessBoard.CHESS_BOARD_SIZE; y++) {
+        for (int x = 0; x < this.weightedMatrix.length; x++) {
+            for (int y = 0; y < this.weightedMatrix.length; y++) {
                 Piece currentPiece = board.getCell(x, y).getPiece();
                 if (currentPiece != null && currentPiece.getTeam() != this.team) {
                     this.weightedMatrix[x][y] += currentPiece.getValue();
@@ -96,8 +97,8 @@ public class CalculatorBotPlayer extends Player implements Observer {
 
     private void printWeightedMatrix() {
         System.out.println("Weighted Matrix : ");
-        for (int i = 0; i < ChessBoard.CHESS_BOARD_SIZE; i++) {
-            for (int j = 0; j < ChessBoard.CHESS_BOARD_SIZE; j++) {
+        for (int i = 0; i < this.weightedMatrix.length; i++) {
+            for (int j = 0; j < this.weightedMatrix.length; j++) {
                 System.out.print(this.weightedMatrix[i][j] + " ");
             }
             System.out.println();
@@ -114,7 +115,7 @@ public class CalculatorBotPlayer extends Player implements Observer {
         if (params instanceof String[]) {
             String signal = (String) params[0];
             if (signal.equals("botPromotion")) {
-                this.game.sendPromotion("queen");
+                ((ChessGame) this.game).sendPromotion("queen");
             }
         }
     }

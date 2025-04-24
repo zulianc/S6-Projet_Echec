@@ -1,6 +1,6 @@
 package models.players;
 
-import models.Move;
+import models.boards.Move;
 
 public class HumanPlayer extends Player {
 
@@ -18,7 +18,7 @@ public class HumanPlayer extends Player {
             synchronized (game) {
                 game.wait();
             }
-            return game.move;
+            return game.playerMove;
         } catch (Exception ignored) {
             return null;
         }

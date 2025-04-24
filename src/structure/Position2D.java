@@ -1,7 +1,5 @@
 package structure;
 
-import models.Cell;
-
 public class Position2D {
      private int x;
      private int y;

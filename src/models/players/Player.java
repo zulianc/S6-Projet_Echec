@@ -1,7 +1,7 @@
 package models.players;
 
-import models.Game;
-import models.Move;
+import models.games.Game;
+import models.boards.Move;
 
 public abstract class Player {
     protected final String name;

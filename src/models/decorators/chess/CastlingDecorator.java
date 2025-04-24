@@ -1,10 +1,12 @@
-package models.decorators;
+package models.decorators.chess;
 
-import models.Cell;
-import models.Game;
-import models.Move;
+import models.boards.Cell;
+import models.decorators.AccessibleCellsDecorator;
+import models.games.ChessGame;
+import models.games.Game;
+import models.boards.Move;
 import models.pieces.Piece;
-import models.pieces.Rook;
+import models.pieces.chess.Rook;
 import structure.Orientation;
 import structure.Position2D;
 
@@ -98,7 +100,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                         blockedPath = true;
                                     } else {
                                         if (!reachedFinalKingCell) {
-                                            if (!game.isntInCheckIfMove(new Move(startingCell, nextCell))) {
+                                            if (!((ChessGame) game).isntInCheckIfMove(new Move(startingCell, nextCell))) {
                                                 blockedPath = true;
                                             }
                                         }

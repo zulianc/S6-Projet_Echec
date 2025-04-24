@@ -1,7 +1,8 @@
-package models.decorators;
+package models.decorators.chess;
 
-import models.Cell;
-import models.Game;
+import models.boards.Cell;
+import models.decorators.AccessibleCellsDecorator;
+import models.games.Game;
 import models.pieces.Piece;
 import structure.Orientation;
 import structure.Position2D;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ChessPawnDecorator extends AccessibleCellsDecorator{
+public class ChessPawnDecorator extends AccessibleCellsDecorator {
     public ChessPawnDecorator(AccessibleCellsDecorator base) {
         super(base);
         this.possibleVectors = new ArrayList<>();

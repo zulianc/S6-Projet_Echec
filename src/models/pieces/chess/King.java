@@ -1,7 +1,8 @@
-package models.pieces;
+package models.pieces.chess;
 
-import models.decorators.CastlingDecorator;
-import models.decorators.KingDecorator;
+import models.decorators.chess.CastlingDecorator;
+import models.decorators.chess.KingDecorator;
+import models.pieces.Piece;
 
 public class King extends Piece {
     public King(int team) {
