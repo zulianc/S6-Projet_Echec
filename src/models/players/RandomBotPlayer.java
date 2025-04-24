@@ -12,8 +12,7 @@ import java.util.Random;
 public class RandomBotPlayer extends Player implements Observer {
 
     public RandomBotPlayer(int team) {
-        super(team);
-        this.name = "Random Bot"+team;
+        super("Random Bot " + team, team);
     }
 
     @Override

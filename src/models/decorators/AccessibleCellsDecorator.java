@@ -1,40 +1,42 @@
 package models.decorators;
 
 import models.Cell;
-import models.ChessBoard;
-import models.pieces.ChessPawn;
+import models.Game;
+import models.pieces.Piece;
 import structure.Orientation;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AccessibleCellsDecorator {
     protected AccessibleCellsDecorator base;
-    protected List<Orientation> orientationPossibles;
+    protected List<Orientation> possibleOrientations;
 
     protected AccessibleCellsDecorator(AccessibleCellsDecorator base) {
         this.base = base;
     }
 
-    protected abstract List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell);
+    protected abstract List<Cell> getDecoratorAccessibleCells(Game game, Piece piece);
 
-    public List<Cell> getAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
-        assert startingCell.hasPiece();
-        if (!startingCell.hasPiece()) {
-            throw new RuntimeException("Cannot access cells of a Piece");
+    public List<Cell> getAccessibleCells(Game game, Piece piece) {
+        if (piece == null) {
+            throw new RuntimeException("decorator: piece is null");
         }
-        List<Cell> cells = this.getDecoratorAccessibleCells(chessBoard, startingCell);
-        AccessibleCellsDecorator baseDecorator = this.base;
+
+        List<Cell> cells = new LinkedList<>();
+        AccessibleCellsDecorator baseDecorator = this;
         while (baseDecorator != null) {
-            cells.addAll(baseDecorator.getDecoratorAccessibleCells(chessBoard, startingCell));
+            cells.addAll(baseDecorator.getDecoratorAccessibleCells(game, piece));
             baseDecorator = baseDecorator.base;
         }
         return cells;
     }
 
-    protected boolean doesntContainsSameTeamPieces(Cell cell1, Cell cell2) {
-        if (!cell2.hasPiece()) {
-            throw new RuntimeException("Cannot access cells of a Piece");
-        }
-        return !cell1.hasPiece() || cell1.getPiece().getTeam() != cell2.getPiece().getTeam();
+    protected boolean containsPiecesOfDifferentTeams(Cell cell1, Cell cell2) {
+        return cell1.hasPiece() && cell2.hasPiece() && cell1.getPiece().getTeam() != cell2.getPiece().getTeam();
+    }
+
+    protected boolean containsPiecesOfSameTeams(Cell cell1, Cell cell2) {
+        return cell1.hasPiece() && cell2.hasPiece() && cell1.getPiece().getTeam() == cell2.getPiece().getTeam();
     }
 }

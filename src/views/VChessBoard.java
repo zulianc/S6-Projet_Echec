@@ -124,7 +124,7 @@ public class VChessBoard extends JPanel implements Observer {
 
     public Position getVCellPosition(VCell vCell) {
         int position = vCells.indexOf(vCell);
-        return Position.getPositionFromIndex(position);
+        return Position.getPositionFromIndex(position, 8, 8);
     }
 
     public void setRotating(boolean isRotating) {

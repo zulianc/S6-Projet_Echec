@@ -1,9 +1,9 @@
 package models.decorators;
 
 import models.Cell;
-import models.ChessBoard;
+import models.Game;
+import models.pieces.Piece;
 import structure.Orientation;
-import structure.Position;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,31 +12,34 @@ import java.util.List;
 public class ChessPawnDecorator extends AccessibleCellsDecorator{
     public ChessPawnDecorator(AccessibleCellsDecorator base) {
         super(base);
-        this.orientationPossibles = new ArrayList<>();
-        this.orientationPossibles.add(Orientation.FRONT_LEFT);
-        this.orientationPossibles.add(Orientation.FRONT_RIGHT);
+        this.possibleOrientations = new ArrayList<>();
+        this.possibleOrientations.add(Orientation.FRONT_LEFT);
+        this.possibleOrientations.add(Orientation.FRONT_RIGHT);
     }
 
     @Override
-    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
-        List<Position> orientationVectors = new LinkedList<>();
-        double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
-        int totalPlayer    = chessBoard.getGame().getPlayerCount();
-        int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
-        for (Orientation orientation : this.orientationPossibles) {
-            orientationVectors.add(Orientation.rotatingVector(orientation, rotationDegree));
-        }
-
+    protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
         List<Cell> accessibleCells = new LinkedList<>();
-        for (Position vector : orientationVectors) {
-            Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, vector);
 
-            if (nextCell != null && nextCell.hasPiece() && doesntContainsSameTeamPieces(nextCell, startingCell)) {
+        Cell startingCell = game.getBoard().getCellOfPiece(piece);
+
+        // EATING
+        for (Orientation orientation : this.possibleOrientations) {
+            Orientation pieceOrientation = orientation;
+            pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+
+            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceOrientation.getVector());
+
+            if (nextCell != null && containsPiecesOfDifferentTeams(nextCell, startingCell)) {
                 accessibleCells.add(nextCell);
             }
         }
 
-        Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, Orientation.rotatingVector(Orientation.FRONT, rotationDegree));
+        // MOVING
+        Orientation pieceOrientation = Orientation.FRONT;
+        pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+
+        Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceOrientation.getVector());
 
         if (nextCell != null && !nextCell.hasPiece()) {
             accessibleCells.add(nextCell);

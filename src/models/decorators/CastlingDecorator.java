@@ -2,7 +2,10 @@ package models.decorators;
 
 import models.Cell;
 import models.ChessBoard;
+import models.Game;
 import models.Move;
+import models.pieces.Piece;
+import models.pieces.Rook;
 import structure.Orientation;
 
 import java.util.ArrayList;
@@ -12,57 +15,117 @@ import java.util.List;
 public class CastlingDecorator extends AccessibleCellsDecorator {
     public CastlingDecorator (AccessibleCellsDecorator base) {
         super(base);
-        this.orientationPossibles = new ArrayList<>();
-        this.orientationPossibles.add(Orientation.LEFT);
-        this.orientationPossibles.add(Orientation.RIGHT);
+        this.possibleOrientations = new ArrayList<>();
+        this.possibleOrientations.add(Orientation.LEFT);
+        this.possibleOrientations.add(Orientation.RIGHT);
     }
 
     @Override
-    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
+    protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
+        /*
+        Castling rules for both normal chess and 960 chess:
+        - the king and rook must have never moved
+        - the rook and king's final positions are the same in both variants
+        - the king always starts with one rook to its left and one rook to its right in both variants
+        - every cell from the king's starting position to its end position must not be under attack
+        - every cell from the king and the rook's starting positions to their end positions must be empty
+         */
+
         List<Cell> accessibleCells = new LinkedList<>();
-        if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMoved()) {
-            if (startingCell.getPiece().getTeam() == chessBoard.getGame().getActualPlayer().getTeam()) {
-                for (Orientation orientation : this.orientationPossibles) {
-                    Cell cellPassingBy = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
-                    Cell cellStoppingAt = chessBoard.getCellAtRelativePosition(cellPassingBy, orientation.getVector());
 
-                    Cell rookCell = cellStoppingAt;
-                    boolean canCastle = false;
-                    boolean endOfBoard = false;
-                    do {
-                        rookCell = chessBoard.getCellAtRelativePosition(rookCell, orientation.getVector());
-                        if (rookCell == null) {
-                            endOfBoard = true;
-                        } else {
-                            canCastle = cellHasRockWithItCanDoCastling(startingCell, rookCell);
+        Cell startingCell = game.getBoard().getCellOfPiece(piece);
+
+        if (piece.hasNeverMoved()) {
+            // Check team to prevent infinite loop when checking for checks, works because castling is not a capturing move
+            if (piece.getTeam() == game.getActualPlayer().getTeam()) {
+                for (Orientation orientation : this.possibleOrientations) {
+                    boolean longCastling = (orientation == Orientation.LEFT);
+                    boolean canCastle = true;
+
+                    Orientation pieceOrientation = orientation;
+                    // The kings' files are the same in 2 players chess but not in 4 players
+                    if (game.getPlayerCount() == 4) {
+                        pieceOrientation.rotate(piece.getTeam(), game.getPlayerCount());
+                    }
+
+                    // STEP 1: find the final position of the king
+                    Cell finalKingCell;
+                    Cell finalRookCell;
+                    {
+                        Cell nextCell = startingCell;
+                        boolean endOfBoard = false;
+                        do {
+                            Cell followingCell = game.getBoard().getCellAtRelativePosition(nextCell, orientation.getVector());
+                            if (followingCell == null) {
+                                endOfBoard = true;
+                            }
+                            else {
+                                nextCell = followingCell;
+                            }
+                        } while (!endOfBoard);
+
+                        Orientation inversedOrientation = pieceOrientation;
+                        inversedOrientation.rotate180Clockwise();
+                        Orientation kingOrientation = inversedOrientation;
+                        if (longCastling) {
+                            kingOrientation.add(inversedOrientation);
                         }
-                    } while (!canCastle && !endOfBoard);
 
-                    if (canCastle) {
-                        if (cellPassingBy != null && cellStoppingAt != null) {
-                            if (cellPassingBy.getPiece() == null && cellStoppingAt.getPiece() == null) {
-                                Move goToStartingCell   = new Move(startingCell, startingCell);
-                                Move goToPassingByCell  = new Move(startingCell, cellPassingBy);
-                                Move goToStoppingAtCell = new Move(startingCell, cellStoppingAt);
+                        finalKingCell = game.getBoard().getCellAtRelativePosition(nextCell, kingOrientation.getVector());
 
-                                if (notInCheck(chessBoard, goToStartingCell, goToPassingByCell, goToStoppingAtCell)) {
-                                    accessibleCells.add(cellStoppingAt);
+                        kingOrientation.add(inversedOrientation);
+
+                        finalRookCell = game.getBoard().getCellAtRelativePosition(nextCell, kingOrientation.getVector());
+                    }
+
+                    // STEP 2: check for the rook's existence and that the path is clear
+                    {
+                        Cell nextCell = startingCell;
+                        boolean endOfBoard = false;
+                        boolean foundValidRook = false;
+                        boolean reachedFinalKingCell = false;
+                        boolean blockedPath = false;
+                        do {
+                            if (nextCell == null) {
+                                endOfBoard = true;
+                            } else {
+                                if (this.containsPiecesOfSameTeams(nextCell, startingCell)
+                                        && nextCell.getPiece() instanceof Rook
+                                        && nextCell.getPiece().hasNeverMoved()) {
+                                    foundValidRook = true;
+                                }
+                                else {
+                                    if (nextCell.hasPiece()) {
+                                        blockedPath = true;
+                                    } else {
+                                        if (!reachedFinalKingCell) {
+                                            if (!game.isntInCheckIfMove(new Move(startingCell, nextCell))) {
+                                                blockedPath = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (nextCell.equals(finalKingCell)) {
+                                    reachedFinalKingCell = true;
                                 }
                             }
+
+                            if (!endOfBoard) {
+                                nextCell = game.getBoard().getCellAtRelativePosition(nextCell, orientation.getVector());
+                            }
+                        } while (!(foundValidRook && reachedFinalKingCell) && !endOfBoard && !blockedPath);
+
+                        if (endOfBoard || blockedPath) {
+                            continue;
                         }
                     }
+
+                    accessibleCells.add(finalKingCell);
                 }
             }
         }
 
         return accessibleCells;
-    }
-
-    private boolean cellHasRockWithItCanDoCastling(Cell startingCell, Cell cellToTest) {
-        return cellToTest.hasPiece() && !doesntContainsSameTeamPieces(startingCell, cellToTest) && cellToTest.getPiece().getPieceName().equals("rook") && cellToTest.getPiece().hasNeverMoved();
-    }
-
-    private boolean notInCheck(ChessBoard chessBoard, Move goToStartingCell, Move goToPassingByCell, Move goToStoppingAtCell) {
-        return chessBoard.getGame().isntInCheckIfMove(goToStartingCell) && chessBoard.getGame().isntInCheckIfMove(goToPassingByCell) && chessBoard.getGame().isntInCheckIfMove(goToStoppingAtCell);
     }
 }

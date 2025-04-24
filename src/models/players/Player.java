@@ -4,15 +4,16 @@ import models.Game;
 import models.Move;
 
 public abstract class Player {
-    protected String name;
+    protected final String name;
     protected Game game;
     protected final int team;
-    protected boolean lost = false;
+    protected boolean alive;
 
     public Player(String name, Game game, int team) {
         this.name = name;
         this.game = game;
         this.team = team;
+        this.alive = false;
     }
 
     public Player(String name, int team) {
@@ -20,37 +21,29 @@ public abstract class Player {
     }
 
     public Player(int team) {
-        this(null, team);
+        this("unnamed player", team);
     }
 
     public abstract Move getMove();
+
+    public void startGame(Game game) {
+        this.game = game;
+        this.alive = true;
+    }
+
+    public void playerLostGame() {
+        alive = false;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-        this.lost = false;
-    }
-
     public int getTeam() {
         return team;
-    }
-
-    public void makePlayerLose() {
-        lost = true;
-    }
-
-    public boolean isAlive() {
-        return !lost;
     }
 }

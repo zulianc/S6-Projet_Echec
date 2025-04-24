@@ -16,9 +16,7 @@ public class CalculatorBotPlayer extends Player implements Observer {
     private int[][] weightedMatrix;
 
     public CalculatorBotPlayer(int team) {
-        super(team);
-        this.name = "Calculator Bot"+team;
-
+        super("Calculator Bot " + team, team);
         setupMatrix();
     }
 

@@ -27,9 +27,9 @@ public class Game extends Observable implements Runnable {
             if (player instanceof Observer) {
                 this.addObserver((Observer) player);
             }
-            player.setGame(this);
+            player.startGame(this);
         }
-        this.chessBoard = new ChessBoard(this);
+        this.chessBoard = new ChessBoard();
         this.turn = 0;
     }
 
@@ -129,7 +129,7 @@ public class Game extends Observable implements Runnable {
 
     private void checkIfPlayerLost(Player p) {
         if (this.isInCheckmate(p)) {
-            p.makePlayerLose();
+            p.playerLostGame();
         }
     }
 
@@ -153,7 +153,7 @@ public class Game extends Observable implements Runnable {
     }
 
     public List<Cell> getValidCells(Piece piece, Player p) {
-        Cell startCell = piece.getCell();
+        Cell startCell = this.chessBoard.getCellOfPiece(piece);
 
         List<Cell> accessibleCells = piece.getAccessibleCells(this.chessBoard);
         List<Cell> validCells = new ArrayList<>();
@@ -250,7 +250,7 @@ public class Game extends Observable implements Runnable {
         checkCastling(destinationCell);
         checkPromotion(destinationCell);
 
-        movedPiece.pieceHasMoved(this.turn);
+        movedPiece.signalPieceJustMoved(this.turn);
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
     }
@@ -329,7 +329,7 @@ public class Game extends Observable implements Runnable {
             int pieceToReviveY = (destinationY == 2) ? destinationY + 1 : destinationY - 1;
             Cell pieceToRevive = this.chessBoard.getCell(destinationX, pieceToReviveY);
             this.chessBoard.addPiece(new ChessPawn(1 - destinationCell.getPiece().getTeam()), pieceToRevive);
-            pieceToRevive.getPiece().pieceHasMoved(this.turn - 1);
+            pieceToRevive.getPiece().signalPieceJustMoved(this.turn - 1);
         }
     }
 

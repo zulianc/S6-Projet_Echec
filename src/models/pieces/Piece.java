@@ -8,7 +8,6 @@ import java.util.List;
 
 public abstract class Piece {
     private final int team;
-    private Cell cell;
     private final AccessibleCellsDecorator decorator;
     private int moveCount;
     private int lastMoveTurn;
@@ -22,43 +21,27 @@ public abstract class Piece {
         this.moveCount = 0;
     }
 
-    public Piece(int team, AccessibleCellsDecorator decorator) {
-        this(team, decorator, 1);
+    public abstract String getPieceName();
+
+    public void signalPieceJustMoved(int turn) {
+        this.moveCount++;
+        this.lastMoveTurn = turn;
     }
 
     public int getTeam() {
         return team;
     }
 
-    public abstract String getPieceName();
-
-    public void goToCell(Cell cell) {
-        this.cell = cell;
-    }
-
     public List<Cell> getAccessibleCells(ChessBoard chessBoard) {
         return decorator.getAccessibleCells(chessBoard, this.cell);
-    }
-
-    public Cell getCell() {
-        return cell;
-    }
-
-    public void setCell(Cell cell) {
-        this.cell = cell;
-    }
-
-    public boolean hasNeverMoved() {
-        return this.moveCount == 0;
     }
 
     public int getMoveCount() {
         return this.moveCount;
     }
 
-    public void pieceHasMoved(int turn) {
-        this.moveCount++;
-        this.lastMoveTurn = turn;
+    public boolean hasNeverMoved() {
+        return this.moveCount == 0;
     }
 
     public Integer getLastMoveTurn() {

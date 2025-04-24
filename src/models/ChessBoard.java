@@ -11,10 +11,8 @@ public class ChessBoard {
     public static final int CHESS_BOARD_SIZE = 8;
     private final Cell[][] cells = new Cell[CHESS_BOARD_SIZE][CHESS_BOARD_SIZE];
     private final HashMap<Cell, Position> cellsPosition = new HashMap<>();
-    private final Game game;
 
-    public ChessBoard(Game game) {
-        this.game = game;
+    public ChessBoard() {
         initializeEmptyBoard();
     }
 
@@ -37,10 +35,6 @@ public class ChessBoard {
 
     public void movePiece(Piece piece, Cell cell) {
         cell.setPiece(piece);
-
-        if (piece != null) {
-            piece.setCell(cell);
-        }
     }
 
     public void movePiece(Piece piece, int x, int y) {
@@ -96,6 +90,17 @@ public class ChessBoard {
         return this.cellsPosition.get(startingCell);
     }
 
+    public Cell getCellOfPiece(Piece piece) {
+        for (Cell[] cellList : cells) {
+            for (Cell cell : cellList) {
+                if (cell.getPiece() != null && cell.getPiece().equals(piece)) {
+                    return cell;
+                }
+            }
+        }
+        return null;
+    }
+
     public Cell getCell(int x, int y) {
         return cells[x][y];
     }
@@ -106,9 +111,5 @@ public class ChessBoard {
 
     public Cell[][] getCells() {
         return this.cells;
-    }
-
-    public Game getGame() {
-        return game;
     }
 }

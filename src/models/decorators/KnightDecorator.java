@@ -1,7 +1,8 @@
 package models.decorators;
 
 import models.Cell;
-import models.ChessBoard;
+import models.Game;
+import models.pieces.Piece;
 import structure.Orientation;
 
 import java.util.ArrayList;
@@ -11,25 +12,30 @@ import java.util.List;
 public class KnightDecorator extends AccessibleCellsDecorator{
     public KnightDecorator(AccessibleCellsDecorator base) {
         super(base);
-        this.orientationPossibles = new ArrayList<>();
-        this.orientationPossibles.add(Orientation.LONG_FRONT_LEFT);
-        this.orientationPossibles.add(Orientation.LONG_FRONT_RIGHT);
-        this.orientationPossibles.add(Orientation.LONG_LEFT_FRONT);
-        this.orientationPossibles.add(Orientation.LONG_RIGHT_FRONT);
-        this.orientationPossibles.add(Orientation.LONG_LEFT_BACK);
-        this.orientationPossibles.add(Orientation.LONG_RIGHT_BACK);
-        this.orientationPossibles.add(Orientation.LONG_BACK_LEFT);
-        this.orientationPossibles.add(Orientation.LONG_BACK_RIGHT);
+        this.possibleOrientations = new ArrayList<>();
+        Orientation firstL = Orientation.LONG_FRONT;
+        firstL.add(Orientation.LEFT);
+        Orientation secondL = Orientation.LONG_FRONT;
+        secondL.add(Orientation.RIGHT);
+
+        for (int i = 0; i < 4; i++) {
+            firstL.rotate90Clockwise();
+            secondL.rotate90Clockwise();
+            this.possibleOrientations.add(firstL);
+            this.possibleOrientations.add(secondL);
+        }
     }
 
-
     @Override
-    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
+    protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
         List<Cell> accessibleCells = new LinkedList<>();
-        for (Orientation orientation : this.orientationPossibles) {
-            Cell nextCell = chessBoard.getCellAtRelativePosition(startingCell, orientation.getVector());
 
-            if (nextCell != null && doesntContainsSameTeamPieces(nextCell, startingCell)) {
+        Cell startingCell = game.getBoard().getCellOfPiece(piece);
+
+        for (Orientation orientation : this.possibleOrientations) {
+            Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, orientation.getVector());
+
+            if (nextCell != null && containsPiecesOfDifferentTeams(nextCell, startingCell)) {
                 accessibleCells.add(nextCell);
             }
         }

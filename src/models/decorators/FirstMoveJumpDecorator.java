@@ -2,41 +2,49 @@ package models.decorators;
 
 import models.Cell;
 import models.ChessBoard;
+import models.Game;
+import models.pieces.Piece;
 import structure.Orientation;
 import structure.Position;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
     public FirstMoveJumpDecorator (AccessibleCellsDecorator base) {
         super(base);
+        this.possibleOrientations = new ArrayList<>();
+        this.possibleOrientations.add(Orientation.FRONT);
     }
 
     @Override
-    protected List<Cell> getDecoratorAccessibleCells(ChessBoard chessBoard, Cell startingCell) {
+    protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
+        List<Cell> accessibleCells = new LinkedList<>();
+
+        Cell startingCell = game.getBoard().getCellOfPiece(piece);
+
         if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMoved()) {
-            double playerTeam  = chessBoard.getGame().getActualPlayer().getTeam();
-            int totalPlayer    = chessBoard.getGame().getPlayerCount();
-            int rotationDegree = (int)((playerTeam / totalPlayer) * 360);
-            Position vector = Orientation.rotatingVector(Orientation.FRONT, rotationDegree);
+            for (Orientation orientation : this.possibleOrientations) {
+                Orientation pieceOrientation = orientation;
+                pieceOrientation.rotate(startingCell.getPiece().getTeam(), game.getPlayerCount());
 
-            List<Cell> accessibleCells = new LinkedList<>();
-            Cell nextCell = startingCell;
-            boolean cellCanMove = true;
-            for (int i = 0; i < 2; i++) {
-                nextCell = chessBoard.getCellAtRelativePosition(nextCell, vector);
+                Cell nextCell = startingCell;
+                boolean cellCanMove = true;
+                for (int i = 0; i < 2; i++) {
+                    nextCell = game.getBoard().getCellAtRelativePosition(nextCell, pieceOrientation.getVector());
 
-                if (nextCell == null || nextCell.hasPiece()) {
-                    cellCanMove = false;
+                    if (nextCell == null || nextCell.hasPiece()) {
+                        cellCanMove = false;
+                    }
+                }
+
+                if (cellCanMove) {
+                    accessibleCells.add(nextCell);
                 }
             }
-            if (nextCell != null && cellCanMove) {
-                accessibleCells.add(nextCell);
-            }
-            return accessibleCells;
         }
 
-        return new LinkedList<>();
+        return accessibleCells;
     }
 }

@@ -10,6 +10,10 @@ public class HumanPlayer extends Player {
 
     @Override
     public Move getMove() {
+        if (!this.alive) {
+            throw new RuntimeException("Human player is dead");
+        }
+
         try {
             synchronized (game) {
                 game.wait();
