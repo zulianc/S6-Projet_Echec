@@ -11,4 +11,9 @@ public class Rook extends Piece {
     public String getPieceName() {
         return "rook";
     }
+
+    @Override
+    public String getPieceCode() {
+        return "R";
+    }
 }

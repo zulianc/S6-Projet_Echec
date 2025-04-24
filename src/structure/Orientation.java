@@ -1,5 +1,7 @@
 package structure;
 
+import models.Move;
+
 public enum Orientation {
     FRONT(           new Position( 0, -1)),
     LONG_FRONT(      new Position( 0, -2)),

@@ -11,4 +11,9 @@ public class Bishop extends Piece {
     public String getPieceName() {
         return "bishop";
     }
+
+    @Override
+    public String getPieceCode() {
+        return "B";
+    }
 }

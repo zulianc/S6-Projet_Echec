@@ -63,6 +63,6 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
     }
 
     private boolean notInCheck(ChessBoard chessBoard, Move goToStartingCell, Move goToPassingByCell, Move goToStoppingAtCell) {
-        return chessBoard.getGame().isntInCheckIfMove(goToStartingCell) && chessBoard.getGame().isntInCheckIfMove(goToPassingByCell) && chessBoard.getGame().isntInCheckIfMove(goToStoppingAtCell);
+        return !chessBoard.getGame().isInCheckIfMove(goToStartingCell) && !chessBoard.getGame().isInCheckIfMove(goToPassingByCell) && !chessBoard.getGame().isInCheckIfMove(goToStoppingAtCell);
     }
 }

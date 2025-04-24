@@ -79,4 +79,6 @@ public abstract class Piece {
                 "value=" + value +
                 '}';
     }
+
+    public abstract String getPieceCode();
 }

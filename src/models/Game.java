@@ -20,6 +20,7 @@ public class Game extends Observable implements Runnable {
     private Piece promotionPiece;
     private int turn;
     private boolean isStaleMate = false;
+    private List<String> moves = new ArrayList<>();
 
     public Game(List<Player> players) {
         this.players     = players;
@@ -51,10 +52,18 @@ public class Game extends Observable implements Runnable {
                     m = this.actualPlayer.getMove();
                 } while (!this.isValidMove(m, this.actualPlayer));
                 this.applyMove(m);
+                System.out.println(moves);
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.updateAll();
             }
         }
+        String lastMove = this.moves.getLast();
+        if (!isStaleMate) {
+            this.moves.set(this.moves.size()-1, lastMove.replace("+", "#"));
+        } else {
+            this.moves.add("1/2-1/2");
+        }
+        System.out.println(moves);
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
 
@@ -211,22 +220,40 @@ public class Game extends Observable implements Runnable {
         return false;
     }
 
-    public boolean isntInCheckIfMove(Move m) {
+    public boolean isInCheckIfMove(Move m) {
         Piece deadPiece = m.destination().getPiece();
         this.tryMove(m);
         boolean isInCheck = this.isInCheck(this.actualPlayer);
         this.undoMove(m, deadPiece);
-        return !isInCheck;
+        return isInCheck;
+    }
+
+    public boolean wouldBeInCheckIfMove(Move m) {
+        Player actualPlayer = this.actualPlayer;
+        Piece deadPiece = m.destination().getPiece();
+        this.tryMove(m);
+        boolean isInCheck = this.isInCheck(this.nextPlayer());
+        this.undoMove(m, deadPiece);
+        this.actualPlayer = actualPlayer;
+        return isInCheck;
     }
 
     public boolean isInCheckmate(Player p) {
-        this.isStaleMate = false;
-        return this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        boolean isInCheckmate = this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        if (isInCheckmate) {
+            this.isStaleMate = false;
+        }
+
+        return isInCheckmate;
     }
 
     public boolean isInStalemate(Player p) {
-        this.isStaleMate = true;
-        return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        boolean isInStalemate = !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
+        if (isInStalemate) {
+            this.isStaleMate = true;
+        }
+
+        return isInStalemate;
     }
 
     private boolean playerHasNoAvailableMove(Player p) {
@@ -252,16 +279,22 @@ public class Game extends Observable implements Runnable {
         return movedPiece;
     }
 
-    private void applyMove(Move m) {
+    private void applyMove(Move m, boolean recordMove) {
+        if (recordMove) this.moves.add(PGNConverter.convertMoveToPGN(chessBoard, m));
+
         Piece movedPiece = this.tryMove(m);
 
         Cell destinationCell = m.destination();
-        checkCastling(destinationCell);
+        checkCastling(m);
         checkPromotion(destinationCell);
 
         movedPiece.pieceHasMoved(this.turn);
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
+    }
+
+    private void applyMove(Move m) {
+        this.applyMove(m, true);
     }
 
     private void undoMove(Move m, Piece deadPiece) {
@@ -275,22 +308,22 @@ public class Game extends Observable implements Runnable {
         this.chessBoard.movePiece(deadPiece,  endCell);
     }
 
-    private void checkCastling(Cell destinationCell) {
+    private void checkCastling(Move m) {
+        Cell destinationCell = m.destination();
         if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMoved()) {
             int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
-            int kingX = this.getBoard().getPositionOfCell(destinationCell).getX();
 
             Cell rookToMoveCell;
             Cell whereMoveRookCell;
-            if (kingX == 2 || kingX == 6) {
-                if (kingX == 2) {
+            if (Math.abs(this.chessBoard.getDistanceFromMove(m).getX()) == 2) {
+                if (this.chessBoard.getDistanceFromMove(m).getX() < 0) {
                     rookToMoveCell    = this.chessBoard.getCell(0, kingY);
                     whereMoveRookCell = this.chessBoard.getCell(3, kingY);
                 } else {
                     rookToMoveCell    = this.chessBoard.getCell(7, kingY);
                     whereMoveRookCell = this.chessBoard.getCell(5, kingY);
                 }
-                applyMove(new Move(rookToMoveCell, whereMoveRookCell));
+                applyMove(new Move(rookToMoveCell, whereMoveRookCell), false);
             }
         }
     }

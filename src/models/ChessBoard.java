@@ -111,4 +111,45 @@ public class ChessBoard {
     public Game getGame() {
         return game;
     }
+
+    public String getCellCoordinates(Cell cell) {
+        Position pos = getPositionOfCell(cell);
+        int y = pos.getY();
+        int x = pos.getX();
+        int xToChar = x + 97;
+        int cordY = -y + 8;
+
+        char xChar = (char) xToChar;
+
+        return String.valueOf(xChar) + cordY;
+    }
+
+    public String getCellColumn(Cell cell) {
+        Position pos = getPositionOfCell(cell);
+        int x = pos.getX();
+        int xToChar = x + 97;
+
+        char xChar = (char) xToChar;
+
+        return String.valueOf(xChar);
+    }
+
+    public String getCellRow(Cell cell) {
+        Position pos = getPositionOfCell(cell);
+        int y = pos.getY();
+        int cordY = -y + 8;
+
+        return "" + cordY;
+    }
+
+    public Position getDistanceFromMove(Move m) {
+        Position sourcePosition      = this.getPositionOfCell(m.source());
+        Position destinationPosition = this.getPositionOfCell(m.destination());
+
+        return new Position(destinationPosition.getX() - sourcePosition.getX(), destinationPosition.getY() - sourcePosition.getY());
+    }
+
+    public boolean isCastling(Move m) {
+        return m.source().getPiece().getPieceName().equals("king") && Math.abs(getDistanceFromMove(m).getX()) == 2;
+    }
 }
