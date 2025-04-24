@@ -64,6 +64,7 @@ public class Game extends Observable implements Runnable {
             this.moves.add("1/2-1/2");
         }
         System.out.println(moves);
+        System.out.println(PGNConverter.convertGameToPGN(this));
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
 
@@ -393,5 +394,13 @@ public class Game extends Observable implements Runnable {
 
     public boolean isStaleMate() {
         return isStaleMate;
+    }
+
+    public List<String> getMoves() {
+        return this.moves;
+    }
+
+    public List<Player> getPlayers() {
+        return this.players;
     }
 }
