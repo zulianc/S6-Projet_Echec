@@ -146,14 +146,14 @@ public class GameBoard {
         return "" + cordY;
     }
 
-    public Position2D getDistanceFromMove(PieceMove m) {
+    public Position2D getDistanceFromMove(PlayerMove m) {
         Position2D sourcePosition      = this.getPositionOfCell(m.source());
         Position2D destinationPosition = this.getPositionOfCell(m.destination());
 
         return new Position2D(destinationPosition.getX() - sourcePosition.getX(), destinationPosition.getY() - sourcePosition.getY());
     }
 
-    public boolean isCastling(PieceMove m) {
+    public boolean isCastling(PlayerMove m) {
         return m.source().getPiece().getPieceName().equals("king") && Math.abs(getDistanceFromMove(m).getX()) == 2;
     }
 }

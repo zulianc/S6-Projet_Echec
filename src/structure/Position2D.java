@@ -1,8 +1,8 @@
 package structure;
 
 public class Position2D {
-     private int x;
-     private int y;
+     private final int x;
+     private final int y;
 
     public Position2D(int x, int y) {
         this.x = x;
@@ -13,42 +13,38 @@ public class Position2D {
         return new Position2D(x, y);
     }
 
-    public void add(Position2D position) {
-        this.x += position.x;
-        this.y += position.y;
+    public Position2D add(Position2D position) {
+        return new Position2D(this.x + position.x, this.y + position.y);
     }
 
-    public void rotate(int actualPlayer, int playerCount) {
+    public Position2D rotate(int actualPlayer, int playerCount) {
         if (playerCount != 2 && playerCount != 4) {
             throw new IllegalArgumentException("Unsupported player count: " + playerCount);
         }
 
         if ((actualPlayer == 1 && playerCount == 2) || (actualPlayer == 2 && playerCount == 4)) {
-            this.rotate180Clockwise();
+            return this.rotate180Clockwise();
         }
         if (actualPlayer == 1 && playerCount == 4) {
-            this.rotate90Clockwise();
+            return this.rotate90Clockwise();
         }
         if (actualPlayer == 3 && playerCount == 4) {
-            this.rotate270Clockwise();
+            return this.rotate270Clockwise();
         }
+
+        return this.copy();
     }
 
-    public void rotate90Clockwise() {
-        int memX = this.x;
-        this.x = +this.y;
-        this.y = -memX;
+    public Position2D rotate90Clockwise() {
+        return new Position2D(this.y, -this.x);
     }
 
-    public void rotate180Clockwise() {
-        this.x = -this.x;
-        this.y = -this.y;
+    public Position2D rotate180Clockwise() {
+        return new Position2D(-this.x, -this.y);
     }
 
-    public void rotate270Clockwise() {
-        int memX = this.x;
-        this.x = -this.y;
-        this.y = +memX;
+    public Position2D rotate270Clockwise() {
+        return new Position2D(-this.y, this.x);
     }
 
     public int getX() {

@@ -1,6 +1,6 @@
 package models.players;
 
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 
 public class HumanPlayer extends Player {
 
@@ -9,7 +9,7 @@ public class HumanPlayer extends Player {
     }
 
     @Override
-    public PieceMove getMove() {
+    public PlayerMove getMove() {
         if (!this.alive) {
             throw new RuntimeException("Human player is dead");
         }

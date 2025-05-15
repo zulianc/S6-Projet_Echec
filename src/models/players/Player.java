@@ -1,7 +1,7 @@
 package models.players;
 
 import models.games.Game;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 
 public abstract class Player {
     protected final String name;
@@ -24,7 +24,7 @@ public abstract class Player {
         this("unnamed player", team);
     }
 
-    public abstract PieceMove getMove();
+    public abstract PlayerMove getMove();
 
     public void startGame(Game game) {
         this.game = game;

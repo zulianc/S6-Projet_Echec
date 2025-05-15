@@ -27,12 +27,9 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
         for (Position2D vector : this.possibleVectors) {
-            Position2D pieceVector = vector.copy();
-            pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
+            Position2D pieceVector = vector.rotate(piece.getTeam(), game.getPlayerCount());
 
-            Position2D capturedPawnVector = vector.copy();
-            capturedPawnVector.add(Orientation.BACK.getVector());
-            capturedPawnVector.rotate(piece.getTeam(), game.getPlayerCount());
+            Position2D capturedPawnVector = vector.add(Orientation.BACK.getVector()).rotate(piece.getTeam(), game.getPlayerCount());
 
             Cell cellToMoveAt = game.getBoard().getCellAtRelativePosition(startingCell, pieceVector);
             Cell cellToCapture = game.getBoard().getCellAtRelativePosition(startingCell, capturedPawnVector);

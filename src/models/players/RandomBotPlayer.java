@@ -1,7 +1,7 @@
 package models.players;
 
 import models.boards.Cell;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 import models.games.ChessGame;
 import models.pieces.Piece;
 import structure.Observer;
@@ -17,16 +17,16 @@ public class RandomBotPlayer extends Player implements Observer {
     }
 
     @Override
-    public PieceMove getMove() {
+    public PlayerMove getMove() {
         List<Piece> piecesToMove = this.game.getBoard().getAllPiecesOfTeam(this.team);
-        List<PieceMove> accessibleCells = new ArrayList<>();
+        List<PlayerMove> accessibleCells = new ArrayList<>();
         for (Piece piece : piecesToMove) {
             Cell sourceCell = this.game.getBoard().getCellOfPiece(piece);
 
             List<Cell> accessibleCellsForOnePiece = this.game.getValidCells(piece, this);
             if (accessibleCellsForOnePiece != null) {
                 for (Cell destinationCell : accessibleCellsForOnePiece) {
-                    PieceMove moveToAdd = new PieceMove(sourceCell, destinationCell);
+                    PlayerMove moveToAdd = new PlayerMove(sourceCell, destinationCell);
                     accessibleCells.add(moveToAdd);
                 }
             }

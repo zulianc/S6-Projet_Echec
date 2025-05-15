@@ -2,7 +2,7 @@ package models.games;
 
 import models.PGNConverter;
 import models.boards.Cell;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 import models.pieces.*;
 import models.pieces.chess.*;
 import models.players.HumanPlayer;
@@ -27,7 +27,7 @@ public class ChessGame extends Game {
         List<Cell> accessibleCells = piece.getAccessibleCells(this);
         List<Cell> validCells = new ArrayList<>();
         for (Cell cell : accessibleCells) {
-            if (this.isValidMove(new PieceMove(startCell, cell), p)) {
+            if (this.isValidMove(new PlayerMove(startCell, cell), p)) {
                 validCells.add(cell);
             }
         }
@@ -91,7 +91,19 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected boolean isValidMove(PieceMove m, Player p) {
+    protected void lastMove() {
+        String lastMove = this.moves.getLast();
+        if (!this.isDraw()) {
+            this.moves.set(this.moves.size()-1, lastMove.replace("+", "#"));
+        } else {
+            this.moves.add("1/2-1/2");
+        }
+        System.out.println(moves);
+        System.out.println(PGNConverter.convertGameToPGN(this));
+    }
+
+    @Override
+    protected boolean isValidMove(PlayerMove m, Player p) {
         boolean isValid = false;
 
         Cell sourceCell      = m.source();
@@ -114,11 +126,11 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void applyMove(PieceMove m) {
+    protected void applyMove(PlayerMove m) {
         this.applyMove(m, true);
     }
 
-    private void applyMove(PieceMove m, boolean recordMove) {
+    private void applyMove(PlayerMove m, boolean recordMove) {
         if (recordMove) this.moves.add(PGNConverter.convertMoveToPGN(this, m));
 
         Piece movedPiece = this.tryMove(m);
@@ -132,7 +144,7 @@ public class ChessGame extends Game {
         updateAllWithParams(s);
     }
 
-    private Piece tryMove(PieceMove m) {
+    private Piece tryMove(PlayerMove m) {
         Cell startCell = m.source();
         Cell endCell   = m.destination();
         Piece movedPiece = startCell.getPiece();
@@ -146,7 +158,7 @@ public class ChessGame extends Game {
         return movedPiece;
     }
 
-    private void undoMove(PieceMove m, Piece deadPiece) {
+    private void undoMove(PlayerMove m, Piece deadPiece) {
         Cell startCell = m.source();
         Cell endCell   = m.destination();
         Piece movedPiece = endCell.getPiece();
@@ -201,7 +213,7 @@ public class ChessGame extends Game {
         return false;
     }
 
-    public boolean isntInCheckIfMove(PieceMove m) {
+    public boolean isntInCheckIfMove(PlayerMove m) {
         Piece deadPiece = m.destination().getPiece();
         this.tryMove(m);
         boolean isInCheck = this.isInCheck(this.actualPlayer);
@@ -209,7 +221,7 @@ public class ChessGame extends Game {
         return !isInCheck;
     }
 
-    public boolean wouldBeInCheckIfMove(PieceMove m) {
+    public boolean wouldBeInCheckIfMove(PlayerMove m) {
         Player actualPlayer = this.actualPlayer;
         Piece deadPiece = m.destination().getPiece();
         this.tryMove(m);
@@ -220,21 +232,11 @@ public class ChessGame extends Game {
     }
 
     public boolean isInCheckmate(Player p) {
-        boolean isInCheckmate = this.isInCheck(p) && this.playerHasNoAvailableMove(p);
-        if (isInCheckmate) {
-            this.isStaleMate = false;
-        }
-
-        return isInCheckmate;
+        return this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
 
     public boolean isInStalemate(Player p) {
-        boolean isInStalemate = !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
-        if (isInStalemate) {
-            this.isStaleMate = true;
-        }
-
-        return isInStalemate;
+        return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
 
     private boolean playerHasNoAvailableMove(Player p) {
@@ -247,7 +249,7 @@ public class ChessGame extends Game {
         return true;
     }
 
-    private void checkCastling(PieceMove m) {
+    private void checkCastling(PlayerMove m) {
         Cell destinationCell = m.destination();
         if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMoved()) {
             int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
@@ -262,7 +264,7 @@ public class ChessGame extends Game {
                     rookToMoveCell    = this.board.getCell(7, kingY);
                     whereMoveRookCell = this.board.getCell(5, kingY);
                 }
-                applyMove(new PieceMove(rookToMoveCell, whereMoveRookCell), false);
+                applyMove(new PlayerMove(rookToMoveCell, whereMoveRookCell), false);
             }
         }
     }
@@ -287,7 +289,7 @@ public class ChessGame extends Game {
         }
     }
 
-    private void checkTryingEnPassant(PieceMove m) {
+    private void checkTryingEnPassant(PlayerMove m) {
         Cell sourceCell = m.source();
         Cell destinationCell = m.destination();
         int sourceX = this.getBoard().getPositionOfCell(sourceCell).getX();
@@ -300,7 +302,7 @@ public class ChessGame extends Game {
         }
     }
 
-    private void checkUndoingEnPassant(PieceMove m, Piece deadPiece) {
+    private void checkUndoingEnPassant(PlayerMove m, Piece deadPiece) {
         Cell sourceCell = m.source();
         Cell destinationCell = m.destination();
         int sourceX = this.getBoard().getPositionOfCell(sourceCell).getX();

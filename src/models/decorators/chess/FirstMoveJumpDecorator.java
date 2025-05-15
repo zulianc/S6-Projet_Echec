@@ -26,8 +26,7 @@ public class FirstMoveJumpDecorator extends AccessibleCellsDecorator {
 
         if (startingCell.hasPiece() && startingCell.getPiece().hasNeverMoved()) {
             for (Position2D vector : this.possibleVectors) {
-                Position2D pieceVector = vector.copy();
-                pieceVector.rotate(startingCell.getPiece().getTeam(), game.getPlayerCount());
+                Position2D pieceVector = vector.rotate(startingCell.getPiece().getTeam(), game.getPlayerCount());
 
                 Cell nextCell = startingCell;
                 boolean cellCanMove = true;

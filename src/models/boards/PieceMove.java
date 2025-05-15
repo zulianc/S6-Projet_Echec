@@ -1,4 +1,4 @@
 package models.boards;
 
-public record PieceMove(Cell source, Cell destination) {
+public record PieceMove(Cell source, Cell destination, Cell captured) {
 }

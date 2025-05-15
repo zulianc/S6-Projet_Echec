@@ -1,9 +1,8 @@
 package models.games;
 
-import models.PGNConverter;
 import models.boards.Cell;
 import models.boards.GameBoard;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 import models.pieces.Piece;
 import models.players.Player;
 import structure.Observable;
@@ -18,8 +17,7 @@ public abstract class Game extends Observable implements Runnable {
     protected Player actualPlayer;
     protected int turn;
     protected List<String> moves = new ArrayList<>();
-    public PieceMove playerMove;
-    protected boolean isStaleMate = false;
+    public PlayerMove playerMove;
 
     public Game(List<Player> players) {
         this.players = players;
@@ -44,28 +42,21 @@ public abstract class Game extends Observable implements Runnable {
             this.turn++;
             this.actualPlayer = this.nextPlayer();
             if (this.actualPlayer.isAlive()) {
-                PieceMove m;
+                PlayerMove m;
                 do {
                     this.updateAll();
                     m = this.actualPlayer.getMove();
                 } while (!this.isValidMove(m, this.actualPlayer));
                 this.applyMove(m);
-                System.out.println(moves);
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.updateAll();
+
+                System.out.println(moves);
             }
         }
-        String lastMove = this.moves.getLast();
-        if (!isStaleMate) {
-            this.moves.set(this.moves.size()-1, lastMove.replace("+", "#"));
-        } else {
-            this.moves.add("1/2-1/2");
-        }
-        System.out.println(moves);
-        System.out.println(PGNConverter.convertGameToPGN(this));
+        this.lastMove();
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
-
         System.out.println("game ended");
 
         for (Player player : players) {
@@ -75,7 +66,7 @@ public abstract class Game extends Observable implements Runnable {
         }
     }
 
-    public void sendMove(PieceMove m) {
+    public void sendMove(PlayerMove m) {
         this.playerMove = m;
         synchronized (this) {
             notify();
@@ -94,9 +85,11 @@ public abstract class Game extends Observable implements Runnable {
 
     public abstract boolean hasGameEnded();
 
-    protected abstract boolean isValidMove(PieceMove m, Player p);
+    protected abstract void lastMove();
 
-    protected abstract void applyMove(PieceMove m);
+    protected abstract boolean isValidMove(PlayerMove m, Player p);
+
+    protected abstract void applyMove(PlayerMove m);
 
     public GameBoard getBoard() {
         return this.board;
@@ -122,7 +115,13 @@ public abstract class Game extends Observable implements Runnable {
         return this.players;
     }
 
-    public boolean isStaleMate() {
-        return isStaleMate;
+    public boolean isDraw() {
+        int playerCount = 0;
+        for (Player player : this.players) {
+            if (player.isAlive()) {
+                playerCount++;
+            }
+        }
+        return playerCount > 1;
     }
 }

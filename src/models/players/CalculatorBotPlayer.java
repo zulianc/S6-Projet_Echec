@@ -2,7 +2,7 @@ package models.players;
 
 import models.boards.Cell;
 import models.boards.GameBoard;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 import models.games.ChessGame;
 import models.pieces.Piece;
 import structure.Observer;
@@ -50,12 +50,12 @@ public class CalculatorBotPlayer extends Player implements Observer {
     }
 
     @Override
-    public PieceMove getMove() {
+    public PlayerMove getMove() {
         updateWeightedMatrix();
 
         List<Piece> piecesToMove = this.game.getBoard().getAllPiecesOfTeam(this.team);
-        List<PieceMove> accessibleCells = new ArrayList<>();
-        List<PieceMove> bestMoves = new ArrayList<>();
+        List<PlayerMove> accessibleCells = new ArrayList<>();
+        List<PlayerMove> bestMoves = new ArrayList<>();
         int bestMoveValue = -1;
         for (Piece piece : piecesToMove) {
             Cell sourceCell = this.game.getBoard().getCellOfPiece(piece);
@@ -63,13 +63,13 @@ public class CalculatorBotPlayer extends Player implements Observer {
             List<Cell> accessibleCellsForOnePiece = this.game.getValidCells(piece, this);
             if (accessibleCellsForOnePiece != null) {
                 for (Cell destinationCell : accessibleCellsForOnePiece) {
-                    PieceMove moveToAdd = new PieceMove(sourceCell, destinationCell);
+                    PlayerMove moveToAdd = new PlayerMove(sourceCell, destinationCell);
                     accessibleCells.add(moveToAdd);
                 }
             }
         }
 
-        for (PieceMove possibleMove : accessibleCells) {
+        for (PlayerMove possibleMove : accessibleCells) {
             Position2D currentPosition = this.game.getBoard().getPositionOfCell(possibleMove.destination());
             int currentValue = this.weightedMatrix[currentPosition.getX()][currentPosition.getY()];
             if (currentValue > bestMoveValue) {

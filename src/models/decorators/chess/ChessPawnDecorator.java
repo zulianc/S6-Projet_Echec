@@ -27,8 +27,7 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator {
 
         // EATING
         for (Position2D vector : this.possibleVectors) {
-            Position2D pieceVector = vector.copy();
-            pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
+            Position2D pieceVector = vector.rotate(piece.getTeam(), game.getPlayerCount());
 
             Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceVector);
 
@@ -38,8 +37,7 @@ public class ChessPawnDecorator extends AccessibleCellsDecorator {
         }
 
         // MOVING
-        Position2D pieceVector = Orientation.FRONT.getVector();
-        pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
+        Position2D pieceVector = Orientation.FRONT.getVector().rotate(piece.getTeam(), game.getPlayerCount());
 
         Cell nextCell = game.getBoard().getCellAtRelativePosition(startingCell, pieceVector);
 

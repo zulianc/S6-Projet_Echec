@@ -4,7 +4,7 @@ import models.boards.Cell;
 import models.decorators.AccessibleCellsDecorator;
 import models.games.ChessGame;
 import models.games.Game;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 import models.pieces.Piece;
 import models.pieces.chess.Rook;
 import structure.Orientation;
@@ -43,10 +43,10 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                 for (Position2D vector : this.possibleVectors) {
                     boolean longCastling = (vector.equals(Orientation.LEFT.getVector()));
 
-                    Position2D pieceVector = vector.copy();
+                    Position2D pieceVector = vector;
                     // The kings' files are the same in 2 players chess but not in 4 players
                     if (game.getPlayerCount() == 4) {
-                        pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
+                        pieceVector = pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
                     }
 
                     // STEP 1: find the final position of the king
@@ -65,16 +65,15 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                             }
                         } while (!endOfBoard);
 
-                        Position2D inversedVector = pieceVector.copy();
-                        inversedVector.rotate180Clockwise();
-                        Position2D boardEndToKingVector = inversedVector.copy();
+                        Position2D inversedVector = pieceVector.rotate180Clockwise();
+                        Position2D boardEndToKingVector = inversedVector;
                         if (longCastling) {
-                            boardEndToKingVector.add(inversedVector);
+                            boardEndToKingVector = boardEndToKingVector.add(inversedVector);
                         }
 
                         finalKingCell = game.getBoard().getCellAtRelativePosition(nextCell, boardEndToKingVector);
 
-                        boardEndToKingVector.add(inversedVector);
+                        boardEndToKingVector = boardEndToKingVector.add(inversedVector);
 
                         finalRookCell = game.getBoard().getCellAtRelativePosition(nextCell, boardEndToKingVector);
                     }
@@ -100,7 +99,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                         blockedPath = true;
                                     } else {
                                         if (!reachedFinalKingCell) {
-                                            if (!((ChessGame) game).isntInCheckIfMove(new PieceMove(startingCell, nextCell))) {
+                                            if (!((ChessGame) game).isntInCheckIfMove(new PlayerMove(startingCell, nextCell))) {
                                                 blockedPath = true;
                                             }
                                         }

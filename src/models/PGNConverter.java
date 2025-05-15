@@ -2,7 +2,7 @@ package models;
 
 import models.boards.Cell;
 import models.boards.GameBoard;
-import models.boards.PieceMove;
+import models.boards.PlayerMove;
 import models.games.ChessGame;
 import models.games.Game;
 import models.pieces.Piece;
@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PGNConverter {
-    public static String convertMoveToPGN(Game game, PieceMove move) {
+    public static String convertMoveToPGN(Game game, PlayerMove move) {
         Cell sourceCell = move.source();
         Cell destinationCell = move.destination();
 
@@ -72,7 +72,7 @@ public class PGNConverter {
         }
     }
 
-    public static PieceMove convertPGNToPieceMove(GameBoard GameBoard, String pgn) {
+    public static PlayerMove convertPGNToPieceMove(GameBoard GameBoard, String pgn) {
         return null;
     }
 

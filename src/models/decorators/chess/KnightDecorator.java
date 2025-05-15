@@ -17,17 +17,14 @@ public class KnightDecorator extends AccessibleCellsDecorator {
 
         this.possibleVectors = new ArrayList<>();
 
-        Position2D firstL = Orientation.LONG_FRONT.getVector();
-        firstL.add(Orientation.LEFT.getVector());
-
-        Position2D secondL = Orientation.LONG_FRONT.getVector();
-        secondL.add(Orientation.RIGHT.getVector());
+        Position2D firstL = Orientation.LONG_FRONT.getVector().add(Orientation.LEFT.getVector());
+        Position2D secondL = Orientation.LONG_FRONT.getVector().add(Orientation.RIGHT.getVector());
 
         for (int i = 0; i < 4; i++) {
-            this.possibleVectors.add(firstL.copy());
-            this.possibleVectors.add(secondL.copy());
-            firstL.rotate90Clockwise();
-            secondL.rotate90Clockwise();
+            this.possibleVectors.add(firstL);
+            this.possibleVectors.add(secondL);
+            firstL = firstL.rotate90Clockwise();
+            secondL = secondL.rotate90Clockwise();
         }
     }
 
