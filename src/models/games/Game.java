@@ -1,8 +1,6 @@
 package models.games;
 
-import models.boards.Cell;
-import models.boards.GameBoard;
-import models.boards.PlayerMove;
+import models.boards.*;
 import models.pieces.Piece;
 import models.players.Player;
 import structure.Observable;
@@ -16,7 +14,8 @@ public abstract class Game extends Observable implements Runnable {
     protected final List<Player> players;
     protected Player actualPlayer;
     protected int turn;
-    protected List<String> moves = new ArrayList<>();
+    protected List<GameMove> possibleMoves;
+    protected List<String> movesNotation = new ArrayList<>();
     public PlayerMove playerMove;
 
     public Game(List<Player> players) {
@@ -42,19 +41,22 @@ public abstract class Game extends Observable implements Runnable {
             this.turn++;
             this.actualPlayer = this.nextPlayer();
             if (this.actualPlayer.isAlive()) {
-                PlayerMove m;
+                this.updatePossibleMoves();
+                PlayerMove playerMove;
                 do {
-                    this.updateAll();
-                    m = this.actualPlayer.getMove();
-                } while (!this.isValidMove(m, this.actualPlayer));
-                this.applyMove(m);
+                    do {
+                        this.updateAll();
+                        playerMove = this.actualPlayer.getMove();
+                    } while (!this.canPlayerMove(playerMove));
+                    this.applyMove(playerMove);
+                } while (!this.possibleMoves.isEmpty());
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.updateAll();
 
-                System.out.println(moves);
+                System.out.println(movesNotation);
             }
         }
-        this.lastMove();
+        this.lastMoveNotation();
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
         System.out.println("game ended");
@@ -66,8 +68,8 @@ public abstract class Game extends Observable implements Runnable {
         }
     }
 
-    public void sendMove(PlayerMove m) {
-        this.playerMove = m;
+    public void sendMove(PlayerMove playerMove) {
+        this.playerMove = playerMove;
         synchronized (this) {
             notify();
         }
@@ -77,7 +79,38 @@ public abstract class Game extends Observable implements Runnable {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.players.size());
     }
 
-    public abstract List<Cell> getValidCells(Piece piece, Player p);
+    protected void updatePossibleMoves() {
+        this.possibleMoves = new ArrayList<>();
+        for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
+            for (GameMove move : piece.getAccessibleCells(this)) {
+                if (this.isValidMove(move)) {
+                    this.possibleMoves.add(move);
+                }
+            }
+        }
+    }
+
+    public List<Cell> getValidCells(Piece piece) {
+        List<Cell> validCells = new ArrayList<>();
+
+        Cell startCell = this.board.getCellOfPiece(piece);
+        for (GameMove move : this.possibleMoves) {
+            if (move.moves().getFirst().source().equals(startCell)) {
+                validCells.add(move.moves().getFirst().destination());
+            }
+        }
+
+        return validCells;
+    }
+
+    protected boolean canPlayerMove(PlayerMove playerMove) {
+        for (GameMove move : this.possibleMoves) {
+            if (move.moves().getFirst().source().equals(playerMove.source()) && move.moves().getFirst().destination().equals(playerMove.destination())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     protected abstract void initializePieces();
 
@@ -85,11 +118,11 @@ public abstract class Game extends Observable implements Runnable {
 
     public abstract boolean hasGameEnded();
 
-    protected abstract void lastMove();
-
-    protected abstract boolean isValidMove(PlayerMove m, Player p);
+    protected abstract void lastMoveNotation();
 
     protected abstract void applyMove(PlayerMove m);
+
+    protected abstract boolean isValidMove(GameMove move);
 
     public GameBoard getBoard() {
         return this.board;
@@ -107,8 +140,8 @@ public abstract class Game extends Observable implements Runnable {
         return this.turn;
     }
 
-    public List<String> getMoves() {
-        return this.moves;
+    public List<String> getMovesNotation() {
+        return this.movesNotation;
     }
 
     public List<Player> getPlayers() {

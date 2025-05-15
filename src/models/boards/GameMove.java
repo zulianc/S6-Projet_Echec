@@ -2,5 +2,5 @@ package models.boards;
 
 import java.util.ArrayList;
 
-public record GameMove(ArrayList<GameMove> moves) {
+public record GameMove(ArrayList<PieceMove> moves) {
 }

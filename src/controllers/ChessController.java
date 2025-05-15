@@ -82,7 +82,7 @@ public class ChessController {
         before = vCell.getCell();
         if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
             vCell.setSelected(true);
-            List<Cell> cellsToMark = gameModel.getValidCells(selectedCell.getPiece(), gameModel.getActualPlayer());
+            List<Cell> cellsToMark = gameModel.getValidCells(selectedCell.getPiece());
             this.mainView.getBoard().markValidMoveCells(cellsToMark);
         }
     }

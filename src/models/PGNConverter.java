@@ -86,7 +86,7 @@ public class PGNConverter {
 
         result.append("\n");
 
-        Iterator<String> it = game.getMoves().iterator();
+        Iterator<String> it = game.getMovesNotation().iterator();
         int playNumber = 0;
         int PieceMoveInPlay = game.getPlayerCount();
         int playTemp = PieceMoveInPlay;

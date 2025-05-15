@@ -2,6 +2,8 @@ package models.games;
 
 import models.PGNConverter;
 import models.boards.Cell;
+import models.boards.GameMove;
+import models.boards.PieceMove;
 import models.boards.PlayerMove;
 import models.pieces.*;
 import models.pieces.chess.*;
@@ -9,30 +11,14 @@ import models.players.HumanPlayer;
 import models.players.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import static java.lang.Math.abs;
 
 public class ChessGame extends Game {
     protected Piece promotionPiece;
 
     public ChessGame(List<Player> players) {
         super(players);
-    }
-
-    @Override
-    public List<Cell> getValidCells(Piece piece, Player p) {
-        Cell startCell = this.board.getCellOfPiece(piece);
-
-        List<Cell> accessibleCells = piece.getAccessibleCells(this);
-        List<Cell> validCells = new ArrayList<>();
-        for (Cell cell : accessibleCells) {
-            if (this.isValidMove(new PlayerMove(startCell, cell), p)) {
-                validCells.add(cell);
-            }
-        }
-
-        return validCells;
     }
 
     @Override
@@ -91,36 +77,22 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void lastMove() {
-        String lastMove = this.moves.getLast();
+    protected void lastMoveNotation() {
+        String lastMove = this.movesNotation.getLast();
         if (!this.isDraw()) {
-            this.moves.set(this.moves.size()-1, lastMove.replace("+", "#"));
+            this.movesNotation.set(this.movesNotation.size()-1, lastMove.replace("+", "#"));
         } else {
-            this.moves.add("1/2-1/2");
+            this.movesNotation.add("1/2-1/2");
         }
-        System.out.println(moves);
+        System.out.println(movesNotation);
         System.out.println(PGNConverter.convertGameToPGN(this));
     }
 
     @Override
-    protected boolean isValidMove(PlayerMove m, Player p) {
-        boolean isValid = false;
-
-        Cell sourceCell      = m.source();
-        Cell destinationCell = m.destination();
-
-        if (sourceCell.hasPiece()) {
-            Piece pieceToMove = sourceCell.getPiece();
-            if (pieceToMove.getTeam() == p.getTeam()) {
-                List<Cell> accessibleCells = pieceToMove.getAccessibleCells(this);
-                if (accessibleCells.contains(destinationCell)) {
-                    Piece deadPiece = destinationCell.getPiece();
-                    this.tryMove(m);
-                    isValid = !this.isInCheck(p);
-                    this.undoMove(m, deadPiece);
-                }
-            }
-        }
+    protected boolean isValidMove(GameMove move) {
+        List<Piece> deadPieces = this.doMove(move);
+        boolean isValid = !this.isInCheck(this.actualPlayer);
+        this.undoMove(move, deadPieces);
 
         return isValid;
     }
@@ -130,43 +102,90 @@ public class ChessGame extends Game {
         this.applyMove(m, true);
     }
 
-    private void applyMove(PlayerMove m, boolean recordMove) {
-        if (recordMove) this.moves.add(PGNConverter.convertMoveToPGN(this, m));
+    private void applyMove(PlayerMove playerMove, boolean recordMove) {
+        if (recordMove) this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
 
-        Piece movedPiece = this.tryMove(m);
+        Iterator<GameMove> it = this.possibleMoves.iterator();
+        while (it.hasNext()) {
+            GameMove possibleMove = it.next();
+            if (possibleMove.moves().getFirst().source().equals(playerMove.source()) && possibleMove.moves().getFirst().destination().equals(playerMove.destination())) {
+                applyMove(possibleMove.moves().getFirst());
+                possibleMove.moves().removeFirst();
+                if (possibleMove.moves().isEmpty()) {
+                    it.remove();
+                }
+            }
+            else {
+                it.remove();
+            }
+        }
 
-        Cell destinationCell = m.destination();
-        checkCastling(m);
+        Cell destinationCell = playerMove.destination();
         checkPromotion(destinationCell);
 
+        Piece movedPiece = playerMove.source().getPiece();
         movedPiece.signalPieceJustMoved(this.turn);
+
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
     }
 
-    private Piece tryMove(PlayerMove m) {
-        Cell startCell = m.source();
-        Cell endCell   = m.destination();
-        Piece movedPiece = startCell.getPiece();
+    private Piece applyMove(PieceMove move) {
+        Piece movedPiece = move.source().getPiece();
+        Piece deadPiece = move.captured().getPiece();
 
-        this.checkTryingEnPassant(m);
-
-        this.board.removePieceFromCell(endCell.getPiece());
-        this.board.setPieceToCell(null, startCell);
-        this.board.setPieceToCell(movedPiece, endCell);
-
-        return movedPiece;
+        this.board.removePieceFromCell(deadPiece);
+        this.board.setPieceToCell(null, move.source());
+        this.board.setPieceToCell(movedPiece, move.destination());
     }
 
-    private void undoMove(PlayerMove m, Piece deadPiece) {
-        Cell startCell = m.source();
-        Cell endCell   = m.destination();
-        Piece movedPiece = endCell.getPiece();
+    private List<Piece> doMove(GameMove move) {
+        List<Piece> deadPieces = new ArrayList<>();
 
-        this.checkUndoingEnPassant(m, deadPiece);
+        for (PieceMove pieceMove : move.moves()) {
+            Piece movedPiece = pieceMove.source().getPiece();
+            Piece deadPiece = pieceMove.captured().getPiece();
 
-        this.board.setPieceToCell(movedPiece, startCell);
-        this.board.setPieceToCell(deadPiece,  endCell);
+            deadPieces.addLast(deadPiece);
+            this.board.removePieceFromCell(deadPiece);
+            this.board.setPieceToCell(null, pieceMove.source());
+            this.board.setPieceToCell(movedPiece, pieceMove.destination());
+        }
+
+        return deadPieces;
+    }
+
+    private void undoMove(GameMove move, List<Piece> deadPieces) {
+        deadPieces = deadPieces.reversed();
+        for (PieceMove pieceMove : move.moves().reversed()) {
+            Piece revivedPiece = deadPieces.getFirst();
+            deadPieces.removeFirst();
+            Piece movedPiece = pieceMove.destination().getPiece();
+
+            this.board.setPieceToCell(revivedPiece, pieceMove.captured());
+            this.board.removePieceFromCell(movedPiece);
+            this.board.setPieceToCell(movedPiece, pieceMove.source());
+        }
+    }
+
+    private void checkPromotion(Cell destinationCell) {
+        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("pawn")) {
+            int pawnY = this.getBoard().getPositionOfCell(destinationCell).getY();
+            int pawnTeam = destinationCell.getPiece().getTeam();
+
+            if ((pawnY == 0 && pawnTeam == 0) || (pawnY == 7 && pawnTeam == 1)) {
+                String[] s;
+                if (this.actualPlayer instanceof HumanPlayer) {
+                    s = new String[]{"humanPromotion"};
+                } else {
+                    s = new String[]{"botPromotion"};
+                }
+                updateAllWithParams(s);
+
+                int pawnX = this.getBoard().getPositionOfCell(destinationCell).getX();
+                this.board.setPieceToCell(this.promotionPiece, pawnX, pawnY);
+            }
+        }
     }
 
     public void sendPromotion(String pieceName) {
@@ -215,7 +234,7 @@ public class ChessGame extends Game {
 
     public boolean isntInCheckIfMove(PlayerMove m) {
         Piece deadPiece = m.destination().getPiece();
-        this.tryMove(m);
+        this.doMove(m);
         boolean isInCheck = this.isInCheck(this.actualPlayer);
         this.undoMove(m, deadPiece);
         return !isInCheck;
@@ -224,7 +243,7 @@ public class ChessGame extends Game {
     public boolean wouldBeInCheckIfMove(PlayerMove m) {
         Player actualPlayer = this.actualPlayer;
         Piece deadPiece = m.destination().getPiece();
-        this.tryMove(m);
+        this.doMove(m);
         boolean isInCheck = this.isInCheck(this.nextPlayer());
         this.undoMove(m, deadPiece);
         this.actualPlayer = actualPlayer;
@@ -249,70 +268,5 @@ public class ChessGame extends Game {
         return true;
     }
 
-    private void checkCastling(PlayerMove m) {
-        Cell destinationCell = m.destination();
-        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("king") && destinationCell.getPiece().hasNeverMoved()) {
-            int kingY = this.getBoard().getPositionOfCell(destinationCell).getY();
 
-            Cell rookToMoveCell;
-            Cell whereMoveRookCell;
-            if (Math.abs(this.board.getDistanceFromMove(m).getX()) == 2) {
-                if (this.board.getDistanceFromMove(m).getX() < 0) {
-                    rookToMoveCell    = this.board.getCell(0, kingY);
-                    whereMoveRookCell = this.board.getCell(3, kingY);
-                } else {
-                    rookToMoveCell    = this.board.getCell(7, kingY);
-                    whereMoveRookCell = this.board.getCell(5, kingY);
-                }
-                applyMove(new PlayerMove(rookToMoveCell, whereMoveRookCell), false);
-            }
-        }
-    }
-
-    private void checkPromotion(Cell destinationCell) {
-        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("pawn")) {
-            int pawnY = this.getBoard().getPositionOfCell(destinationCell).getY();
-            int pawnTeam = destinationCell.getPiece().getTeam();
-
-            if ((pawnY == 0 && pawnTeam == 0) || (pawnY == 7 && pawnTeam == 1)) {
-                String[] s;
-                if (this.actualPlayer instanceof HumanPlayer) {
-                    s = new String[]{"humanPromotion"};
-                } else {
-                    s = new String[]{"botPromotion"};
-                }
-                updateAllWithParams(s);
-
-                int pawnX = this.getBoard().getPositionOfCell(destinationCell).getX();
-                this.board.setPieceToCell(this.promotionPiece, pawnX, pawnY);
-            }
-        }
-    }
-
-    private void checkTryingEnPassant(PlayerMove m) {
-        Cell sourceCell = m.source();
-        Cell destinationCell = m.destination();
-        int sourceX = this.getBoard().getPositionOfCell(sourceCell).getX();
-        int destinationX = this.getBoard().getPositionOfCell(destinationCell).getX();
-        if (sourceCell.getPiece() instanceof ChessPawn && abs(sourceX - destinationX) == 1 && !destinationCell.hasPiece()) {
-            int destinationY = this.getBoard().getPositionOfCell(destinationCell).getY();
-            int pieceToRemoveY = (destinationY == 2) ? destinationY + 1 : destinationY - 1;
-            Cell pieceToRemove = this.board.getCell(destinationX, pieceToRemoveY);
-            this.board.setPieceToCell(null, pieceToRemove);
-        }
-    }
-
-    private void checkUndoingEnPassant(PlayerMove m, Piece deadPiece) {
-        Cell sourceCell = m.source();
-        Cell destinationCell = m.destination();
-        int sourceX = this.getBoard().getPositionOfCell(sourceCell).getX();
-        int destinationX = this.getBoard().getPositionOfCell(destinationCell).getX();
-        if (destinationCell.getPiece() instanceof ChessPawn && abs(sourceX - destinationX) == 1 && deadPiece == null) {
-            int destinationY = this.getBoard().getPositionOfCell(destinationCell).getY();
-            int pieceToReviveY = (destinationY == 2) ? destinationY + 1 : destinationY - 1;
-            Cell pieceToRevive = this.board.getCell(destinationX, pieceToReviveY);
-            this.board.setPieceToCell(new ChessPawn(1 - destinationCell.getPiece().getTeam()), pieceToRevive);
-            pieceToRevive.getPiece().signalPieceJustMoved(this.turn - 1);
-        }
-    }
 }

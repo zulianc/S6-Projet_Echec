@@ -114,10 +114,10 @@ public class MainFrame extends JFrame implements Observer {
                     String winningMessage = "\nVictoire de "+winnerName+teamWinning;
 
                     String finalMessage;
-                    if (!this.gameModel.isDraw()) {
-                        finalMessage = "Partie finie" + winningMessage;
-                    } else {
+                    if (this.gameModel.isDraw()) {
                         finalMessage = "Partie finie\nC'est une égalité";
+                    } else {
+                        finalMessage = "Partie finie" + winningMessage;
                     }
 
                     JOptionPane.showMessageDialog(this, finalMessage);
