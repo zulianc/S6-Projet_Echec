@@ -4,21 +4,20 @@ import models.boards.Cell;
 import models.games.Game;
 import models.decorators.AccessibleCellsDecorator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
     private final AccessibleCellsDecorator decorator;
     private final int team;
     protected int value;
-    private int moveCount;
-    private int lastMoveTurn;
+    private final ArrayList<Integer> moveTurns = new ArrayList<>();
 
     public Piece(int team, int value, AccessibleCellsDecorator decorator) {
         this.decorator = decorator;
         this.team = team;
         this.value = value;
-        this.moveCount = 0;
-        this.lastMoveTurn = -1;
+        this.moveTurns.add(-1);
     }
 
     public abstract String getPieceName();
@@ -30,8 +29,11 @@ public abstract class Piece {
     }
 
     public void signalPieceJustMoved(int turn) {
-        this.moveCount++;
-        this.lastMoveTurn = turn;
+        this.moveTurns.add(turn);
+    }
+
+    public void signalPieceUnmoved() {
+        this.moveTurns.removeLast();
     }
 
     public int getTeam() {
@@ -43,18 +45,20 @@ public abstract class Piece {
     }
 
     public int getMoveCount() {
-        return this.moveCount;
+        return this.moveTurns.size() - 1;
     }
 
     public boolean hasNeverMoved() {
-        return this.moveCount == 0;
+        return this.getMoveCount() == 0;
     }
 
     public Integer getLastMoveTurn() {
-        if (this.lastMoveTurn == -1) {
+        int lastMoveTurn = this.moveTurns.getLast();
+
+        if (lastMoveTurn == -1) {
             return null;
         }
-        return this.lastMoveTurn;
+        return lastMoveTurn;
     }
 
     @Override

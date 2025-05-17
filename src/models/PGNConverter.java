@@ -63,7 +63,7 @@ public class PGNConverter {
                     }
                 }
 
-                if (((ChessGame) game).wouldBeInCheckIfMove(move)) {
+                if (((ChessGame) game).isNextPlayerInCheckIfMove(move)) {
                     isChecked = "+";
                 }
 

@@ -99,7 +99,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                         blockedPath = true;
                                     } else {
                                         if (!reachedFinalKingCell) {
-                                            if (!((ChessGame) game).isntInCheckIfMove(new PlayerMove(startingCell, nextCell))) {
+                                            if (((ChessGame) game).isInCheckIfMove(new PlayerMove(startingCell, nextCell))) {
                                                 blockedPath = true;
                                             }
                                         }

@@ -75,6 +75,18 @@ public abstract class Game extends Observable implements Runnable {
         }
     }
 
+    protected abstract void initializePieces();
+
+    protected abstract void checkIfPlayerLost(Player p);
+
+    public abstract boolean hasGameEnded();
+
+    protected abstract void lastMoveNotation();
+
+    protected abstract void applyMove(PlayerMove m);
+
+    protected abstract boolean isValidMove(GameMove move);
+
     protected Player nextPlayer() {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.players.size());
     }
@@ -90,6 +102,68 @@ public abstract class Game extends Observable implements Runnable {
         }
     }
 
+    protected boolean canPlayerMove(PlayerMove playerMove) {
+        for (GameMove move : this.possibleMoves) {
+            if (move.moves().getFirst().source().equals(playerMove.source()) && move.moves().getFirst().destination().equals(playerMove.destination())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected Piece doMove(PieceMove move) {
+        Piece movedPiece = move.source().getPiece();
+        Piece deadPiece = move.captured().getPiece();
+
+        this.board.removePieceFromCell(deadPiece);
+        this.board.setPieceToCell(null, move.source());
+        this.board.setPieceToCell(movedPiece, move.destination());
+
+        movedPiece.signalPieceJustMoved(this.turn);
+
+        return deadPiece;
+    }
+
+    protected List<Piece> doMove(GameMove move) {
+        List<Piece> deadPieces = new ArrayList<>();
+
+        for (PieceMove pieceMove : move.moves()) {
+            Piece deadPiece = this.doMove(pieceMove);
+            deadPieces.addLast(deadPiece);
+        }
+
+        return deadPieces;
+    }
+
+    protected void undoMove(PieceMove move, Piece deadPiece) {
+        Piece movedPiece = move.destination().getPiece();
+
+        this.board.setPieceToCell(deadPiece, move.captured());
+        this.board.removePieceFromCell(movedPiece);
+        this.board.setPieceToCell(movedPiece, move.source());
+
+        movedPiece.signalPieceUnmoved();
+    }
+
+    protected void undoMove(GameMove move, List<Piece> deadPieces) {
+        deadPieces = deadPieces.reversed();
+        for (PieceMove pieceMove : move.moves().reversed()) {
+            Piece revivedPiece = deadPieces.getFirst();
+            deadPieces.removeFirst();
+            this.undoMove(pieceMove, revivedPiece);
+        }
+    }
+
+    protected boolean playerHasNoAvailableMove(Player p) {
+        List<Piece> pieces = this.board.getAllPiecesOfTeam(p.getTeam());
+        for (Piece piece : pieces) {
+            if (piece.getAccessibleCells(this).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public List<Cell> getValidCells(Piece piece) {
         List<Cell> validCells = new ArrayList<>();
 
@@ -103,26 +177,15 @@ public abstract class Game extends Observable implements Runnable {
         return validCells;
     }
 
-    protected boolean canPlayerMove(PlayerMove playerMove) {
-        for (GameMove move : this.possibleMoves) {
-            if (move.moves().getFirst().source().equals(playerMove.source()) && move.moves().getFirst().destination().equals(playerMove.destination())) {
-                return true;
+    public boolean isDraw() {
+        int playerCount = 0;
+        for (Player player : this.players) {
+            if (player.isAlive()) {
+                playerCount++;
             }
         }
-        return false;
+        return playerCount > 1;
     }
-
-    protected abstract void initializePieces();
-
-    protected abstract void checkIfPlayerLost(Player p);
-
-    public abstract boolean hasGameEnded();
-
-    protected abstract void lastMoveNotation();
-
-    protected abstract void applyMove(PlayerMove m);
-
-    protected abstract boolean isValidMove(GameMove move);
 
     public GameBoard getBoard() {
         return this.board;
@@ -146,15 +209,5 @@ public abstract class Game extends Observable implements Runnable {
 
     public List<Player> getPlayers() {
         return this.players;
-    }
-
-    public boolean isDraw() {
-        int playerCount = 0;
-        for (Player player : this.players) {
-            if (player.isAlive()) {
-                playerCount++;
-            }
-        }
-        return playerCount > 1;
     }
 }

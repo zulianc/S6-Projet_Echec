@@ -10,7 +10,6 @@ import models.pieces.chess.*;
 import models.players.HumanPlayer;
 import models.players.Player;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,67 +104,33 @@ public class ChessGame extends Game {
     private void applyMove(PlayerMove playerMove, boolean recordMove) {
         if (recordMove) this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
 
-        Iterator<GameMove> it = this.possibleMoves.iterator();
-        while (it.hasNext()) {
-            GameMove possibleMove = it.next();
-            if (possibleMove.moves().getFirst().source().equals(playerMove.source()) && possibleMove.moves().getFirst().destination().equals(playerMove.destination())) {
-                applyMove(possibleMove.moves().getFirst());
-                possibleMove.moves().removeFirst();
-                if (possibleMove.moves().isEmpty()) {
+        boolean sizeChanged = true;
+        while (sizeChanged) {
+            int size = this.possibleMoves.size();
+            Iterator<GameMove> it = this.possibleMoves.iterator();
+            PieceMove moveToDo = null;
+            while (it.hasNext()) {
+                GameMove possibleMove = it.next();
+                if (possibleMove.moves().getFirst().source().equals(playerMove.source()) && possibleMove.moves().getFirst().destination().equals(playerMove.destination())) {
+                    moveToDo = possibleMove.moves().getFirst();
+                    possibleMove.moves().removeFirst();
+                    if (possibleMove.moves().isEmpty()) {
+                        it.remove();
+                    }
+                }
+                else {
                     it.remove();
                 }
             }
-            else {
-                it.remove();
-            }
+            doMove(moveToDo);
+            sizeChanged = (this.possibleMoves.size() != size);
         }
 
         Cell destinationCell = playerMove.destination();
         checkPromotion(destinationCell);
 
-        Piece movedPiece = playerMove.source().getPiece();
-        movedPiece.signalPieceJustMoved(this.turn);
-
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
-    }
-
-    private Piece applyMove(PieceMove move) {
-        Piece movedPiece = move.source().getPiece();
-        Piece deadPiece = move.captured().getPiece();
-
-        this.board.removePieceFromCell(deadPiece);
-        this.board.setPieceToCell(null, move.source());
-        this.board.setPieceToCell(movedPiece, move.destination());
-    }
-
-    private List<Piece> doMove(GameMove move) {
-        List<Piece> deadPieces = new ArrayList<>();
-
-        for (PieceMove pieceMove : move.moves()) {
-            Piece movedPiece = pieceMove.source().getPiece();
-            Piece deadPiece = pieceMove.captured().getPiece();
-
-            deadPieces.addLast(deadPiece);
-            this.board.removePieceFromCell(deadPiece);
-            this.board.setPieceToCell(null, pieceMove.source());
-            this.board.setPieceToCell(movedPiece, pieceMove.destination());
-        }
-
-        return deadPieces;
-    }
-
-    private void undoMove(GameMove move, List<Piece> deadPieces) {
-        deadPieces = deadPieces.reversed();
-        for (PieceMove pieceMove : move.moves().reversed()) {
-            Piece revivedPiece = deadPieces.getFirst();
-            deadPieces.removeFirst();
-            Piece movedPiece = pieceMove.destination().getPiece();
-
-            this.board.setPieceToCell(revivedPiece, pieceMove.captured());
-            this.board.removePieceFromCell(movedPiece);
-            this.board.setPieceToCell(movedPiece, pieceMove.source());
-        }
     }
 
     private void checkPromotion(Cell destinationCell) {
@@ -232,22 +197,27 @@ public class ChessGame extends Game {
         return false;
     }
 
-    public boolean isntInCheckIfMove(PlayerMove m) {
-        Piece deadPiece = m.destination().getPiece();
-        this.doMove(m);
-        boolean isInCheck = this.isInCheck(this.actualPlayer);
-        this.undoMove(m, deadPiece);
+    private boolean isPlayerInCheckIfMove(PlayerMove playerMove, Player p) {
+        GameMove moveToDo = null;
+        for (GameMove move : this.possibleMoves) {
+            if (move.moves().getFirst().source() == playerMove.source() && move.moves().getFirst().destination() == playerMove.destination()) {
+                moveToDo = move;
+            }
+        }
+
+        List<Piece> deadPieces = this.doMove(moveToDo);
+        boolean isInCheck = this.isInCheck(p);
+        this.undoMove(moveToDo, deadPieces);
+
         return !isInCheck;
     }
 
-    public boolean wouldBeInCheckIfMove(PlayerMove m) {
-        Player actualPlayer = this.actualPlayer;
-        Piece deadPiece = m.destination().getPiece();
-        this.doMove(m);
-        boolean isInCheck = this.isInCheck(this.nextPlayer());
-        this.undoMove(m, deadPiece);
-        this.actualPlayer = actualPlayer;
-        return isInCheck;
+    public boolean isInCheckIfMove(PlayerMove m) {
+        return this.isPlayerInCheckIfMove(m, this.actualPlayer);
+    }
+
+    public boolean isNextPlayerInCheckIfMove(PlayerMove m) {
+        return this.isPlayerInCheckIfMove(m, this.nextPlayer());
     }
 
     public boolean isInCheckmate(Player p) {
@@ -257,16 +227,4 @@ public class ChessGame extends Game {
     public boolean isInStalemate(Player p) {
         return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
-
-    private boolean playerHasNoAvailableMove(Player p) {
-        List<Piece> pieces = this.board.getAllPieces();
-        for (Piece piece : pieces) {
-            if (piece.getTeam() == p.getTeam() && !this.getValidCells(piece, p).isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
 }
