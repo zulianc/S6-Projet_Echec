@@ -88,7 +88,7 @@ class PromotionDialog {
         return panel;
     }
 
-    void display () {
+    void display() {
         dialog = new JDialog(parent, "Promotion", true);
         dialog.setSize(DWIDTH, DHEIGHT);
         dialog.setResizable(false);
