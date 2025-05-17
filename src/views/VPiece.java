@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VPiece {
-
     private static final String BASE = "assets/ChessPieces/";
     private static final String EXTENSION = ".png";
 

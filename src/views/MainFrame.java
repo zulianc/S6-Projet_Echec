@@ -11,12 +11,13 @@ import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements Observer {
     private final Game gameModel;
-    private BoardGameController chessController;
+    private BoardGameController boardGameController;
 
     private VBoard board;
     private JPanel contentPane;
     private JLabel titleLabel;
     private JToggleButton toggleRotationMode;
+    private JLabel traitLabel;
 
     public MainFrame(Game model) {
         this.gameModel = model;
@@ -24,7 +25,7 @@ public class MainFrame extends JFrame implements Observer {
     }
 
     private void build() {
-        this.chessController = new BoardGameController(gameModel, this);
+        this.boardGameController = new BoardGameController(gameModel, this);
 
         this.contentPane = new JPanel();
         this.contentPane.setPreferredSize(new Dimension(800, 600));
@@ -34,7 +35,7 @@ public class MainFrame extends JFrame implements Observer {
         basesColors.add(Color.WHITE);
         basesColors.add(Color.BLACK);
 
-        this.board = new VBoard(600, gameModel, chessController, basesColors);
+        this.board = new VBoard(600, gameModel, boardGameController, basesColors);
 
         this.titleLabel = new JLabel("Super jeu d'échecs");
         this.titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -50,13 +51,22 @@ public class MainFrame extends JFrame implements Observer {
             }
         });
 
+        this.traitLabel = new JLabel("Trait au Blancs");
+
         JPanel northPan = new JPanel();
         JPanel westPan  = new JPanel();
-        JPanel eastPan  = new JPanel();
+        JPanel eastPan  = new JPanel(new BorderLayout());
+        JPanel northEastPan = new JPanel();
+        JPanel centerEastPan = new JPanel();
 
         westPan.add(board);
         northPan.add(titleLabel);
-        eastPan.add(toggleRotationMode);
+        eastPan.add(northEastPan, BorderLayout.NORTH);
+        eastPan.add(centerEastPan, BorderLayout.CENTER);
+        northEastPan.add(toggleRotationMode);
+        centerEastPan.add(traitLabel);
+
+        northEastPan.setPreferredSize(new Dimension(150, 100));
 
         this.contentPane.add(westPan,  BorderLayout.WEST);
         this.contentPane.add(northPan, BorderLayout.NORTH);
@@ -85,7 +95,10 @@ public class MainFrame extends JFrame implements Observer {
 
     @Override
     public void update() {
-        board.update();
+        this.board.update();
+
+        String couleur = (this.gameModel.getActualPlayer().getTeam() == 0) ? "Blancs" : "Noirs";
+        this.traitLabel.setText("Trait au " + couleur);
     }
 
     @Override
@@ -99,7 +112,7 @@ public class MainFrame extends JFrame implements Observer {
                     diag.display();
 
                     String result = diag.getResultPieceName();
-                    chessController.promotionControl(result);
+                    boardGameController.promotionControl(result);
                 }
                 case "gameEnded" -> {
                     this.board.unmarkValidMoveCells();

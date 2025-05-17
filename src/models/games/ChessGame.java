@@ -33,18 +33,16 @@ public class ChessGame extends Game {
         this.board.setPieceToCell(new Bishop(1), 2, 0);
         this.board.setPieceToCell(new Bishop(1), 5, 0);
         this.board.setPieceToCell(new Bishop(0), 2, 7);
-        this.board.setPieceToCell(new Bishop(0), 4, 7);
+        this.board.setPieceToCell(new Bishop(0), 5, 7);
 
         this.board.setPieceToCell(new Queen(1), 3, 0);
         this.board.setPieceToCell(new Queen(0), 3, 7);
 
         this.board.setPieceToCell(new King(1), 4, 0);
-        this.board.setPieceToCell(new King(0), 5, 7);
+        this.board.setPieceToCell(new King(0), 4, 7);
 
         for (int x = 0; x < 8; x++) {
             this.board.setPieceToCell(new ChessPawn(1), x, 1);
-        }
-        for (int x = 0; x < 8; x++) {
             this.board.setPieceToCell(new ChessPawn(0), x, 6);
         }
     }
@@ -104,7 +102,12 @@ public class ChessGame extends Game {
         return alivePlayers == 1;
     }
 
-    private void checkPromotion(Cell destinationCell) {
+    public void sendPromotion(String pieceName) {
+        System.out.println("Promote to " + pieceName);
+        this.promotionPiece = createPieceFromString(pieceName);
+    }
+
+    protected void checkPromotion(Cell destinationCell) {
         if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("pawn")) {
             int pawnY = this.getBoard().getPositionOfCell(destinationCell).getY();
             int pawnTeam = destinationCell.getPiece().getTeam();
@@ -124,12 +127,7 @@ public class ChessGame extends Game {
         }
     }
 
-    public void sendPromotion(String pieceName) {
-        System.out.println("Promote to " + pieceName);
-        this.promotionPiece = createPieceFromString(pieceName);
-    }
-
-    private Piece createPieceFromString(String pieceName) {
+    protected Piece createPieceFromString(String pieceName) {
         Piece result;
         int actualPlayerTeam = this.actualPlayer.getTeam();
         switch (pieceName) {
@@ -153,7 +151,7 @@ public class ChessGame extends Game {
         return result;
     }
 
-    private boolean isInCheck(Player p) {
+    protected boolean isInCheck(Player p) {
         List<Piece> pieces = this.board.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() != p.getTeam()) {
@@ -170,7 +168,7 @@ public class ChessGame extends Game {
         return false;
     }
 
-    private boolean isPlayerInCheckIfMove(PlayerMove playerMove, Player p) {
+    protected boolean isPlayerInCheckIfMove(PlayerMove playerMove, Player p) {
         GameMove moveToDo = null;
         for (GameMove move : this.possibleMoves) {
             if (playerMove.correspondsTo(move)) {

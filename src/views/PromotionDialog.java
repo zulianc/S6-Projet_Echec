@@ -1,6 +1,5 @@
 package views;
 
-
 import models.pieces.chess.Bishop;
 import models.pieces.chess.Knight;
 import models.pieces.chess.Queen;

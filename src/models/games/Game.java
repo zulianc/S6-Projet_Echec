@@ -50,12 +50,12 @@ public abstract class Game extends Observable implements Runnable {
                 PlayerMove playerMove;
                 do {
                     do {
+                        this.updateAll();
                         playerMove = this.actualPlayer.getMove();
                     } while (!this.canPlayerMove(playerMove));
                     this.updateNotation(playerMove);
                     this.applyMove(playerMove);
                 } while (!this.possibleMoves.isEmpty());
-
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.updateAll();
 
@@ -172,7 +172,7 @@ public abstract class Game extends Observable implements Runnable {
         Piece movedPiece = move.source().getPiece();
         Piece deadPiece = move.captured().getPiece();
 
-        if (!move.destination().hasPiece()) {
+        if (!(move.destination().hasPiece() && move.destination().getPiece().getTeam() == movedPiece.getTeam())) {
             this.board.removePieceFromBoard(deadPiece);
             this.board.setPieceToCell(null, move.source());
             this.board.setPieceToCell(movedPiece, move.destination());
