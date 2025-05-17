@@ -7,6 +7,7 @@ import structure.Observable;
 import structure.Observer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Game extends Observable implements Runnable {
@@ -36,6 +37,7 @@ public abstract class Game extends Observable implements Runnable {
     }
 
     public void playGame() {
+        System.out.println("Initializing pieces...");
         this.initializePieces();
         while (!this.hasGameEnded()) {
             this.turn++;
@@ -59,7 +61,7 @@ public abstract class Game extends Observable implements Runnable {
         this.lastMoveNotation();
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
-        System.out.println("game ended");
+        System.out.println("Game ended!");
 
         for (Player player : players) {
             synchronized (player) {
@@ -94,7 +96,7 @@ public abstract class Game extends Observable implements Runnable {
     protected void updatePossibleMoves() {
         this.possibleMoves = new ArrayList<>();
         for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
-            for (GameMove move : piece.getAccessibleCells(this)) {
+            for (GameMove move : piece.getPossibleMoves(this)) {
                 if (this.isValidMove(move)) {
                     this.possibleMoves.add(move);
                 }
@@ -125,7 +127,7 @@ public abstract class Game extends Observable implements Runnable {
     }
 
     protected List<Piece> doMove(GameMove move) {
-        List<Piece> deadPieces = new ArrayList<>();
+        List<Piece> deadPieces = new LinkedList<>();
 
         for (PieceMove pieceMove : move.moves()) {
             Piece deadPiece = this.doMove(pieceMove);
@@ -138,9 +140,9 @@ public abstract class Game extends Observable implements Runnable {
     protected void undoMove(PieceMove move, Piece deadPiece) {
         Piece movedPiece = move.destination().getPiece();
 
-        this.board.setPieceToCell(deadPiece, move.captured());
         this.board.removePieceFromCell(movedPiece);
         this.board.setPieceToCell(movedPiece, move.source());
+        this.board.setPieceToCell(deadPiece, move.captured());
 
         movedPiece.signalPieceUnmoved();
     }
@@ -157,7 +159,7 @@ public abstract class Game extends Observable implements Runnable {
     protected boolean playerHasNoAvailableMove(Player p) {
         List<Piece> pieces = this.board.getAllPiecesOfTeam(p.getTeam());
         for (Piece piece : pieces) {
-            if (piece.getAccessibleCells(this).isEmpty()) {
+            if (piece.getPossibleMoves(this).isEmpty()) {
                 return false;
             }
         }

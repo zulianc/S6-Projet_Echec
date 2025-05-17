@@ -1,19 +1,19 @@
 package models.pieces;
 
-import models.boards.Cell;
+import models.boards.GameMove;
 import models.games.Game;
-import models.decorators.AccessibleCellsDecorator;
+import models.decorators.PossibleMovesDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Piece {
-    private final AccessibleCellsDecorator decorator;
+    private final PossibleMovesDecorator decorator;
     private final int team;
     protected int value;
     private final ArrayList<Integer> moveTurns = new ArrayList<>();
 
-    public Piece(int team, int value, AccessibleCellsDecorator decorator) {
+    public Piece(int team, int value, PossibleMovesDecorator decorator) {
         this.decorator = decorator;
         this.team = team;
         this.value = value;
@@ -24,8 +24,8 @@ public abstract class Piece {
 
     public abstract String getPieceCode();
 
-    public List<Cell> getAccessibleCells(Game game) {
-        return decorator.getAccessibleCells(game, this);
+    public List<GameMove> getPossibleMoves(Game game) {
+        return decorator.getPossibleMoves(game, this);
     }
 
     public void signalPieceJustMoved(int turn) {

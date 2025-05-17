@@ -15,7 +15,7 @@ public class VArrow {
         this.targetCell = targetCell;
     }
 
-    public void paint(Graphics g, VChessBoard vBoard) {
+    public void paint(Graphics g, VBoard vBoard) {
         Position2D sourcePosition = vBoard.getVCellPosition(sourceCell);
         Position2D targetPosition = vBoard.getVCellPosition(targetCell);
 

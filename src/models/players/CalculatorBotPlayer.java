@@ -60,7 +60,7 @@ public class CalculatorBotPlayer extends Player implements Observer {
         for (Piece piece : piecesToMove) {
             Cell sourceCell = this.game.getBoard().getCellOfPiece(piece);
 
-            List<Cell> accessibleCellsForOnePiece = this.game.getValidCells(piece, this);
+            List<Cell> accessibleCellsForOnePiece = this.game.getValidCells(piece);
             if (accessibleCellsForOnePiece != null) {
                 for (Cell destinationCell : accessibleCellsForOnePiece) {
                     PlayerMove moveToAdd = new PlayerMove(sourceCell, destinationCell);

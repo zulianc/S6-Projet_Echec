@@ -22,7 +22,6 @@ public class ChessGame extends Game {
 
     @Override
     protected void initializePieces() {
-        System.out.println("Initializing pieces...");
         this.board.setPieceToCell(new Rook(1), 0, 0);
         this.board.setPieceToCell(new Rook(1), 7, 0);
         this.board.setPieceToCell(new Rook(0), 0, 7);
@@ -98,33 +97,27 @@ public class ChessGame extends Game {
 
     @Override
     protected void applyMove(PlayerMove m) {
-        this.applyMove(m, true);
-    }
+        this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
 
-    private void applyMove(PlayerMove playerMove, boolean recordMove) {
-        if (recordMove) this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
-
-        boolean sizeChanged = true;
-        while (sizeChanged) {
-            int size = this.possibleMoves.size();
-            Iterator<GameMove> it = this.possibleMoves.iterator();
-            PieceMove moveToDo = null;
-            while (it.hasNext()) {
-                GameMove possibleMove = it.next();
-                if (possibleMove.moves().getFirst().source().equals(playerMove.source()) && possibleMove.moves().getFirst().destination().equals(playerMove.destination())) {
-                    moveToDo = possibleMove.moves().getFirst();
-                    possibleMove.moves().removeFirst();
-                    if (possibleMove.moves().isEmpty()) {
-                        it.remove();
-                    }
-                }
-                else {
+        Iterator<GameMove> it = this.possibleMoves.iterator();
+        PieceMove moveToDo = null;
+        while (it.hasNext()) {
+            GameMove possibleMove = it.next();
+            if (possibleMove.moves().getFirst().source().equals(playerMove.source()) && possibleMove.moves().getFirst().destination().equals(playerMove.destination())) {
+                moveToDo = possibleMove.moves().getFirst();
+                possibleMove.moves().removeFirst();
+                if (possibleMove.moves().isEmpty()) {
                     it.remove();
                 }
             }
-            doMove(moveToDo);
-            sizeChanged = (this.possibleMoves.size() != size);
+            else {
+                it.remove();
+            }
         }
+        if (moveToDo == null) {
+            throw new RuntimeException("The move the player inputed isn't in the list of possible moves.");
+        }
+        doMove(moveToDo);
 
         Cell destinationCell = playerMove.destination();
         checkPromotion(destinationCell);
@@ -186,7 +179,9 @@ public class ChessGame extends Game {
         List<Piece> pieces = this.board.getAllPieces();
         for (Piece piece : pieces) {
             if (piece.getTeam() != p.getTeam()) {
-                for (Cell cell : piece.getAccessibleCells(this)) {
+                List<GameMove> possibleMoves = piece.getPossibleMoves(this);
+                for (GameMove possibleMove : possibleMoves) {
+                    Cell cell = possibleMove.moves().getFirst().destination();
                     if (cell.getPiece() instanceof King) {
                         return true;
                     }
@@ -203,6 +198,10 @@ public class ChessGame extends Game {
             if (move.moves().getFirst().source() == playerMove.source() && move.moves().getFirst().destination() == playerMove.destination()) {
                 moveToDo = move;
             }
+        }
+
+        if (moveToDo == null) {
+            return false;
         }
 
         List<Piece> deadPieces = this.doMove(moveToDo);

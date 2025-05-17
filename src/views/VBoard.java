@@ -1,8 +1,7 @@
 package views;
 
-import controllers.ChessController;
+import controllers.BoardGameController;
 import models.boards.Cell;
-import models.boards.GameBoard;
 import models.games.Game;
 import structure.Observer;
 import structure.Position2D;
@@ -15,19 +14,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class VChessBoard extends JPanel implements Observer {
+public class VBoard extends JPanel implements Observer {
     private final int cellSize;
     private List<VCell> vCells;
     private final List<VArrow> vArrows = new LinkedList<>();
-    private final ChessController controller;
     private final Game model;
     private List<Color> baseColors;
     private boolean isRotating = false;
     private int currentRotationDegree = 0;
 
-    public VChessBoard(int size, Game model, ChessController controller, List<Color> baseColors) {
+    public VBoard(int size, Game model, BoardGameController controller, List<Color> baseColors) {
         this.model = model;
-        this.controller = controller;
         this.cellSize = size / this.model.getBoard().getBoardSize();
         this.setPreferredSize(new Dimension(size, size));
 
@@ -38,23 +35,18 @@ public class VChessBoard extends JPanel implements Observer {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
                 VCell cellClicked = collectVCellFromEvent(e);
                 controller.controlClicked(cellClicked, e);
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("mousePressed");
-
                 VCell cellEnd = collectVCellFromEvent(e);
                 controller.controlPressed(cellEnd, e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.out.println("mouseReleased");
-
                 VCell cellEnd = collectVCellFromEvent(e);
                 controller.controlReleased(cellEnd, e);
             }

@@ -11,14 +11,14 @@ import views.VCell;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public class ChessController {
+public class BoardGameController {
     private final Game gameModel;
     private final MainFrame mainView;
     private Cell before;
     private Cell after;
     private VCell startCell;
 
-    public ChessController(Game gameModel, MainFrame mainView) {
+    public BoardGameController(Game gameModel, MainFrame mainView) {
         this.gameModel = gameModel;
         this.mainView  = mainView;
 

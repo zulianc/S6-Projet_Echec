@@ -46,9 +46,9 @@ public class PGNConverter {
                 if (destinationCell.hasPiece()) {
 
                     List<Cell> accessibleCells = new ArrayList<>();
-                    for (Piece p : game.getBoard().getAllPiecesOfTeam(game.getActualPlayer().getTeam())) {
-                        if (!game.getBoard().getCellOfPiece(p).equals(sourceCell)  && p.getPieceName().equals(sourcePiece.getPieceName())) {
-                            accessibleCells.addAll(p.getAccessibleCells(game));
+                    for (Piece piece : game.getBoard().getAllPiecesOfTeam(game.getActualPlayer().getTeam())) {
+                        if (!game.getBoard().getCellOfPiece(piece).equals(sourceCell) && piece.getPieceName().equals(sourcePiece.getPieceName())) {
+                            piece.getPossibleMoves(game).forEach(gameMove -> accessibleCells.add(gameMove.moves().getFirst().destination()));
                         }
                     }
                     for (Cell cell : accessibleCells) {

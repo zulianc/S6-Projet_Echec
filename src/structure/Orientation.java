@@ -22,7 +22,7 @@ public enum Orientation {
     }
 
     public Position2D getVector() {
-        return vector.copy();
+        return vector;
     }
 
     @Override

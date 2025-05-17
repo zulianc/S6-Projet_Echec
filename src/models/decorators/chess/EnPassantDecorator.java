@@ -1,7 +1,8 @@
 package models.decorators.chess;
 
 import models.boards.Cell;
-import models.decorators.AccessibleCellsDecorator;
+import models.boards.GameMove;
+import models.decorators.PossibleMovesDecorator;
 import models.games.Game;
 import models.pieces.chess.ChessPawn;
 import models.pieces.Piece;
@@ -12,8 +13,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EnPassantDecorator extends AccessibleCellsDecorator {
-    public EnPassantDecorator(AccessibleCellsDecorator base) {
+public class EnPassantDecorator extends PossibleMovesDecorator {
+    public EnPassantDecorator(PossibleMovesDecorator base) {
         super(base);
         this.possibleVectors = new ArrayList<>();
         this.possibleVectors.add(Orientation.FRONT_LEFT.getVector());
@@ -21,8 +22,8 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
     }
 
     @Override
-    protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
-        List<Cell> accessibleCells = new LinkedList<>();
+    protected List<GameMove> getDecoratorPossibleMoves(Game game, Piece piece) {
+        List<GameMove> possibleMoves = new LinkedList<>();
 
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
@@ -39,7 +40,7 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
                     if (cellToCapture.getPiece() instanceof ChessPawn) {
                         if (cellToCapture.getPiece().getMoveCount() == 1) {
                             if (cellToCapture.getPiece().getLastMoveTurn() > (game.getTurn() - game.getPlayerCount())) {
-                                accessibleCells.add(cellToMoveAt);
+                                possibleMoves.add(new GameMove(startingCell, cellToMoveAt, cellToCapture));
                             }
                         }
                     }
@@ -47,6 +48,6 @@ public class EnPassantDecorator extends AccessibleCellsDecorator {
             }
         }
 
-        return accessibleCells;
+        return possibleMoves;
     }
 }

@@ -1,7 +1,9 @@
 package models.decorators.chess;
 
 import models.boards.Cell;
-import models.decorators.AccessibleCellsDecorator;
+import models.boards.GameMove;
+import models.boards.PieceMove;
+import models.decorators.PossibleMovesDecorator;
 import models.games.ChessGame;
 import models.games.Game;
 import models.boards.PlayerMove;
@@ -14,8 +16,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CastlingDecorator extends AccessibleCellsDecorator {
-    public CastlingDecorator (AccessibleCellsDecorator base) {
+public class CastlingDecorator extends PossibleMovesDecorator {
+    public CastlingDecorator (PossibleMovesDecorator base) {
         super(base);
         this.possibleVectors = new ArrayList<>();
         this.possibleVectors.add(Orientation.LEFT.getVector());
@@ -23,7 +25,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
     }
 
     @Override
-    protected List<Cell> getDecoratorAccessibleCells(Game game, Piece piece) {
+    protected List<GameMove> getDecoratorPossibleMoves(Game game, Piece piece) {
         /*
         Castling rules for both normal chess and 960 chess:
         - the king and rook must have never moved
@@ -33,7 +35,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
         - every cell from the king and the rook's starting positions to their end positions must be empty
          */
 
-        List<Cell> accessibleCells = new LinkedList<>();
+        List<GameMove> possibleMoves = new LinkedList<>();
 
         Cell startingCell = game.getBoard().getCellOfPiece(piece);
 
@@ -79,6 +81,7 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                     }
 
                     // STEP 2: check for the rook's existence and that the path is clear
+                    Cell startingRookCell = null;
                     {
                         Cell nextCell = startingCell;
                         boolean reachedEndOfBoard = false;
@@ -93,10 +96,13 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                                         && nextCell.getPiece() instanceof Rook
                                         && nextCell.getPiece().hasNeverMoved()) {
                                     foundValidRook = true;
+                                    startingRookCell = nextCell;
                                 }
                                 else {
-                                    if (nextCell.hasPiece() && !nextCell.equals(startingCell)) {
-                                        blockedPath = true;
+                                    if (nextCell.hasPiece()) {
+                                        if (!nextCell.equals(startingCell)) {
+                                            blockedPath = true;
+                                        }
                                     } else {
                                         if (!reachedFinalKingCell) {
                                             if (((ChessGame) game).isInCheckIfMove(new PlayerMove(startingCell, nextCell))) {
@@ -116,14 +122,17 @@ public class CastlingDecorator extends AccessibleCellsDecorator {
                             }
                         } while (!(foundValidRook && reachedFinalKingCell) && !reachedEndOfBoard && !blockedPath);
 
-                        if (!reachedEndOfBoard && !blockedPath) {
-                            accessibleCells.add(finalKingCell);
+                        if (!reachedEndOfBoard && !blockedPath && foundValidRook) {
+                            List<PieceMove> moves = new LinkedList<>();
+                            moves.addLast(new PieceMove(startingCell, finalKingCell));
+                            moves.addLast(new PieceMove(startingRookCell, finalRookCell));
+                            possibleMoves.add(new GameMove(moves));
                         }
                     }
                 }
             }
         }
 
-        return accessibleCells;
+        return possibleMoves;
     }
 }

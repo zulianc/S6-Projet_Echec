@@ -9,10 +9,6 @@ public class Position2D {
         this.y = y;
     }
 
-    public Position2D copy() {
-        return new Position2D(x, y);
-    }
-
     public Position2D add(Position2D position) {
         return new Position2D(this.x + position.x, this.y + position.y);
     }
@@ -32,7 +28,7 @@ public class Position2D {
             return this.rotate270Clockwise();
         }
 
-        return this.copy();
+        return this;
     }
 
     public Position2D rotate90Clockwise() {

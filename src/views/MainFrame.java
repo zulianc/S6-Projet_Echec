@@ -1,6 +1,6 @@
 package views;
 
-import controllers.ChessController;
+import controllers.BoardGameController;
 import models.games.Game;
 import models.players.Player;
 import structure.Observer;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements Observer {
     private final Game gameModel;
-    private ChessController chessController;
+    private BoardGameController chessController;
 
-    private VChessBoard board;
+    private VBoard board;
     private JPanel contentPane;
     private JLabel titleLabel;
     private JToggleButton toggleRotationMode;
@@ -24,7 +24,7 @@ public class MainFrame extends JFrame implements Observer {
     }
 
     private void build() {
-        this.chessController = new ChessController(gameModel, this);
+        this.chessController = new BoardGameController(gameModel, this);
 
         this.contentPane = new JPanel();
         this.contentPane.setPreferredSize(new Dimension(800, 600));
@@ -34,7 +34,7 @@ public class MainFrame extends JFrame implements Observer {
         basesColors.add(Color.WHITE);
         basesColors.add(Color.BLACK);
 
-        this.board = new VChessBoard(600, gameModel, chessController, basesColors);
+        this.board = new VBoard(600, gameModel, chessController, basesColors);
 
         this.titleLabel = new JLabel("Super jeu d'échecs");
         this.titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -79,7 +79,7 @@ public class MainFrame extends JFrame implements Observer {
         return gameModel;
     }
 
-    public VChessBoard getBoard() {
+    public VBoard getBoard() {
         return board;
     }
 
