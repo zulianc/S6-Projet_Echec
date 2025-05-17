@@ -6,6 +6,7 @@ import models.decorators.PossibleMovesDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Piece {
     private final PossibleMovesDecorator decorator;
@@ -65,8 +66,8 @@ public abstract class Piece {
     public String toString() {
         return "Piece{" +
                 "name=" + this.getPieceName() +
-                ", team=" + team +
-                ", value=" + value +
+                ", team=" + this.team +
+                ", value=" + this.value +
                 '}';
     }
 }

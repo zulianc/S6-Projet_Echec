@@ -198,4 +198,8 @@ public class ChessGame extends Game {
     public boolean isInStalemate(Player p) {
         return !this.isInCheck(p) && this.playerHasNoAvailableMove(p);
     }
+
+    public boolean isCastling(PlayerMove m) {
+        return m.source().getPiece() instanceof King && Math.abs(this.board.getDistanceFromMove(m).getX()) == 2;
+    }
 }

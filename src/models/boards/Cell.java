@@ -34,14 +34,14 @@ public class Cell {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hashCode(this.id);
     }
 
     @Override
     public String toString() {
         return "Cell{" +
-                "id=" + id +
-                ", piece=" + piece +
+                "id=" + this.id +
+                ", piece=" + this.piece +
                 '}';
     }
 }

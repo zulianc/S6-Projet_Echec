@@ -152,8 +152,4 @@ public class GameBoard {
 
         return new Position2D(destinationPosition.getX() - sourcePosition.getX(), destinationPosition.getY() - sourcePosition.getY());
     }
-
-    public boolean isCastling(PlayerMove m) {
-        return m.source().getPiece().getPieceName().equals("king") && Math.abs(getDistanceFromMove(m).getX()) == 2;
-    }
 }

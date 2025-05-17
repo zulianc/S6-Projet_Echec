@@ -24,7 +24,7 @@ public class PGNConverter {
         String isChecked     = "";
         Piece sourcePiece = sourceCell.getPiece();
 
-        if (game.getBoard().isCastling(move)) {
+        if (((ChessGame) game).isCastling(move)) {
             if (game.getBoard().getDistanceFromMove(move).getX() < 0) {
                 return "O-O-O";
             } else {
