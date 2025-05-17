@@ -16,6 +16,7 @@ public abstract class Game extends Observable implements Runnable {
     protected final List<Player> players;
     protected Player actualPlayer;
     protected int turn;
+    protected boolean gameEnded;
     protected List<GameMove> possibleMoves;
     protected List<String> movesNotation = new ArrayList<>();
     public PlayerMove playerMove;
@@ -30,6 +31,7 @@ public abstract class Game extends Observable implements Runnable {
         }
         this.board = new GameBoard(8);
         this.turn = 0;
+        this.gameEnded = false;
     }
 
     @Override
@@ -41,7 +43,7 @@ public abstract class Game extends Observable implements Runnable {
         System.out.println("Initializing pieces...");
         this.initializePieces();
 
-        while (!this.hasGameEnded()) {
+        do {
             this.turn++;
             this.actualPlayer = this.nextPlayer();
 
@@ -57,11 +59,12 @@ public abstract class Game extends Observable implements Runnable {
                     this.applyMove(playerMove);
                 } while (!this.possibleMoves.isEmpty());
                 this.checkIfPlayerLost(this.nextPlayer());
+                this.checkIfGameEnded();
                 this.updateAll();
 
                 System.out.println(movesNotation);
             }
-        }
+        } while (!this.gameEnded);
 
         this.updateNotationLastMove();
         String[] s = new String[]{"gameEnded"};
@@ -94,7 +97,7 @@ public abstract class Game extends Observable implements Runnable {
 
     protected abstract void checkIfPlayerLost(Player p);
 
-    public abstract boolean hasGameEnded();
+    public abstract void checkIfGameEnded();
 
     protected Player nextPlayer() {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.players.size());
@@ -217,12 +220,13 @@ public abstract class Game extends Observable implements Runnable {
 
     protected boolean playerHasNoAvailableMove(Player p) {
         List<Piece> pieces = this.board.getAllPiecesOfTeam(p.getTeam());
+        boolean hasAtLeastOneMove = false;
         for (Piece piece : pieces) {
-            if (piece.getPossibleMoves(this).isEmpty()) {
-                return false;
+            if (!piece.getPossibleMoves(this).isEmpty()) {
+                hasAtLeastOneMove = true;
             }
         }
-        return true;
+        return !hasAtLeastOneMove;
     }
 
     public List<Cell> getValidCells(Piece piece) {
@@ -262,6 +266,10 @@ public abstract class Game extends Observable implements Runnable {
 
     public int getTurn() {
         return this.turn;
+    }
+
+    public boolean hasGameEnded() {
+        return this.gameEnded;
     }
 
     public List<String> getMovesNotation() {

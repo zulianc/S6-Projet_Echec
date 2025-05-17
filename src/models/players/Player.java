@@ -32,18 +32,18 @@ public abstract class Player {
     }
 
     public void playerLostGame() {
-        alive = false;
+        this.alive = false;
     }
 
     public boolean isAlive() {
-        return alive;
+        return this.alive;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public int getTeam() {
-        return team;
+        return this.team;
     }
 }

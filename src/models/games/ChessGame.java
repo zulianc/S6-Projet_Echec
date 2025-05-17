@@ -87,11 +87,7 @@ public class ChessGame extends Game {
     }
 
     @Override
-    public boolean hasGameEnded() {
-        if (this.actualPlayer == null) {
-            return false;
-        }
-
+    public void checkIfGameEnded() {
         int alivePlayers = 0;
         for (Player player : this.players) {
             if (player.isAlive() && !isInStalemate(player)) {
@@ -99,7 +95,7 @@ public class ChessGame extends Game {
             }
         }
 
-        return alivePlayers == 1;
+        this.gameEnded = (alivePlayers < 2);
     }
 
     public void sendPromotion(String pieceName) {
@@ -108,7 +104,7 @@ public class ChessGame extends Game {
     }
 
     protected void checkPromotion(Cell destinationCell) {
-        if (destinationCell.hasPiece() && destinationCell.getPiece().getPieceName().equals("pawn")) {
+        if (destinationCell.hasPiece() && destinationCell.getPiece() instanceof ChessPawn) {
             int pawnY = this.getBoard().getPositionOfCell(destinationCell).getY();
             int pawnTeam = destinationCell.getPiece().getTeam();
 
@@ -121,8 +117,8 @@ public class ChessGame extends Game {
                 }
                 updateAllWithParams(s);
 
-                int pawnX = this.getBoard().getPositionOfCell(destinationCell).getX();
-                this.board.setPieceToCell(this.promotionPiece, pawnX, pawnY);
+                this.board.removePieceFromBoard(destinationCell.getPiece());
+                this.board.setPieceToCell(this.promotionPiece, destinationCell);
             }
         }
     }
