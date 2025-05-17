@@ -35,18 +35,28 @@ public class BoardGameController {
                 this.mainView.getBoard().clearNotes();
             }
 
-            mainView.update();
-
+            this.mainView.update();
         }
     }
 
     public void controlPressed(VCell vCell, MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-            startCell = vCell;
+            this.startCell = vCell;
+        }
+    }
 
-        } else if (e.getButton() == MouseEvent.BUTTON1) {
+    public void controlReleased(VCell vCell, MouseEvent e) {
+        if (this.startCell != null && !this.startCell.equals(vCell)) {
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                this.mainView.getBoard().addArrow(new VArrow(this.startCell, vCell));
+                this.startCell = null;
+                this.mainView.update();
+            }
+        }
+
+        if (e.getButton() == MouseEvent.BUTTON1) {
             if (!this.gameModel.hasGameEnded()) {
-                if (before == null) {
+                if (this.before == null) {
                     this.selectFirstCell(vCell);
                 } else {
                     if (vCell.canMoveOnIt()) {
@@ -60,36 +70,19 @@ public class BoardGameController {
         }
     }
 
-    public void controlReleased(VCell endCell, MouseEvent e) {
-        if (startCell != null && !startCell.equals(endCell)) {
-            if (e.getButton() == MouseEvent.BUTTON3) {
-                this.mainView.getBoard().addArrow(new VArrow(this.startCell, endCell));
-                startCell = null;
-                mainView.update();
-            }
-        }
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            if (!this.gameModel.hasGameEnded()) {
-                if (before != null && endCell.canMoveOnIt()) {
-                    this.selectSecondCell(endCell);
-                }
-            }
-        }
-    }
-
     private void selectFirstCell(VCell vCell) {
         Cell selectedCell = vCell.getCell();
-        before = vCell.getCell();
-        if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == gameModel.getActualPlayer().getTeam()) {
+        this.before = vCell.getCell();
+        if (selectedCell.hasPiece() && selectedCell.getPiece().getTeam() == this.gameModel.getActualPlayer().getTeam()) {
             vCell.setSelected(true);
-            List<Cell> cellsToMark = gameModel.getValidCells(selectedCell.getPiece());
+            List<Cell> cellsToMark = this.gameModel.getValidCells(selectedCell.getPiece());
             this.mainView.getBoard().markValidMoveCells(cellsToMark);
         }
     }
 
     private void selectSecondCell(VCell vCell) {
-        after = vCell.getCell();
-        gameModel.sendMove(new PlayerMove(before, after));
+        this.after = vCell.getCell();
+        this.gameModel.sendMove(new PlayerMove(this.before, this.after));
         this.unselectCells();
     }
 
@@ -98,10 +91,10 @@ public class BoardGameController {
         this.after  = null;
         this.mainView.getBoard().unselectAll();
         this.mainView.getBoard().unmarkValidMoveCells();
-        gameModel.updateAll();
+        this.gameModel.updateAll();
     }
 
     public void promotionControl(String result) {
-        ((ChessGame) gameModel).sendPromotion(result);
+        ((ChessGame) this.gameModel).sendPromotion(result);
     }
 }

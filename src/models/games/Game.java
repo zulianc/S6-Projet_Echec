@@ -172,11 +172,13 @@ public abstract class Game extends Observable implements Runnable {
         Piece movedPiece = move.source().getPiece();
         Piece deadPiece = move.captured().getPiece();
 
-        this.board.removePieceFromCell(deadPiece);
-        this.board.setPieceToCell(null, move.source());
-        this.board.setPieceToCell(movedPiece, move.destination());
+        if (!move.destination().hasPiece()) {
+            this.board.removePieceFromBoard(deadPiece);
+            this.board.setPieceToCell(null, move.source());
+            this.board.setPieceToCell(movedPiece, move.destination());
 
-        movedPiece.signalPieceJustMoved(this.turn);
+            movedPiece.signalPieceJustMoved(this.turn);
+        }
 
         return deadPiece;
     }
@@ -193,13 +195,15 @@ public abstract class Game extends Observable implements Runnable {
     }
 
     protected void undoMove(PieceMove move, Piece deadPiece) {
-        Piece movedPiece = move.destination().getPiece();
+        if (!move.source().hasPiece()) {
+            Piece movedPiece = move.destination().getPiece();
 
-        this.board.removePieceFromCell(movedPiece);
-        this.board.setPieceToCell(movedPiece, move.source());
-        this.board.setPieceToCell(deadPiece, move.captured());
+            this.board.removePieceFromBoard(movedPiece);
+            this.board.setPieceToCell(movedPiece, move.source());
+            this.board.setPieceToCell(deadPiece, move.captured());
 
-        movedPiece.signalPieceUnmoved();
+            movedPiece.signalPieceUnmoved();
+        }
     }
 
     protected void undoMove(GameMove move, List<Piece> deadPieces) {

@@ -123,10 +123,36 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                         } while (!(foundValidRook && reachedFinalKingCell) && !reachedEndOfBoard && !blockedPath);
 
                         if (!reachedEndOfBoard && !blockedPath && foundValidRook) {
+                            Cell safeCell = null;
+                            for (Cell[] cells : game.getBoard().getCells()) {
+                                for (Cell cell : cells) {
+                                    if (!cell.hasPiece()) {
+                                        safeCell = cell;
+                                    }
+                                }
+                            }
+
+                            boolean altMove = (finalKingCell.equals(startingRookCell));
+
                             List<PieceMove> moves = new LinkedList<>();
                             moves.addLast(new PieceMove(startingCell, finalKingCell));
+                            if (altMove) {
+                                moves.addLast(new PieceMove(startingCell, safeCell));
+                            }
                             moves.addLast(new PieceMove(startingRookCell, finalRookCell));
+                            if (altMove) {
+                                moves.addLast(new PieceMove(safeCell, finalKingCell));
+                            }
                             possibleMoves.add(new GameMove(moves));
+
+                            System.out.println("aaaa");
+                            if (Math.abs(game.getBoard().getDistanceFromMove(new PlayerMove(startingCell, finalKingCell)).getX()) == 1 && !finalKingCell.hasPiece()) {
+                                List<PieceMove> dullMoves = new LinkedList<>();
+                                dullMoves.addLast(new PieceMove(startingCell, finalKingCell));
+                                dullMoves.addLast(new PieceMove(startingRookCell, startingRookCell));
+                                possibleMoves.add(new GameMove(dullMoves));
+                                System.out.println("wwwww");
+                            }
                         }
                     }
                 }

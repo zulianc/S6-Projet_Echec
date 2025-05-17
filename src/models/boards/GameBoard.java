@@ -29,22 +29,22 @@ public class GameBoard {
     }
 
     public void setPieceToCell(Piece piece, Cell cell) {
-        if (piece != null) {
+        if (piece != null && !cell.hasPiece()) {
             this.piecesCells.put(piece, cell);
         }
 
         cell.setPiece(piece);
     }
 
-    public void removePieceFromCell(Piece piece) {
+    public void setPieceToCell(Piece piece, int x, int y) {
+        this.setPieceToCell(piece, this.cells[x][y]);
+    }
+
+    public void removePieceFromBoard(Piece piece) {
         if (piece != null) {
             this.piecesCells.get(piece).setPiece(null);
             this.piecesCells.remove(piece);
         }
-    }
-
-    public void setPieceToCell(Piece piece, int x, int y) {
-        this.setPieceToCell(piece, this.cells[x][y]);
     }
 
     public List<Piece> getAllPieces() {

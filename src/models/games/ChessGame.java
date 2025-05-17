@@ -33,13 +33,13 @@ public class ChessGame extends Game {
         this.board.setPieceToCell(new Bishop(1), 2, 0);
         this.board.setPieceToCell(new Bishop(1), 5, 0);
         this.board.setPieceToCell(new Bishop(0), 2, 7);
-        this.board.setPieceToCell(new Bishop(0), 5, 7);
+        this.board.setPieceToCell(new Bishop(0), 4, 7);
 
         this.board.setPieceToCell(new Queen(1), 3, 0);
         this.board.setPieceToCell(new Queen(0), 3, 7);
 
         this.board.setPieceToCell(new King(1), 4, 0);
-        this.board.setPieceToCell(new King(0), 4, 7);
+        this.board.setPieceToCell(new King(0), 5, 7);
 
         for (int x = 0; x < 8; x++) {
             this.board.setPieceToCell(new ChessPawn(1), x, 1);
