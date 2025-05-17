@@ -3,14 +3,12 @@ package models.games;
 import models.PGNConverter;
 import models.boards.Cell;
 import models.boards.GameMove;
-import models.boards.PieceMove;
 import models.boards.PlayerMove;
 import models.pieces.*;
 import models.pieces.chess.*;
 import models.players.HumanPlayer;
 import models.players.Player;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class ChessGame extends Game {
@@ -52,6 +50,38 @@ public class ChessGame extends Game {
     }
 
     @Override
+    protected void checkSpecialRules(PlayerMove playerMove) {
+        Cell destinationCell = playerMove.destination();
+        checkPromotion(destinationCell);
+    }
+
+    @Override
+    protected boolean isValidMove(GameMove move) {
+        List<Piece> deadPieces = this.doMove(move);
+        boolean isValid = !this.isInCheck(this.actualPlayer);
+        this.undoMove(move, deadPieces);
+
+        return isValid;
+    }
+
+    @Override
+    protected void updateNotation(PlayerMove playerMove) {
+        this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
+    }
+
+    @Override
+    protected void updateNotationLastMove() {
+        String lastMove = this.movesNotation.getLast();
+        if (!this.isDraw()) {
+            this.movesNotation.set(this.movesNotation.size()-1, lastMove.replace("+", "#"));
+        } else {
+            this.movesNotation.add("1/2-1/2");
+        }
+        System.out.println(movesNotation);
+        System.out.println(PGNConverter.convertGameToPGN(this));
+    }
+
+    @Override
     protected void checkIfPlayerLost(Player p) {
         if (this.isInCheckmate(p)) {
             p.playerLostGame();
@@ -72,58 +102,6 @@ public class ChessGame extends Game {
         }
 
         return alivePlayers == 1;
-    }
-
-    @Override
-    protected void lastMoveNotation() {
-        String lastMove = this.movesNotation.getLast();
-        if (!this.isDraw()) {
-            this.movesNotation.set(this.movesNotation.size()-1, lastMove.replace("+", "#"));
-        } else {
-            this.movesNotation.add("1/2-1/2");
-        }
-        System.out.println(movesNotation);
-        System.out.println(PGNConverter.convertGameToPGN(this));
-    }
-
-    @Override
-    protected boolean isValidMove(GameMove move) {
-        List<Piece> deadPieces = this.doMove(move);
-        boolean isValid = !this.isInCheck(this.actualPlayer);
-        this.undoMove(move, deadPieces);
-
-        return isValid;
-    }
-
-    @Override
-    protected void applyMove(PlayerMove m) {
-        this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
-
-        Iterator<GameMove> it = this.possibleMoves.iterator();
-        PieceMove moveToDo = null;
-        while (it.hasNext()) {
-            GameMove possibleMove = it.next();
-            if (possibleMove.moves().getFirst().source().equals(playerMove.source()) && possibleMove.moves().getFirst().destination().equals(playerMove.destination())) {
-                moveToDo = possibleMove.moves().getFirst();
-                possibleMove.moves().removeFirst();
-                if (possibleMove.moves().isEmpty()) {
-                    it.remove();
-                }
-            }
-            else {
-                it.remove();
-            }
-        }
-        if (moveToDo == null) {
-            throw new RuntimeException("The move the player inputed isn't in the list of possible moves.");
-        }
-        doMove(moveToDo);
-
-        Cell destinationCell = playerMove.destination();
-        checkPromotion(destinationCell);
-
-        String[] s = new String[]{"unselectAll"};
-        updateAllWithParams(s);
     }
 
     private void checkPromotion(Cell destinationCell) {
@@ -195,7 +173,7 @@ public class ChessGame extends Game {
     private boolean isPlayerInCheckIfMove(PlayerMove playerMove, Player p) {
         GameMove moveToDo = null;
         for (GameMove move : this.possibleMoves) {
-            if (move.moves().getFirst().source() == playerMove.source() && move.moves().getFirst().destination() == playerMove.destination()) {
+            if (playerMove.correspondsTo(move)) {
                 moveToDo = move;
             }
         }

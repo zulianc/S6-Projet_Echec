@@ -7,6 +7,7 @@ import structure.Observable;
 import structure.Observer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,26 +40,30 @@ public abstract class Game extends Observable implements Runnable {
     public void playGame() {
         System.out.println("Initializing pieces...");
         this.initializePieces();
+
         while (!this.hasGameEnded()) {
             this.turn++;
             this.actualPlayer = this.nextPlayer();
+
             if (this.actualPlayer.isAlive()) {
-                this.updatePossibleMoves();
+                this.getPossibleMoves();
                 PlayerMove playerMove;
                 do {
                     do {
-                        this.updateAll();
                         playerMove = this.actualPlayer.getMove();
                     } while (!this.canPlayerMove(playerMove));
+                    this.updateNotation(playerMove);
                     this.applyMove(playerMove);
                 } while (!this.possibleMoves.isEmpty());
+
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.updateAll();
 
                 System.out.println(movesNotation);
             }
         }
-        this.lastMoveNotation();
+
+        this.updateNotationLastMove();
         String[] s = new String[]{"gameEnded"};
         updateAllWithParams(s);
         System.out.println("Game ended!");
@@ -79,21 +84,23 @@ public abstract class Game extends Observable implements Runnable {
 
     protected abstract void initializePieces();
 
+    protected abstract boolean isValidMove(GameMove move);
+
+    protected abstract void checkSpecialRules(PlayerMove playerMove);
+
+    protected abstract void updateNotation(PlayerMove playerMove);
+
+    protected abstract void updateNotationLastMove();
+
     protected abstract void checkIfPlayerLost(Player p);
 
     public abstract boolean hasGameEnded();
-
-    protected abstract void lastMoveNotation();
-
-    protected abstract void applyMove(PlayerMove m);
-
-    protected abstract boolean isValidMove(GameMove move);
 
     protected Player nextPlayer() {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.players.size());
     }
 
-    protected void updatePossibleMoves() {
+    protected void getPossibleMoves() {
         this.possibleMoves = new ArrayList<>();
         for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
             for (GameMove move : piece.getPossibleMoves(this)) {
@@ -106,11 +113,59 @@ public abstract class Game extends Observable implements Runnable {
 
     protected boolean canPlayerMove(PlayerMove playerMove) {
         for (GameMove move : this.possibleMoves) {
-            if (move.moves().getFirst().source().equals(playerMove.source()) && move.moves().getFirst().destination().equals(playerMove.destination())) {
+            if (playerMove.correspondsTo(move)) {
                 return true;
             }
         }
         return false;
+    }
+
+    protected void applyMove(PlayerMove playerMove) {
+        PieceMove moveToDo = this.updatePossibleMoves(playerMove);
+        if (moveToDo == null) {
+            throw new RuntimeException("The move the player inputed isn't in the list of possible moves.");
+        }
+        doMove(moveToDo);
+
+        boolean autoMove = true;
+        while (!this.possibleMoves.isEmpty() && autoMove) {
+            autoMove = true;
+            PieceMove firstMove = this.possibleMoves.getFirst().moves().getFirst();
+            for (GameMove move : this.possibleMoves) {
+                if (!firstMove.equals(move.moves().getFirst())) {
+                    autoMove = false;
+                }
+            }
+
+            if (autoMove) {
+                this.updatePossibleMoves(new PlayerMove(firstMove));
+                doMove(firstMove);
+            }
+        }
+
+        this.checkSpecialRules(playerMove);
+
+        String[] s = new String[]{"unselectAll"};
+        updateAllWithParams(s);
+    }
+
+    protected PieceMove updatePossibleMoves(PlayerMove playerMove) {
+        Iterator<GameMove> it = this.possibleMoves.iterator();
+        PieceMove moveToDo = null;
+        while (it.hasNext()) {
+            GameMove possibleMove = it.next();
+            if (playerMove.correspondsTo(possibleMove)) {
+                moveToDo = possibleMove.moves().getFirst();
+                possibleMove.moves().removeFirst();
+                if (possibleMove.moves().isEmpty()) {
+                    it.remove();
+                }
+            }
+            else {
+                it.remove();
+            }
+        }
+        return moveToDo;
     }
 
     protected Piece doMove(PieceMove move) {
