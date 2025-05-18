@@ -167,29 +167,32 @@ public class PGNConverter {
     public static String convertGameToPGN(Game game) {
         StringBuilder result = new StringBuilder();
 
-        String white = "[White \""+game.getPlayers().get(0).getName()+"\"]\n";
-        String black = "[Black \""+game.getPlayers().get(1).getName()+"\"]\n";
-        result.append(white);
-        result.append(black);
+        result.append("[White \"").append(game.getPlayers().get(0).getName()).append("\"]\n");
+        result.append("[Black \"").append(game.getPlayers().get(1).getName()).append("\"]\n");
 
-        result.append("\n");
-
-        Iterator<String> it = game.getMovesNotation().iterator();
+        List<String> moves = game.getMovesNotation();
         int playNumber = 0;
-        int PieceMoveInPlay = game.getPlayerCount();
-        int playTemp = PieceMoveInPlay;
+        int movesPerTurn = game.getPlayerCount();
+        int turnCounter = movesPerTurn;
 
-        while (it.hasNext()) {
-            if (playTemp == PieceMoveInPlay)  {
-                playTemp = 0;
+        for (int i = 0; i < moves.size(); i++) {
+            if (turnCounter == movesPerTurn) {
+                turnCounter = 0;
                 playNumber++;
-                result.append(playNumber).append(". ");
+                result.append("\n")
+                        .append(playNumber).append(". ");
             }
-            result.append(it.next()).append(" ");
-            playTemp++;
+            result.append(moves.get(i)).append(" ");
+            turnCounter++;
         }
+
+        if (game.hasGameEnded()) {
+            result.replace(result.length() - 1, result.length(), "#");
+        }
+
         return result.toString();
     }
+
 
     public static List<PlayerMove> convertGameFromPGN(Game game, String pgn) {
         List<PlayerMove> result = new ArrayList<>();

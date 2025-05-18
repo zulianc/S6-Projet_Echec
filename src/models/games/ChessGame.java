@@ -78,7 +78,6 @@ public class ChessGame extends Game {
     @Override
     protected void updateNotation() {
         PlayerMove playerMove = new PlayerMove(this.currentMove.moves().getFirst());
-        System.out.println("PlayerMove : " + playerMove);
         this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
     }
 

@@ -1,6 +1,7 @@
 package views;
 
 import controllers.BoardGameController;
+import models.PGNConverter;
 import models.games.Game;
 import models.players.Player;
 import structure.Observer;
@@ -18,6 +19,8 @@ public class MainFrame extends JFrame implements Observer {
     private JLabel titleLabel;
     private JToggleButton toggleRotationMode;
     private JLabel traitLabel;
+    private JTextArea pgnTextArea;
+    private JLabel pgnLabel;
 
     public MainFrame(Game model) {
         this.gameModel = model;
@@ -53,18 +56,24 @@ public class MainFrame extends JFrame implements Observer {
 
         this.traitLabel = new JLabel("Trait au Blancs");
 
+        this.pgnLabel = new JLabel("PGN :");
+        this.pgnTextArea = new JTextArea("");
+        this.pgnTextArea.setEditable(false);
+
         JPanel northPan = new JPanel();
         JPanel westPan  = new JPanel();
         JPanel eastPan  = new JPanel(new BorderLayout());
-        JPanel northEastPan = new JPanel();
-        JPanel centerEastPan = new JPanel();
+        JPanel northEastPan = new JPanel(new BorderLayout());
+        JPanel centerEastPan = new JPanel(new BorderLayout());
 
         westPan.add(board);
         northPan.add(titleLabel);
         eastPan.add(northEastPan, BorderLayout.NORTH);
         eastPan.add(centerEastPan, BorderLayout.CENTER);
-        northEastPan.add(toggleRotationMode);
-        centerEastPan.add(traitLabel);
+        northEastPan.add(toggleRotationMode, BorderLayout.NORTH);
+        northEastPan.add(traitLabel, BorderLayout.CENTER);
+        centerEastPan.add(pgnLabel, BorderLayout.NORTH);
+        centerEastPan.add(pgnTextArea, BorderLayout.CENTER);
 
         northEastPan.setPreferredSize(new Dimension(150, 100));
 
@@ -99,6 +108,7 @@ public class MainFrame extends JFrame implements Observer {
 
         String couleur = (this.gameModel.getActualPlayer().getTeam() == 0) ? "Blancs" : "Noirs";
         this.traitLabel.setText("Trait au " + couleur);
+        this.pgnTextArea.setText(PGNConverter.convertGameToPGN(this.gameModel));
     }
 
     @Override
@@ -134,8 +144,6 @@ public class MainFrame extends JFrame implements Observer {
                     }
 
                     JOptionPane.showMessageDialog(this, finalMessage);
-                    this.dispose();
-                    System.exit(0);
                 }
                 case "unselectAll" -> this.board.unselectAll();
             }
