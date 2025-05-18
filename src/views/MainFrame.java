@@ -2,21 +2,17 @@ package views;
 
 import controllers.BoardGameController;
 import models.PGNConverter;
-import models.games.ChessGame;
 import models.games.Game;
-import models.players.HumanPlayer;
 import models.players.Player;
 import structure.Observer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.System.exit;
 
 public class MainFrame extends JFrame implements Observer {
     private final Game gameModel;
@@ -30,7 +26,8 @@ public class MainFrame extends JFrame implements Observer {
     private JLabel traitLabel;
     private JTextArea pgnTextArea;
     private JLabel pgnLabel;
-    private JMenu importMenu;
+    private JMenuItem exportMenuItem;
+    private JMenuItem infoMenuItem;
 
     public MainFrame(Game model) {
         this.gameModel = model;
@@ -46,8 +43,34 @@ public class MainFrame extends JFrame implements Observer {
 
         this.menuBar = new JMenuBar();
 
-        this.importMenu = new JMenu("Exporter en PGN");
-        this.importMenu.setMnemonic('E');
+        this.infoMenuItem = new JMenuItem("Info", KeyEvent.VK_I);
+        this.infoMenuItem.setPreferredSize(new Dimension(550, 24));
+        this.infoMenuItem.addActionListener(e -> JOptionPane.showMessageDialog(null,
+                """
+                        Ce logiciel a été créé par Melvyn BAUVENT et Julien CHATAIGNER
+                        
+                        Faites Clique gauche pour jouer et Clique droit pour marquer les cases
+                        """
+        ));
+
+        this.exportMenuItem = new JMenuItem("Exporter en PGN", KeyEvent.VK_E);
+        this.exportMenuItem.setPreferredSize(new Dimension(1, 24));
+        this.exportMenuItem.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnVal = fileChooser.showOpenDialog(null);
+            File file = null;
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                file = fileChooser.getSelectedFile();
+            }
+            try {
+                if (file != null) {
+                    Files.writeString(file.toPath(), PGNConverter.convertGameToPGN(this.gameModel));
+                    JOptionPane.showMessageDialog(null, "Fichier Créé");
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         ArrayList<Color> basesColors = new ArrayList<>();
         basesColors.add(new Color(251, 253, 219));
@@ -104,7 +127,8 @@ public class MainFrame extends JFrame implements Observer {
         this.setContentPane(this.contentPane);
 
         setJMenuBar(menuBar);
-        menuBar.add(importMenu);
+        menuBar.add(exportMenuItem);
+        menuBar.add(infoMenuItem);
 
         this.setTitle("Échecs");
         this.setSize(772, 710);

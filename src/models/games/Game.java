@@ -78,9 +78,6 @@ public abstract class Game extends Observable implements Runnable {
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.checkIfGameEnded();
                 this.updateAll();
-
-                //this.updateNotation();
-                System.out.println("moveNotation : "+movesNotation);
             }
         } while (!this.gameEnded);
 
