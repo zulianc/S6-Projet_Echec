@@ -1,9 +1,11 @@
 package models.games;
 
+import models.boards.Cell;
 import models.boards.GameMove;
 import models.boards.PlayerMove;
 import models.pieces.Piece;
 import models.pieces.checkers.CheckerPawn;
+import models.pieces.checkers.CheckerQueen;
 import models.players.Player;
 
 import java.util.ArrayList;
@@ -53,7 +55,21 @@ public class CheckersGame extends Game {
 
     @Override
     protected void checkSpecialRules(PlayerMove playerMove) {
-        //TODO promotion
+        Cell destinationCell = playerMove.destination();
+        if (!destinationCell.hasPiece()) {
+            return;
+        }
+
+        Piece piece = destinationCell.getPiece();
+
+        int cellY = this.board.getPositionOfCell(destinationCell).getY();
+        if ((cellY == 0 && piece instanceof CheckerPawn && piece.getTeam() == 0)
+            || (cellY == 9 && piece instanceof CheckerPawn && piece.getTeam() == 1)) {
+
+            Piece promotedPiece = new CheckerQueen(piece.getTeam());
+            this.board.removePieceFromBoard(piece);
+            this.board.setPieceToCell(promotedPiece, destinationCell);
+        }
     }
 
     @Override
