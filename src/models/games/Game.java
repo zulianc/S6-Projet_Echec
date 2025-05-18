@@ -127,7 +127,23 @@ public abstract class Game extends Observable implements Runnable {
         return false;
     }
 
-    public void applyMove(PlayerMove playerMove) {
+    public void forceMove(PlayerMove playerMove) {
+        this.turn++;
+        this.possibleMoves = this.getPossibleMoves(this.actualPlayer);
+
+        GameMove moveToDo = null;
+        for (GameMove move : this.possibleMoves) {
+            if (playerMove.correspondsTo(move)) {
+                moveToDo = move;
+            }
+        }
+        this.doMove(moveToDo);
+
+        this.actualPlayer = this.nextPlayer();
+        this.updateAll();
+    }
+
+    protected void applyMove(PlayerMove playerMove) {
         this.updateNotation(playerMove);
 
         PieceMove moveToDo = this.updatePossibleMoves(playerMove);

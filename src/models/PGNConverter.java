@@ -222,7 +222,7 @@ public class PGNConverter {
                 throw new IllegalArgumentException("Impossible d’interpréter le coup PGN: " + notation);
             }
 
-            game.applyMove(move);
+            game.forceMove(move);
         }
 
         game.updateAll();
