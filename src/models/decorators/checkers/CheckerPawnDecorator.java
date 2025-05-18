@@ -71,7 +71,7 @@ public class CheckerPawnDecorator extends PossibleMovesDecorator {
             Cell destinationCell = board.getCellAtRelativePosition(captureCell, orientation);
             if (destinationCell == null) continue;
 
-            if (this.containsPiecesOfDifferentTeams(captureCell, path.getFirst()) && !takenPieces.contains(captureCell.getPiece()) && !destinationCell.hasPiece()) {
+            if (this.containsPiecesOfDifferentTeams(captureCell, path.getFirst()) && !takenPieces.contains(captureCell.getPiece()) && !(destinationCell.hasPiece() && !destinationCell.equals(path.getFirst()))) {
                 canContinueMoving = true;
 
                 path.addLast(captureCell);

@@ -67,29 +67,40 @@ public class CheckerQueenDecorator extends PossibleMovesDecorator {
 
         for (Position2D orientation : this.possibleVectors) {
             Cell captureCell = currentCell;
-            Cell finalCell = board.getCellAtRelativePosition(currentCell, orientation);
-            if (finalCell == null) {
+            Cell destinationCell = board.getCellAtRelativePosition(currentCell, orientation);
+            if (destinationCell == null) {
                 continue;
             }
 
             boolean pieceIsBlocked = false;
+            boolean hasCaptured = false;
             while (!pieceIsBlocked) {
-                captureCell = board.getCellAtRelativePosition(captureCell, orientation);
-                finalCell = board.getCellAtRelativePosition(finalCell, orientation);
+                if (!hasCaptured) {
+                    captureCell = board.getCellAtRelativePosition(captureCell, orientation);
+                }
+                destinationCell = board.getCellAtRelativePosition(destinationCell, orientation);
 
-                if (finalCell == null) {
+                if (path.size() == 1) {
+                    System.out.println(board.getPositionOfCell(captureCell) + " " + board.getPositionOfCell(destinationCell));
+                }
+
+                if (destinationCell == null) {
                     pieceIsBlocked = true;
                 }
                 else {
-                    if (this.containsPiecesOfSameTeams(path.getFirst(), captureCell) || this.containsPiecesOfSameTeams(path.getFirst(), finalCell)) {
+                    if (hasCaptured && destinationCell.hasPiece()) {
+                        pieceIsBlocked = true;
+                    }
+                    else if (this.containsPiecesOfSameTeams(path.getFirst(), captureCell) || (this.containsPiecesOfSameTeams(path.getFirst(), destinationCell) && !destinationCell.equals(path.getFirst()))) {
                         pieceIsBlocked = true;
                     }
                     else {
-                        if (this.containsPiecesOfDifferentTeams(path.getFirst(), captureCell) && !takenPieces.contains(captureCell.getPiece()) && !finalCell.hasPiece()) {
+                        if (this.containsPiecesOfDifferentTeams(path.getFirst(), captureCell) && !takenPieces.contains(captureCell.getPiece()) && !(destinationCell.hasPiece() && !destinationCell.equals(path.getFirst()))) {
                             canContinueMoving = true;
+                            hasCaptured = true;
 
                             path.addLast(captureCell);
-                            path.addLast(finalCell);
+                            path.addLast(destinationCell);
                             takenPieces.addLast(captureCell.getPiece());
                             possibleMoves.addAll(this.visitCell(path, takenPieces, board));
                             takenPieces.removeLast();

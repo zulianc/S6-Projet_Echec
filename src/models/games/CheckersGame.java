@@ -1,5 +1,6 @@
 package models.games;
 
+import models.CheckerTests;
 import models.boards.Cell;
 import models.boards.GameMove;
 import models.pieces.Piece;
@@ -26,6 +27,8 @@ public class CheckersGame extends Game {
                 this.board.setPieceToCell(new CheckerPawn(0), x, y + 6);
             }
         }
+
+        //CheckerTests.testQueen(this.board);
     }
 
     @Override
