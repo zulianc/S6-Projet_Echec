@@ -5,8 +5,12 @@ import models.games.ChessGame;
 import models.games.Game;
 import models.pieces.Piece;
 import models.pieces.chess.King;
+import models.players.HumanPlayer;
+import models.players.Player;
 import structure.Position2D;
+import views.MainFrame;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -193,8 +197,23 @@ public class PGNConverter {
     }
 
 
-    public static List<PlayerMove> convertGameFromPGN(Game game, String pgn) {
-        List<PlayerMove> result = new ArrayList<>();
+    public static void createGameFromPGN(String pgn) {
+        List<String> playerNames = PGNConverter.getPlayersFromPGN(pgn);
+
+        List<Player> players = new ArrayList<>();
+        players.add(new HumanPlayer(playerNames.getFirst(), 0));
+        players.add(new HumanPlayer(playerNames.getLast(),  1));
+
+        Game game = new ChessGame(players);
+
+        Thread thread = new Thread(game);
+        thread.start();
+
+        MainFrame frame = new MainFrame(game);
+        game.addObserver(frame);
+
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
+
         List<String> moves = tokenizePGN(pgn);
 
         for (String notation : moves) {
@@ -202,11 +221,31 @@ public class PGNConverter {
             if (move == null) {
                 throw new IllegalArgumentException("Impossible d’interpréter le coup PGN: " + notation);
             }
-            result.add(move);
 
             game.applyMove(move);
-            game.nextPlayer();
         }
-        return result;
+
+        game.updateAll();
+    }
+
+    public static List<String> getPlayersFromPGN(String pgn) {
+        ArrayList<String> names = new ArrayList<>();
+        names.add(null);
+        names.add(null);
+
+        Pattern tagPattern = Pattern.compile("\\[(White|Black)\\s+\"([^\"]*)\"\\]");
+        Matcher matcher = tagPattern.matcher(pgn);
+
+        while (matcher.find()) {
+            String tag   = matcher.group(1);
+            String value = matcher.group(2);
+            if ("White".equals(tag)) {
+                names.set(0, value);
+            } else {
+                names.set(1, value);
+            }
+        }
+
+        return names;
     }
 }

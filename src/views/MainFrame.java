@@ -2,25 +2,35 @@ package views;
 
 import controllers.BoardGameController;
 import models.PGNConverter;
+import models.games.ChessGame;
 import models.games.Game;
+import models.players.HumanPlayer;
 import models.players.Player;
 import structure.Observer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.System.exit;
 
 public class MainFrame extends JFrame implements Observer {
     private final Game gameModel;
     private BoardGameController boardGameController;
 
     private VBoard board;
+    private JMenuBar menuBar;
     private JPanel contentPane;
     private JLabel titleLabel;
     private JToggleButton toggleRotationMode;
     private JLabel traitLabel;
     private JTextArea pgnTextArea;
     private JLabel pgnLabel;
+    private JMenu importMenu;
 
     public MainFrame(Game model) {
         this.gameModel = model;
@@ -33,6 +43,11 @@ public class MainFrame extends JFrame implements Observer {
         this.contentPane = new JPanel();
         this.contentPane.setPreferredSize(new Dimension(800, 600));
         this.contentPane.setLayout(new BorderLayout());
+
+        this.menuBar = new JMenuBar();
+
+        this.importMenu = new JMenu("Exporter en PGN");
+        this.importMenu.setMnemonic('E');
 
         ArrayList<Color> basesColors = new ArrayList<>();
         basesColors.add(new Color(251, 253, 219));
@@ -83,8 +98,11 @@ public class MainFrame extends JFrame implements Observer {
 
         this.setContentPane(this.contentPane);
 
+        setJMenuBar(menuBar);
+        menuBar.add(importMenu);
+
         this.setTitle("Échecs");
-        this.setSize(772, 690);
+        this.setSize(772, 710);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);

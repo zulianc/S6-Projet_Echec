@@ -1,5 +1,6 @@
 package views;
 
+import models.PGNConverter;
 import models.games.CheckersGame;
 import models.games.Chess960Game;
 import models.games.ChessGame;
@@ -11,12 +12,17 @@ import models.players.RandomBotPlayer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameModeSelectionFrame extends JFrame {
     private Game game;
     private boolean needSetUpRotate = false;
+    private boolean startWithMoves = false;
+    private String pgn = "";
 
     public GameModeSelectionFrame() {
         this.build();
@@ -32,6 +38,7 @@ public class GameModeSelectionFrame extends JFrame {
         JButton botDuo960Btn = new JButton("Echecs 960 1vBot");
         JButton botvBot960Btn = new JButton("Echecs 960 BotvBot");
         JButton checkerHumanDotBtn = new JButton("Dames 1v1");
+        JButton importChessGameBtn = new JButton("Importer via PGN");
 
         List<JButton> buttons = new ArrayList<>();
         buttons.add(humanDuoBtn);
@@ -43,6 +50,7 @@ public class GameModeSelectionFrame extends JFrame {
         buttons.add(botDuo960Btn);
         buttons.add(botvBot960Btn);
         buttons.add(checkerHumanDotBtn);
+        buttons.add(importChessGameBtn);
 
         Dimension buttonDim = new Dimension(150, 50);
 
@@ -129,7 +137,27 @@ public class GameModeSelectionFrame extends JFrame {
             this.startGame();
         });
 
-        JLabel titleLabel = new JLabel("Bienvenu sur un super jeu d'échec, choisissez votre mode de jeu :");
+        importChessGameBtn.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnVal = fileChooser.showOpenDialog(null);
+            File file = null;
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                file = fileChooser.getSelectedFile();
+            }
+            String pgn;
+            try {
+                assert file != null;
+                pgn = new String(Files.readAllBytes(file.toPath()));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            PGNConverter.createGameFromPGN(pgn);
+
+            this.setVisible(false);
+        });
+
+        JLabel titleLabel = new JLabel("Bienvenue sur un super jeu d'échec, choisissez votre mode de jeu :");
 
         JPanel contentPane = new JPanel();
         JPanel tmpPan = new JPanel();
