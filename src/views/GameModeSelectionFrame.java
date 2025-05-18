@@ -1,5 +1,6 @@
 package views;
 
+import models.games.CheckersGame;
 import models.games.Chess960Game;
 import models.games.ChessGame;
 import models.games.Game;
@@ -22,39 +23,33 @@ public class GameModeSelectionFrame extends JFrame {
     }
 
     private void build() {
-        List<Player> playersTmp = new ArrayList<>();
-        playersTmp.add(new HumanPlayer("Bernard", 0));
-        playersTmp.add(new HumanPlayer("Bernardette", 1));
-        this.game = new ChessGame(playersTmp);
+        JButton humanDuoBtn = new JButton("Echecs 1v1");
+        JButton botDuoBtn = new JButton("Echecs 1vBot");
+        JButton botvBotBtn = new JButton("Echecs BotvBot");
+        JButton onlineDuoBtn = new JButton("Echecs online");
+        JButton humanQuartetBtn = new JButton("Echecs 1v1v1v1");
+        JButton humanDuo960Btn = new JButton("Echecs 960 1v1");
+        JButton botDuo960Btn = new JButton("Echecs 960 1vBot");
+        JButton botvBot960Btn = new JButton("Echecs 960 BotvBot");
+        JButton checkerHumanDotBtn = new JButton("Dames 1v1");
 
-        JButton humanDuoBtn = new JButton("Classique 1v1");
-        JButton botDuoBtn = new JButton("Classique 1vBot");
-        JButton botvBotBtn = new JButton("Classique BotvBot");
-        JButton onlineDuoBtn = new JButton("Mode online");
-        JButton humanQuartetBtn = new JButton("Mode 1v1v1v1");
-        JButton humanDuo960Btn = new JButton("960 1v1");
-        JButton botDuo960Btn = new JButton("960 1vBot");
-        JButton botvBot960Btn = new JButton("960 BotvBot");
+        List<JButton> buttons = new ArrayList<>();
+        buttons.add(humanDuoBtn);
+        buttons.add(botDuoBtn);
+        buttons.add(botvBotBtn);
+        //buttons.add(onlineDuoBtn);
+        //buttons.add(humanQuartetBtn);
+        buttons.add(humanDuo960Btn);
+        buttons.add(botDuo960Btn);
+        buttons.add(botvBot960Btn);
+        buttons.add(checkerHumanDotBtn);
 
         Dimension buttonDim = new Dimension(150, 50);
 
-        humanDuoBtn.setPreferredSize(buttonDim);
-        botDuoBtn.setPreferredSize(buttonDim);
-        botvBotBtn.setPreferredSize(buttonDim);
-        onlineDuoBtn.setPreferredSize(buttonDim);
-        humanQuartetBtn.setPreferredSize(buttonDim);
-        humanDuo960Btn.setPreferredSize(buttonDim);
-        botDuo960Btn.setPreferredSize(buttonDim);
-        botvBot960Btn.setPreferredSize(buttonDim);
-
-        humanDuoBtn.setMaximumSize(buttonDim);
-        botDuoBtn.setMaximumSize(buttonDim);
-        botvBotBtn.setMaximumSize(buttonDim);
-        onlineDuoBtn.setMaximumSize(buttonDim);
-        humanQuartetBtn.setMaximumSize(buttonDim);
-        humanDuo960Btn.setMaximumSize(buttonDim);
-        botvBot960Btn.setMaximumSize(buttonDim);
-        botvBot960Btn.setMaximumSize(buttonDim);
+        for (JButton button : buttons) {
+            button.setPreferredSize(buttonDim);
+            button.setMaximumSize(buttonDim);
+        }
 
         humanDuoBtn.addActionListener(e -> {
             String firstPlayerName  = JOptionPane.showInputDialog("Nom du 1er joueur");
@@ -120,23 +115,30 @@ public class GameModeSelectionFrame extends JFrame {
             this.startGame();
         });
 
+        checkerHumanDotBtn.addActionListener(e -> {
+            String firstPlayerName  = JOptionPane.showInputDialog("Nom du 1er joueur");
+            String secondPlayerName = JOptionPane.showInputDialog("Nom du 2e joueur");
+
+            List<Player> players = new ArrayList<>();
+            players.add(new HumanPlayer(firstPlayerName, 0));
+            players.add(new HumanPlayer(secondPlayerName, 1));
+
+            this.needSetUpRotate = true;
+
+            this.game = new CheckersGame(players);
+            this.startGame();
+        });
+
         JLabel titleLabel = new JLabel("Bienvenu sur un super jeu d'échec, choisissez votre mode de jeu :");
 
         JPanel contentPane = new JPanel();
         JPanel tmpPan = new JPanel();
 
-        tmpPan.setPreferredSize(new Dimension(150, 400));
+        tmpPan.setPreferredSize(new Dimension(150, 80 + buttons.size() * 55));
 
-        tmpPan.add(humanDuoBtn);
-        tmpPan.add(botDuoBtn);
-        tmpPan.add(botvBotBtn);
-        /* here too
-        this.tmpPan.add(this.onlineDuoBtn);
-        this.tmpPan.add(this.humanQuartetBtn);
-         */
-        tmpPan.add(humanDuo960Btn);
-        tmpPan.add(botDuo960Btn);
-        tmpPan.add(botvBot960Btn);
+        for (JButton button : buttons) {
+            tmpPan.add(button);
+        }
 
         contentPane.add(titleLabel);
         contentPane.add(tmpPan);
@@ -144,7 +146,7 @@ public class GameModeSelectionFrame extends JFrame {
         this.setContentPane(contentPane);
 
         this.setTitle("Échecs");
-        this.setSize(400, 400);
+        this.setSize(400, 80 + buttons.size() * 55);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);

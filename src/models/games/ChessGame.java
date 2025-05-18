@@ -9,13 +9,14 @@ import models.pieces.chess.*;
 import models.players.HumanPlayer;
 import models.players.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChessGame extends Game {
     protected Piece promotionPiece;
 
     public ChessGame(List<Player> players) {
-        super(players);
+        super(players, 2, 8);
     }
 
     @Override
@@ -54,12 +55,19 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected boolean isValidMove(GameMove move) {
-        List<Piece> deadPieces = this.doMove(move);
-        boolean isValid = !this.isInCheck(this.actualPlayer);
-        this.undoMove(move, deadPieces);
+    protected void getPossibleMoves() {
+        this.possibleMoves = new ArrayList<>();
+        for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
+            for (GameMove move : piece.getPossibleMoves(this)) {
+                List<Piece> deadPieces = this.doMove(move);
+                boolean isValid = !this.isInCheck(this.actualPlayer);
+                this.undoMove(move, deadPieces);
 
-        return isValid;
+                if (isValid) {
+                    this.possibleMoves.add(move);
+                }
+            }
+        }
     }
 
     @Override

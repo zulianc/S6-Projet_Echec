@@ -18,10 +18,17 @@ public abstract class Game extends Observable implements Runnable {
     protected int turn;
     protected boolean gameEnded;
     protected List<GameMove> possibleMoves;
-    protected List<String> movesNotation = new ArrayList<>();
+    protected List<String> movesNotation;
     public PlayerMove playerMove;
 
     public Game(List<Player> players) {
+        this(players, -1, -1);
+    }
+
+    protected Game(List<Player> players, int requiredPlayerNumber, int boardSize) {
+        if (players.size() != requiredPlayerNumber) {
+            throw new IllegalArgumentException("The number of players must be equal to " + requiredPlayerNumber);
+        }
         this.players = players;
         for (Player player : players) {
             if (player instanceof Observer) {
@@ -29,9 +36,14 @@ public abstract class Game extends Observable implements Runnable {
             }
             player.startGame(this);
         }
-        this.board = new GameBoard(8);
+
+        this.board = new GameBoard(boardSize);
+        this.actualPlayer = null;
         this.turn = 0;
         this.gameEnded = false;
+
+        this.possibleMoves = new ArrayList<>();
+        this.movesNotation = new ArrayList<>();
     }
 
     @Override
@@ -54,7 +66,7 @@ public abstract class Game extends Observable implements Runnable {
                     do {
                         this.updateAll();
                         playerMove = this.actualPlayer.getMove();
-                    } while (!this.canPlayerMove(playerMove));
+                    } while (!this.isValidPlayerMove(playerMove));
                     this.updateNotation(playerMove);
                     this.applyMove(playerMove);
                 } while (!this.possibleMoves.isEmpty());
@@ -87,7 +99,7 @@ public abstract class Game extends Observable implements Runnable {
 
     protected abstract void initializePieces();
 
-    protected abstract boolean isValidMove(GameMove move);
+    protected abstract void getPossibleMoves();
 
     protected abstract void checkSpecialRules(PlayerMove playerMove);
 
@@ -103,18 +115,7 @@ public abstract class Game extends Observable implements Runnable {
         return this.players.get((players.indexOf(this.actualPlayer)+1) % this.players.size());
     }
 
-    protected void getPossibleMoves() {
-        this.possibleMoves = new ArrayList<>();
-        for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
-            for (GameMove move : piece.getPossibleMoves(this)) {
-                if (this.isValidMove(move)) {
-                    this.possibleMoves.add(move);
-                }
-            }
-        }
-    }
-
-    protected boolean canPlayerMove(PlayerMove playerMove) {
+    protected boolean isValidPlayerMove(PlayerMove playerMove) {
         for (GameMove move : this.possibleMoves) {
             if (playerMove.correspondsTo(move)) {
                 return true;

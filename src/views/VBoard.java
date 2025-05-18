@@ -116,7 +116,7 @@ public class VBoard extends JPanel implements Observer {
 
     public Position2D getVCellPosition(VCell vCell) {
         int position = vCells.indexOf(vCell);
-        return Position2D.getPositionFromIndex(position, 8);
+        return Position2D.getPositionFromIndex(position, this.model.getBoard().getBoardSize());
     }
 
     public void setRotating(boolean isRotating) {

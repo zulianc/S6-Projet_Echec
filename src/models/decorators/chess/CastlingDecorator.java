@@ -8,6 +8,7 @@ import models.games.ChessGame;
 import models.games.Game;
 import models.boards.PlayerMove;
 import models.pieces.Piece;
+import models.pieces.chess.King;
 import models.pieces.chess.Rook;
 import structure.Orientation;
 import structure.Position2D;
@@ -51,7 +52,7 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                         pieceVector = pieceVector.rotate(piece.getTeam(), game.getPlayerCount());
                     }
 
-                    // STEP 1: find the final position of the king
+                    // STEP 1: find the final position of the king and rook
                     Cell finalKingCell;
                     Cell finalRookCell;
                     {
@@ -122,7 +123,7 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                             }
                         } while (!(foundValidRook && reachedFinalKingCell) && !reachedEndOfBoard && !blockedPath);
 
-                        if (!reachedEndOfBoard && !blockedPath && foundValidRook) {
+                        if (!reachedEndOfBoard && !blockedPath && foundValidRook && !(finalRookCell.hasPiece() && !(finalRookCell.getPiece() instanceof King))) {
                             Cell safeCell = null;
                             for (Cell[] cells : game.getBoard().getCells()) {
                                 for (Cell cell : cells) {
