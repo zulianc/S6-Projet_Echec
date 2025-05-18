@@ -2,7 +2,6 @@ package models.games;
 
 import models.boards.Cell;
 import models.boards.GameMove;
-import models.boards.PlayerMove;
 import models.pieces.Piece;
 import models.pieces.checkers.CheckerPawn;
 import models.pieces.checkers.CheckerQueen;
@@ -30,27 +29,29 @@ public class CheckersGame extends Game {
     }
 
     @Override
-    protected void getPossibleMoves() {
-        this.possibleMoves = new ArrayList<>();
+    protected List<GameMove> getPossibleMoves(Player p) {
+        List<GameMove> possibleMoves = new ArrayList<>();
 
         int maximumSizeChain = 0;
-        for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
+        for (Piece piece : this.board.getAllPiecesOfTeam(p.getTeam())) {
             for (GameMove move : piece.getPossibleMoves(this)) {
                 if (maximumSizeChain < move.moves().size()) {
                     maximumSizeChain = move.moves().size();
                 }
 
-                this.possibleMoves.add(move);
+                possibleMoves.add(move);
             }
         }
 
-        Iterator<GameMove> iterator = this.possibleMoves.iterator();
+        Iterator<GameMove> iterator = possibleMoves.iterator();
         while (iterator.hasNext()) {
             GameMove move = iterator.next();
             if (move.moves().size() < maximumSizeChain) {
                 iterator.remove();
             }
         }
+
+        return possibleMoves;
     }
 
     @Override

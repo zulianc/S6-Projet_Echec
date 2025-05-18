@@ -61,7 +61,7 @@ public abstract class Game extends Observable implements Runnable {
             this.actualPlayer = this.nextPlayer();
 
             if (this.actualPlayer.isAlive()) {
-                this.getPossibleMoves();
+                this.possibleMoves = this.getPossibleMoves(this.actualPlayer);
                 this.currentMove = new GameMove();
 
                 PlayerMove playerMove;
@@ -105,7 +105,7 @@ public abstract class Game extends Observable implements Runnable {
 
     protected abstract void initializePieces();
 
-    protected abstract void getPossibleMoves();
+    protected abstract List<GameMove> getPossibleMoves(Player p);
 
     protected abstract void checkSpecialRules();
 
@@ -226,14 +226,7 @@ public abstract class Game extends Observable implements Runnable {
     }
 
     protected boolean playerHasNoAvailableMove(Player p) {
-        List<Piece> pieces = this.board.getAllPiecesOfTeam(p.getTeam());
-        boolean hasAtLeastOneMove = false;
-        for (Piece piece : pieces) {
-            if (!piece.getPossibleMoves(this).isEmpty()) {
-                hasAtLeastOneMove = true;
-            }
-        }
-        return !hasAtLeastOneMove;
+        return this.getPossibleMoves(p).isEmpty();
     }
 
     public List<Cell> getValidCells(Piece piece) {

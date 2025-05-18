@@ -57,19 +57,22 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void getPossibleMoves() {
-        this.possibleMoves = new ArrayList<>();
-        for (Piece piece : this.board.getAllPiecesOfTeam(this.actualPlayer.getTeam())) {
+    protected List<GameMove> getPossibleMoves(Player p) {
+        List<GameMove> possibleMoves = new ArrayList<>();
+
+        for (Piece piece : this.board.getAllPiecesOfTeam(p.getTeam())) {
             for (GameMove move : piece.getPossibleMoves(this)) {
                 List<Piece> deadPieces = this.doMove(move);
-                boolean isValid = !this.isInCheck(this.actualPlayer);
+                boolean isValid = !this.isInCheck(p);
                 this.undoMove(move, deadPieces);
 
                 if (isValid) {
-                    this.possibleMoves.add(move);
+                    possibleMoves.add(move);
                 }
             }
         }
+
+        return possibleMoves;
     }
 
     @Override
