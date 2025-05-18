@@ -19,6 +19,7 @@ public abstract class Game extends Observable implements Runnable {
     protected boolean gameEnded;
     protected List<GameMove> possibleMoves;
     protected List<String> movesNotation;
+    protected GameMove currentMove;
     public PlayerMove playerMove;
 
     public Game(List<Player> players) {
@@ -61,19 +62,24 @@ public abstract class Game extends Observable implements Runnable {
 
             if (this.actualPlayer.isAlive()) {
                 this.getPossibleMoves();
+                this.currentMove = new GameMove();
+
                 PlayerMove playerMove;
                 do {
                     do {
                         this.updateAll();
                         playerMove = this.actualPlayer.getMove();
                     } while (!this.isValidPlayerMove(playerMove));
-                    this.updateNotation(playerMove);
                     this.applyMove(playerMove);
+
                 } while (!this.possibleMoves.isEmpty());
+                this.checkSpecialRules();
+
                 this.checkIfPlayerLost(this.nextPlayer());
                 this.checkIfGameEnded();
                 this.updateAll();
 
+                this.updateNotation();
                 System.out.println(movesNotation);
             }
         } while (!this.gameEnded);
@@ -101,9 +107,9 @@ public abstract class Game extends Observable implements Runnable {
 
     protected abstract void getPossibleMoves();
 
-    protected abstract void checkSpecialRules(PlayerMove playerMove);
+    protected abstract void checkSpecialRules();
 
-    protected abstract void updateNotation(PlayerMove playerMove);
+    protected abstract void updateNotation();
 
     protected abstract void updateNotationLastMove();
 
@@ -147,8 +153,6 @@ public abstract class Game extends Observable implements Runnable {
             }
         }
 
-        this.checkSpecialRules(playerMove);
-
         String[] s = new String[]{"unselectAll"};
         updateAllWithParams(s);
     }
@@ -169,6 +173,8 @@ public abstract class Game extends Observable implements Runnable {
                 it.remove();
             }
         }
+
+        this.currentMove.moves().addLast(moveToDo);
         return moveToDo;
     }
 

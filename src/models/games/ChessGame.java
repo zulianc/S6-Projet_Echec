@@ -49,9 +49,11 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void checkSpecialRules(PlayerMove playerMove) {
-        Cell destinationCell = playerMove.destination();
-        checkPromotion(destinationCell);
+    protected void checkSpecialRules() {
+        if (this.currentMove.moves().size() == 1) {
+            Cell destinationCell = this.currentMove.moves().getFirst().destination();
+            checkPromotion(destinationCell);
+        }
     }
 
     @Override
@@ -71,7 +73,8 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void updateNotation(PlayerMove playerMove) {
+    protected void updateNotation() {
+        PlayerMove playerMove = new PlayerMove(this.currentMove.moves().getFirst());
         this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
     }
 

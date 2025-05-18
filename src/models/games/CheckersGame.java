@@ -54,8 +54,8 @@ public class CheckersGame extends Game {
     }
 
     @Override
-    protected void checkSpecialRules(PlayerMove playerMove) {
-        Cell destinationCell = playerMove.destination();
+    protected void checkSpecialRules() {
+        Cell destinationCell = this.currentMove.moves().getLast().destination();
         if (!destinationCell.hasPiece()) {
             return;
         }
@@ -73,7 +73,7 @@ public class CheckersGame extends Game {
     }
 
     @Override
-    protected void updateNotation(PlayerMove playerMove) {
+    protected void updateNotation() {
         //TODO notation
     }
 

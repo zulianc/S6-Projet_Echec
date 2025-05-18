@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record GameMove(List<PieceMove> moves) {
+    public GameMove() {
+        this(new ArrayList<>());
+    }
+
     public GameMove(PieceMove move) {
         this(new ArrayList<>());
         this.moves.add(move);
