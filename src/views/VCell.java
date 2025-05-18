@@ -19,7 +19,6 @@ public class VCell {
 
     private final Color baseColor;
 
-
     public VCell(Cell cell, Color baseColor, int size) {
         this.cell = cell;
         this.baseColor = baseColor;
@@ -35,12 +34,9 @@ public class VCell {
 
         Color cellColor = this.isMarked   ? MARKED_COLOR   : this.getBaseColor();
         cellColor       = this.isSelected ? SELECTED_COLOR : cellColor;
+
         g.setColor(cellColor);
-
         g.fillRect(cellX, cellY, size, size);
-
-        g.setColor(Color.BLACK);
-        g.drawRect(cellX, cellY, size, size);
 
         if (cell.getPiece() != null) {
             Image img = VPiece.getImage(cell.getPiece());

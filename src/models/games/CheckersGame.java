@@ -1,6 +1,5 @@
 package models.games;
 
-import models.CheckerTests;
 import models.boards.Cell;
 import models.boards.GameMove;
 import models.pieces.Piece;

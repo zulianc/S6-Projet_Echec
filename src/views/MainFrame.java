@@ -32,8 +32,8 @@ public class MainFrame extends JFrame implements Observer {
         this.contentPane.setLayout(new BorderLayout());
 
         ArrayList<Color> basesColors = new ArrayList<>();
-        basesColors.add(Color.WHITE);
-        basesColors.add(Color.BLACK);
+        basesColors.add(new Color(251, 253, 219));
+        basesColors.add(new Color(96, 138, 72));
 
         this.board = new VBoard(600, gameModel, boardGameController, basesColors);
 

@@ -5,7 +5,7 @@ import models.pieces.Piece;
 import models.pieces.checkers.CheckerPawn;
 import models.pieces.checkers.CheckerQueen;
 
-public abstract class CheckerTests {
+public abstract class CheckersTests {
     private static void emptyBoard(GameBoard board) {
         for (Piece piece : board.getAllPieces()) {
             board.removePieceFromBoard(piece);
