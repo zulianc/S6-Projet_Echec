@@ -79,8 +79,8 @@ public abstract class Game extends Observable implements Runnable {
                 this.checkIfGameEnded();
                 this.updateAll();
 
-                this.updateNotation();
-                System.out.println(movesNotation);
+                //this.updateNotation();
+                System.out.println("moveNotation : "+movesNotation);
             }
         } while (!this.gameEnded);
 
@@ -135,6 +135,7 @@ public abstract class Game extends Observable implements Runnable {
         if (moveToDo == null) {
             throw new RuntimeException("The move the player inputed isn't in the list of possible moves.");
         }
+        this.updateNotation();
         doMove(moveToDo);
 
         boolean autoMove = true;

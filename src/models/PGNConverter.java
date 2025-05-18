@@ -18,7 +18,7 @@ public class PGNConverter {
         Cell sourceCell = move.source();
         Cell destinationCell = move.destination();
 
-        if (!sourceCell.hasPiece()) return ""; // throw new RuntimeException("move without piece to move ??");
+        if (!sourceCell.hasPiece()) throw new RuntimeException("move without piece to move ??");
 
         String coordinates = game.getBoard().getCellCoordinates(destinationCell);
         String piecePieceMoved    = "";
@@ -104,7 +104,7 @@ public class PGNConverter {
         if (!m.matches()) return null;
 
         String pieceCode = m.group(1);
-        String disamb = m.group(2);
+        String disamb    = m.group(2);
         String destCoord = m.group(4);
 
         Cell destination = board.getCellFromCoords(destCoord);
