@@ -169,8 +169,11 @@ public class PGNConverter {
     public static String convertGameToPGN(Game game) {
         StringBuilder result = new StringBuilder();
 
-        result.append("[White \"").append(game.getPlayers().get(0).getName()).append("\"]\n");
-        result.append("[Black \"").append(game.getPlayers().get(1).getName()).append("\"]\n");
+        String playerName1 = game.getPlayers().get(0).getName() != null ? game.getPlayers().get(0).getName() : "?";
+        String playerName2 = game.getPlayers().get(1).getName() != null ? game.getPlayers().get(1).getName() : "?";
+
+        result.append("[White \"").append(playerName1).append("\"]\n");
+        result.append("[Black \"").append(playerName2).append("\"]\n");
 
         List<String> moves = game.getMovesNotation();
         int playNumber = 0;
