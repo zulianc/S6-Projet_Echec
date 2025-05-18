@@ -8,13 +8,12 @@ import models.pieces.chess.King;
 import structure.Position2D;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PGNConverter {
-    public static String convertMoveToPGN(Game game, PlayerMove move) {
+    public static String convertMoveToPGN(Game game, PieceMove move) {
         Cell sourceCell = move.source();
         Cell destinationCell = move.destination();
 
@@ -26,8 +25,8 @@ public class PGNConverter {
         String isChecked     = "";
         Piece sourcePiece = sourceCell.getPiece();
 
-        if (((ChessGame) game).isCastling(move)) {
-            if (game.getBoard().getDistanceFromMove(move).getX() < 0) {
+        if (((ChessGame) game).isCastling(new PlayerMove(move))) {
+            if (game.getBoard().getDistanceFromMove(new PlayerMove(move)).getX() < 0) {
                 return "O-O-O";
             } else {
                 return "O-O";
@@ -65,7 +64,7 @@ public class PGNConverter {
                     }
                 }
 
-                if (((ChessGame) game).isNextPlayerInCheckIfMove(move)) {
+                if (((ChessGame) game).isNextPlayerInCheckIfMove(new PlayerMove(move))) {
                     isChecked = "+";
                 }
 

@@ -109,7 +109,7 @@ public abstract class Game extends Observable implements Runnable {
 
     protected abstract void checkSpecialRules();
 
-    protected abstract void updateNotation();
+    protected abstract void updateNotation(PlayerMove playerMove);
 
     protected abstract void updateNotationLastMove();
 
@@ -131,11 +131,12 @@ public abstract class Game extends Observable implements Runnable {
     }
 
     public void applyMove(PlayerMove playerMove) {
+        this.updateNotation(playerMove);
+
         PieceMove moveToDo = this.updatePossibleMoves(playerMove);
         if (moveToDo == null) {
             throw new RuntimeException("The move the player inputed isn't in the list of possible moves.");
         }
-        this.updateNotation();
         doMove(moveToDo);
 
         boolean autoMove = true;

@@ -5,6 +5,10 @@ public record PieceMove(Cell source, Cell destination, Cell captured) {
         this(source, destination, destination);
     }
 
+    public PieceMove(PlayerMove playerMove) {
+        this(playerMove.source(), playerMove.destination());
+    }
+
     @Override
     public String toString() {
         return "PieceMove={" + source.toString() + " " + destination.toString() + " " + captured.toString() + "}";

@@ -11,6 +11,6 @@ public record PlayerMove(Cell source, Cell destination) {
 
     @Override
     public String toString() {
-        return "PieceMove={" + source.toString() + " " + destination.toString() + "}";
+        return "PlayerMove={" + source.toString() + " " + destination.toString() + "}";
     }
 }

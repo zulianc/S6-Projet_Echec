@@ -3,6 +3,7 @@ package models.games;
 import models.PGNConverter;
 import models.boards.Cell;
 import models.boards.GameMove;
+import models.boards.PieceMove;
 import models.boards.PlayerMove;
 import models.pieces.*;
 import models.pieces.chess.*;
@@ -54,6 +55,15 @@ public class ChessGame extends Game {
             Cell destinationCell = this.currentMove.moves().getFirst().destination();
             checkPromotion(destinationCell);
         }
+
+        if (this.movesNotation.getLast().equals("O-O") || this.movesNotation.getLast().equals("O-O-O")) {
+            if (this.isInCheck(this.nextPlayer())) {
+                String str = this.movesNotation.getLast();
+                str = str + "+";
+                this.movesNotation.removeLast();
+                this.movesNotation.addLast(str);
+            }
+        }
     }
 
     @Override
@@ -76,9 +86,15 @@ public class ChessGame extends Game {
     }
 
     @Override
-    protected void updateNotation() {
-        PlayerMove playerMove = new PlayerMove(this.currentMove.moves().getFirst());
-        this.movesNotation.add(PGNConverter.convertMoveToPGN(this, playerMove));
+    protected void updateNotation(PlayerMove playerMove) {
+        PieceMove move = new PieceMove(playerMove);
+        for (GameMove possibleMove : this.possibleMoves) {
+            if (playerMove.correspondsTo(possibleMove)) {
+                move = possibleMove.moves().getFirst();
+            }
+        }
+
+        this.movesNotation.add(PGNConverter.convertMoveToPGN(this, move));
     }
 
     @Override
@@ -89,6 +105,7 @@ public class ChessGame extends Game {
         } else {
             this.movesNotation.add("1/2-1/2");
         }
+
         System.out.println(movesNotation);
         System.out.println(PGNConverter.convertGameToPGN(this));
     }
@@ -178,7 +195,19 @@ public class ChessGame extends Game {
         return false;
     }
 
-    protected boolean isPlayerInCheckIfMove(PlayerMove playerMove, Player p) {
+    public boolean isInCheckIfMove(PlayerMove playerMove) {
+        PieceMove move = new PieceMove(playerMove);
+
+        Piece deadPiece = this.doMove(move);
+        boolean isInCheck = this.isInCheck(this.actualPlayer);
+        this.undoMove(move, deadPiece);
+
+        return isInCheck;
+    }
+
+    public boolean isNextPlayerInCheckIfMove(PlayerMove playerMove) {
+        Player p = this.nextPlayer();
+
         GameMove moveToDo = null;
         for (GameMove move : this.possibleMoves) {
             if (playerMove.correspondsTo(move)) {
@@ -194,15 +223,7 @@ public class ChessGame extends Game {
         boolean isInCheck = this.isInCheck(p);
         this.undoMove(moveToDo, deadPieces);
 
-        return !isInCheck;
-    }
-
-    public boolean isInCheckIfMove(PlayerMove m) {
-        return this.isPlayerInCheckIfMove(m, this.actualPlayer);
-    }
-
-    public boolean isNextPlayerInCheckIfMove(PlayerMove m) {
-        return this.isPlayerInCheckIfMove(m, this.nextPlayer());
+        return isInCheck;
     }
 
     public boolean isInCheckmate(Player p) {

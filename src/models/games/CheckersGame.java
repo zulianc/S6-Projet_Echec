@@ -2,6 +2,7 @@ package models.games;
 
 import models.boards.Cell;
 import models.boards.GameMove;
+import models.boards.PlayerMove;
 import models.pieces.Piece;
 import models.pieces.checkers.CheckerPawn;
 import models.pieces.checkers.CheckerQueen;
@@ -76,7 +77,7 @@ public class CheckersGame extends Game {
     }
 
     @Override
-    protected void updateNotation() {
+    protected void updateNotation(PlayerMove playerMove) {
         //TODO notation
     }
 
