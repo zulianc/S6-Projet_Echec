@@ -81,6 +81,11 @@ public class MainFrame extends JFrame implements Observer {
         JPanel northEastPan = new JPanel(new BorderLayout());
         JPanel centerEastPan = new JPanel(new BorderLayout());
 
+        JScrollPane scrollPane = new JScrollPane(
+                this.pgnTextArea,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         westPan.add(board);
         northPan.add(titleLabel);
         eastPan.add(northEastPan, BorderLayout.NORTH);
@@ -88,7 +93,7 @@ public class MainFrame extends JFrame implements Observer {
         northEastPan.add(toggleRotationMode, BorderLayout.NORTH);
         northEastPan.add(traitLabel, BorderLayout.CENTER);
         centerEastPan.add(pgnLabel, BorderLayout.NORTH);
-        centerEastPan.add(pgnTextArea, BorderLayout.CENTER);
+        centerEastPan.add(scrollPane, BorderLayout.CENTER);
 
         northEastPan.setPreferredSize(new Dimension(150, 100));
 
