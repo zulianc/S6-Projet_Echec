@@ -3,7 +3,6 @@ package models.boards;
 import models.pieces.Piece;
 import structure.Position2D;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -156,7 +155,7 @@ public class GameBoard {
 
     public Cell getCellFromCoords(String destCord) {
         int x = destCord.charAt(0) - 97;
-        int y = Integer.parseInt(String.valueOf(destCord.charAt(1)));
+        int y = 7 - (Integer.parseInt(String.valueOf(destCord.charAt(1))) - 1);
 
         return getCell(x, y);
     }

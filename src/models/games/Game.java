@@ -131,6 +131,8 @@ public abstract class Game extends Observable implements Runnable {
         this.turn++;
         this.possibleMoves = this.getPossibleMoves(this.actualPlayer);
 
+        this.updateNotation(playerMove);
+
         GameMove moveToDo = null;
         for (GameMove move : this.possibleMoves) {
             if (playerMove.correspondsTo(move)) {
@@ -141,6 +143,9 @@ public abstract class Game extends Observable implements Runnable {
 
         this.actualPlayer = this.nextPlayer();
         this.updateAll();
+
+        this.possibleMoves = this.getPossibleMoves(this.actualPlayer);
+        this.currentMove = new GameMove();
     }
 
     protected void applyMove(PlayerMove playerMove) {

@@ -92,7 +92,6 @@ public class PGNConverter {
         return tokens;
     }
 
-
     public static PlayerMove convertPGNToPieceMove(Game game, String pgn) {
         GameBoard board = game.getBoard();
         if (pgn.equals("O-O") || pgn.equals("O-O-O")) {
@@ -195,7 +194,6 @@ public class PGNConverter {
 
         return result.toString();
     }
-
 
     public static void createGameFromPGN(String pgn) {
         List<String> playerNames = PGNConverter.getPlayersFromPGN(pgn);

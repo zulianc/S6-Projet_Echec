@@ -146,13 +146,11 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                             }
                             possibleMoves.add(new GameMove(moves));
 
-                            System.out.println("aaaa");
                             if (Math.abs(game.getBoard().getDistanceFromMove(new PlayerMove(startingCell, finalKingCell)).getX()) == 1 && !finalKingCell.hasPiece()) {
                                 List<PieceMove> dullMoves = new LinkedList<>();
                                 dullMoves.addLast(new PieceMove(startingCell, finalKingCell));
                                 dullMoves.addLast(new PieceMove(startingRookCell, startingRookCell));
                                 possibleMoves.add(new GameMove(dullMoves));
-                                System.out.println("wwwww");
                             }
                         }
                     }
