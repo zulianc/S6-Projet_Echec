@@ -191,10 +191,6 @@ public class PGNConverter {
             turnCounter++;
         }
 
-        if (game.hasGameEnded()) {
-            result.replace(result.length() - 1, result.length(), "#");
-        }
-
         return result.toString();
     }
 
