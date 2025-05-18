@@ -3,6 +3,7 @@ package models.boards;
 import models.pieces.Piece;
 import structure.Position2D;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -151,5 +152,12 @@ public class GameBoard {
         Position2D destinationPosition = this.getPositionOfCell(m.destination());
 
         return new Position2D(destinationPosition.getX() - sourcePosition.getX(), destinationPosition.getY() - sourcePosition.getY());
+    }
+
+    public Cell getCellFromCoords(String destCord) {
+        int x = destCord.charAt(0) - 97;
+        int y = Integer.parseInt(String.valueOf(destCord.charAt(1)));
+
+        return getCell(x, y);
     }
 }
