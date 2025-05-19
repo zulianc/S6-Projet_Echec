@@ -159,7 +159,6 @@ public abstract class Game extends Observable implements Runnable {
 
         boolean autoMove = true;
         while (!this.possibleMoves.isEmpty() && autoMove) {
-            autoMove = true;
             PieceMove firstMove = this.possibleMoves.getFirst().moves().getFirst();
             for (GameMove move : this.possibleMoves) {
                 if (!firstMove.equals(move.moves().getFirst())) {
