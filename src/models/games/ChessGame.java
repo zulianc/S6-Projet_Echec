@@ -168,7 +168,7 @@ public class ChessGame extends Game {
         }
     }
 
-    protected Piece createPieceFromString(String pieceName) {
+    public Piece createPieceFromString(String pieceName) {
         Piece result;
         int actualPlayerTeam = this.actualPlayer.getTeam();
         switch (pieceName) {
@@ -260,5 +260,9 @@ public class ChessGame extends Game {
 
     public boolean isCastling(PlayerMove m) {
         return m.source().getPiece() instanceof King && Math.abs(this.board.getDistanceFromMove(m).getX()) == 2;
+    }
+
+    public void setActualPlayer(Player player) {
+        this.actualPlayer = player;
     }
 }

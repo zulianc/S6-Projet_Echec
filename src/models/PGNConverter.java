@@ -17,6 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PGNConverter {
+
+    private static String promotionName = "";
+
     public static String convertMoveToPGN(Game game, PieceMove move) {
         Cell sourceCell = move.source();
         Cell destinationCell = move.destination();
@@ -93,10 +96,12 @@ public class PGNConverter {
         return tokens;
     }
 
-    public static PlayerMove convertPGNToPieceMove(Game game, String pgn) {
+    public static List<PlayerMove> convertPGNToPieceMove(Game game, String pgn) {
         GameBoard board = game.getBoard();
+        ArrayList<PlayerMove> playerMoves = new ArrayList<>();
         if (pgn.equals("O-O") || pgn.equals("O-O-O")) {
-            return handleCastling(game, pgn);
+            playerMoves.add(handleCastling(game, pgn));
+            return playerMoves;
         }
 
         String clean = pgn.replaceAll("[+#]", "");
@@ -109,7 +114,12 @@ public class PGNConverter {
         String disamb    = m.group(2);
         String destCoord = m.group(4);
         String promotionCode = m.group(5).replaceAll("=", "");
-        System.out.println("promotion code : "+ promotionCode);
+        PGNConverter.promotionName = switch (promotionCode) {
+            case "R" -> "rook";
+            case "B" -> "bishop";
+            case "N" -> "knight";
+            default -> "queen";
+        };
 
         Cell destination = board.getCellFromCoords(destCoord);
         List<Piece> candidates = new ArrayList<>();
@@ -145,7 +155,13 @@ public class PGNConverter {
         Piece chosen = candidates.getFirst();
         Cell source = board.getCellOfPiece(chosen);
 
-        return new PlayerMove(source, destination);
+        playerMoves.add(new PlayerMove(source, destination));
+
+        if (!promotionCode.isEmpty()) {
+            playerMoves.add(new PlayerMove(null, null));
+        }
+
+        return playerMoves;
     }
 
     private static PlayerMove handleCastling(Game game, String pgn) {
@@ -203,7 +219,7 @@ public class PGNConverter {
         players.add(new HumanPlayer(playerNames.getFirst(), 0));
         players.add(new HumanPlayer(playerNames.getLast(),  1));
 
-        Game game = new ChessGame(players);
+        ChessGame game = new ChessGame(players);
 
         Thread thread = new Thread(game);
         thread.start();
@@ -216,12 +232,20 @@ public class PGNConverter {
         List<String> moves = tokenizePGN(pgn);
 
         for (String notation : moves) {
-            PlayerMove move = convertPGNToPieceMove(game, notation);
+            List<PlayerMove> move = convertPGNToPieceMove(game, notation);
             if (move == null) {
                 throw new IllegalArgumentException("Impossible d’interpréter le coup PGN: " + notation);
             }
 
-            game.forceMove(move);
+            game.forceMove(move.getFirst());
+            if (move.size() > 1) {
+                game.setActualPlayer(game.nextPlayer());
+                Piece promotionPiece = game.createPieceFromString(PGNConverter.promotionName);
+                game.getBoard().removePieceFromBoard(move.getFirst().destination().getPiece());
+                game.getBoard().setPieceToCell(promotionPiece, move.getFirst().destination());
+                game.setActualPlayer(game.nextPlayer());
+            }
+
         }
 
         game.updateAll();
