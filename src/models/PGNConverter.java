@@ -238,14 +238,12 @@ public class PGNConverter {
             }
 
             game.forceMove(move.getFirst());
+
             if (move.size() > 1) {
-                game.setActualPlayer(game.nextPlayer());
-                Piece promotionPiece = game.createPieceFromString(PGNConverter.promotionName);
+                Piece promotionPiece = game.createPieceFromString(PGNConverter.promotionName, game.nextPlayer());
                 game.getBoard().removePieceFromBoard(move.getFirst().destination().getPiece());
                 game.getBoard().setPieceToCell(promotionPiece, move.getFirst().destination());
-                game.setActualPlayer(game.nextPlayer());
             }
-
         }
 
         game.updateAll();

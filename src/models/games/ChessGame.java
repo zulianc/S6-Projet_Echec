@@ -140,7 +140,7 @@ public class ChessGame extends Game {
 
     public void sendPromotion(String pieceName) {
         System.out.println("Promote to " + pieceName);
-        this.promotionPiece = createPieceFromString(pieceName);
+        this.promotionPiece = createPieceFromString(pieceName, this.actualPlayer);
     }
 
     protected void checkPromotion(Cell destinationCell) {
@@ -168,24 +168,23 @@ public class ChessGame extends Game {
         }
     }
 
-    public Piece createPieceFromString(String pieceName) {
+    public Piece createPieceFromString(String pieceName, Player p) {
         Piece result;
-        int actualPlayerTeam = this.actualPlayer.getTeam();
         switch (pieceName) {
             case "rook" : {
-                result = new Rook(actualPlayerTeam);
+                result = new Rook(p.getTeam());
                 break;
             }
             case "bishop" : {
-                result = new Bishop(actualPlayerTeam);
+                result = new Bishop(p.getTeam());
                 break;
             }
             case "knight" : {
-                result = new Knight(actualPlayerTeam);
+                result = new Knight(p.getTeam());
                 break;
             }
             default : {
-                result = new Queen(actualPlayerTeam);
+                result = new Queen(p.getTeam());
                 break;
             }
         }
@@ -260,9 +259,5 @@ public class ChessGame extends Game {
 
     public boolean isCastling(PlayerMove m) {
         return m.source().getPiece() instanceof King && Math.abs(this.board.getDistanceFromMove(m).getX()) == 2;
-    }
-
-    public void setActualPlayer(Player player) {
-        this.actualPlayer = player;
     }
 }
