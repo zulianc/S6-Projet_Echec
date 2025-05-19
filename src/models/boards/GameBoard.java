@@ -159,4 +159,24 @@ public class GameBoard {
 
         return getCell(x, y);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder returnValue = new StringBuilder();
+        for (int i = 0; i < this.boardSize; i++) {
+            for (int j = 0; j < this.boardSize; j++) {
+                Cell currentCell = this.cells[i][j];
+                if (currentCell.hasPiece()) {
+                    Piece currentPiece = currentCell.getPiece();
+                    returnValue
+                            .append(currentPiece.getPieceName())
+                            .append(currentPiece.getTeam());
+                } else {
+                    returnValue.append(" ");
+                }
+
+            }
+        }
+        return returnValue.toString();
+    }
 }

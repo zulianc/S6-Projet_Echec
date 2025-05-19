@@ -11,10 +11,12 @@ import models.players.HumanPlayer;
 import models.players.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChessGame extends Game {
     protected Piece promotionPiece;
+    protected final HashMap<String, Integer> positions = new HashMap<>();
 
     public ChessGame(List<Player> players) {
         super(players, 2, 8);
@@ -119,6 +121,13 @@ public class ChessGame extends Game {
 
     @Override
     public void checkIfGameEnded() {
+        String position = this.board.toString();
+        boolean isDraw = this.addNewPosition(position);
+        if (isDraw) {
+            this.gameEnded = true;
+            return;
+        }
+
         int alivePlayers = 0;
         for (Player player : this.players) {
             if (player.isAlive() && !isInStalemate(player)) {
@@ -150,6 +159,11 @@ public class ChessGame extends Game {
 
                 this.board.removePieceFromBoard(destinationCell.getPiece());
                 this.board.setPieceToCell(this.promotionPiece, destinationCell);
+
+                String str = this.movesNotation.getLast();
+                str = str + "="+this.promotionPiece.getPieceCode();
+                this.movesNotation.removeLast();
+                this.movesNotation.addLast(str);
             }
         }
     }
@@ -176,6 +190,16 @@ public class ChessGame extends Game {
             }
         }
         return result;
+    }
+
+    protected boolean addNewPosition(String boardString) {
+        if (this.positions.containsKey(boardString)) {
+            this.positions.put(boardString, this.positions.get(boardString) + 1);
+        } else {
+            this.positions.put(boardString, 1);
+        }
+
+        return this.positions.get(boardString) == 3;
     }
 
     protected boolean isInCheck(Player p) {

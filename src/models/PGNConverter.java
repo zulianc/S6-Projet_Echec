@@ -24,9 +24,10 @@ public class PGNConverter {
         if (!sourceCell.hasPiece()) throw new RuntimeException("move without piece to move ??");
 
         String coordinates = game.getBoard().getCellCoordinates(destinationCell);
-        String piecePieceMoved    = "";
+        String piecePieceMoved = "";
         String pieceCaptured = "";
         String isChecked     = "";
+        String promotion     = "";
         Piece sourcePiece = sourceCell.getPiece();
 
         if (((ChessGame) game).isCastling(new PlayerMove(move))) {
@@ -73,7 +74,7 @@ public class PGNConverter {
                 }
 
             }
-            return piecePieceMoved + pieceCaptured + coordinates + isChecked;
+            return piecePieceMoved + pieceCaptured + coordinates + promotion + isChecked;
         }
     }
 
