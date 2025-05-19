@@ -81,10 +81,6 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                         finalRookCell = game.getBoard().getCellAtRelativePosition(nextCell, boardEndToKingVector);
                     }
 
-                    if (longCastling) {
-                        System.out.println(game.getBoard().getPositionOfCell(finalKingCell) + " " + game.getBoard().getPositionOfCell(finalRookCell));
-                    }
-
                     // STEP 2: check for the rook's existence and that the path is clear
                     Cell startingRookCell = null;
                     {
@@ -147,8 +143,6 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                                 nextCell = game.getBoard().getCellAtRelativePosition(nextCell, vector);
                             }
                         } while (!(foundValidRook && reachedFinalKingCell) && !reachedEndOfBoard && !blockedPath);
-
-                        System.out.println(foundValidRook + " " + reachedFinalKingCell + " " + reachedEndOfBoard + " " + blockedPath);
 
                         if (!reachedEndOfBoard && !blockedPath && foundValidRook && !(finalRookCell.hasPiece() && !(finalRookCell.getPiece() instanceof King))) {
                             Cell safeCell = null;
