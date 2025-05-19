@@ -81,6 +81,10 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                         finalRookCell = game.getBoard().getCellAtRelativePosition(nextCell, boardEndToKingVector);
                     }
 
+                    if (longCastling) {
+                        System.out.println(game.getBoard().getPositionOfCell(finalKingCell) + " " + game.getBoard().getPositionOfCell(finalRookCell));
+                    }
+
                     // STEP 2: check for the rook's existence and that the path is clear
                     Cell startingRookCell = null;
                     {
@@ -89,6 +93,29 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                         boolean foundValidRook = false;
                         boolean reachedFinalKingCell = false;
                         boolean blockedPath = false;
+
+                        boolean inversedKingMovement = false;
+                        int kingDirection = game.getBoard().getDistanceFromMove(new PlayerMove(startingCell, finalKingCell)).getX();
+                        if (kingDirection != 0) {
+                            kingDirection = kingDirection / (Math.abs(kingDirection));
+                            inversedKingMovement = (kingDirection != vector.getX());
+                        }
+
+                        if (inversedKingMovement) {
+                            nextCell = finalKingCell;
+
+                            do {
+                                if (nextCell == null || ((ChessGame) game).isInCheckIfMove(new PlayerMove(startingCell, nextCell))) {
+                                    blockedPath = true;
+                                }
+
+                                nextCell = game.getBoard().getCellAtRelativePosition(nextCell, vector);
+                            } while (!nextCell.equals(startingCell) && !blockedPath);
+
+                            nextCell = startingCell;
+                            reachedFinalKingCell = true;
+                        }
+
                         do {
                             if (nextCell == null) {
                                 reachedEndOfBoard = true;
@@ -100,10 +127,8 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                                     startingRookCell = nextCell;
                                 }
                                 else {
-                                    if (nextCell.hasPiece()) {
-                                        if (!nextCell.equals(startingCell)) {
-                                            blockedPath = true;
-                                        }
+                                    if (nextCell.hasPiece() && !nextCell.equals(startingCell)) {
+                                        blockedPath = true;
                                     } else {
                                         if (!reachedFinalKingCell) {
                                             if (((ChessGame) game).isInCheckIfMove(new PlayerMove(startingCell, nextCell))) {
@@ -122,6 +147,8 @@ public class CastlingDecorator extends PossibleMovesDecorator {
                                 nextCell = game.getBoard().getCellAtRelativePosition(nextCell, vector);
                             }
                         } while (!(foundValidRook && reachedFinalKingCell) && !reachedEndOfBoard && !blockedPath);
+
+                        System.out.println(foundValidRook + " " + reachedFinalKingCell + " " + reachedEndOfBoard + " " + blockedPath);
 
                         if (!reachedEndOfBoard && !blockedPath && foundValidRook && !(finalRookCell.hasPiece() && !(finalRookCell.getPiece() instanceof King))) {
                             Cell safeCell = null;
