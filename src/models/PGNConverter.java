@@ -99,16 +99,17 @@ public class PGNConverter {
             return handleCastling(game, pgn);
         }
 
-        String clean = pgn.replaceAll("[+#]", "")
-                .replaceAll("=[QRNBqknrb]", "");
+        String clean = pgn.replaceAll("[+#]", "");
 
-        Pattern pattern = Pattern.compile("^([KQRNB]?)([a-h]?[1-8]?)(x?)([a-h][1-8])$");
+        Pattern pattern = Pattern.compile("^([KQRNB]?)([a-h]?[1-8]?)(x?)([a-h][1-8])((=[QRNBqknrb])?)$");
         Matcher m = pattern.matcher(clean);
         if (!m.matches()) return null;
 
         String pieceCode = m.group(1);
         String disamb    = m.group(2);
         String destCoord = m.group(4);
+        String promotionCode = m.group(5).replaceAll("=", "");
+        System.out.println("promotion code : "+ promotionCode);
 
         Cell destination = board.getCellFromCoords(destCoord);
         List<Piece> candidates = new ArrayList<>();
