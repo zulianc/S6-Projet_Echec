@@ -29,7 +29,7 @@ public class CheckersGame extends Game {
             }
         }
 
-        //CheckersTests.testLoops(this.board);
+        //CheckersTests.testQueen(this.board);
     }
 
     @Override

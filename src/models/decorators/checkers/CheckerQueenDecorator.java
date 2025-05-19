@@ -80,10 +80,6 @@ public class CheckerQueenDecorator extends PossibleMovesDecorator {
                 }
                 destinationCell = board.getCellAtRelativePosition(destinationCell, orientation);
 
-                if (path.size() == 1) {
-                    System.out.println(board.getPositionOfCell(captureCell) + " " + board.getPositionOfCell(destinationCell));
-                }
-
                 if (destinationCell == null) {
                     pieceIsBlocked = true;
                 }
