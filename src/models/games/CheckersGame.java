@@ -1,5 +1,6 @@
 package models.games;
 
+import models.CheckersTests;
 import models.boards.Cell;
 import models.boards.GameMove;
 import models.boards.PlayerMove;
@@ -28,7 +29,7 @@ public class CheckersGame extends Game {
             }
         }
 
-        //CheckerTests.testQueen(this.board);
+        //CheckersTests.testLoops(this.board);
     }
 
     @Override

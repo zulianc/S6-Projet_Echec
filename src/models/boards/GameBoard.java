@@ -155,7 +155,7 @@ public class GameBoard {
 
     public Cell getCellFromCoords(String destCord) {
         int x = destCord.charAt(0) - 97;
-        int y = 7 - (Integer.parseInt(String.valueOf(destCord.charAt(1))) - 1);
+        int y = this.boardSize - Integer.parseInt(String.valueOf(destCord.charAt(1)));
 
         return getCell(x, y);
     }
